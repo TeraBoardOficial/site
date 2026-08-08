@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TeraBoard · Avisos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	.f-chip { border-radius: 999px; padding: 8px 16px; background: var(--surface-icon); color: var(--ink-2); font-size: 13px; font-weight: 500; white-space: nowrap; }
+	.f-chip.selected { background: var(--brand-dark); color: #fff; }
+	.alert-row { padding: 16px var(--pad); }
+	.alert-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<!-- =========================================================================
+     Central de avisos, ordenada por urgência e por hora.
+
+     Todo aviso traz a INSTRUÇÃO junto: o produtor não precisa traduzir o
+     número em ação, e nem decidir se aquilo é grave.
+     ========================================================================= -->
+
+<div class="top-bar">
+	<span class="back"><i class="ph ph-caret-left"></i></span>
+	<div class="grow">
+		<div class="tb-title">Avisos</div>
+		<div class="tb-sub">3 não lidos</div>
+	</div>
+</div>
+
+<div class="gap-16"></div>
+
+<div class="filter-row">
+	<span class="f-chip selected">Todos (6)</span>
+	<span class="f-chip">Urgentes (1)</span>
+	<span class="f-chip">Atenção (2)</span>
+	<span class="f-chip">Histórico (3)</span>
+</div>
+
+<div class="gap-16"></div>
+
+<div>
+
+	<div class="stripe">
+		<div class="alert-row">
+			<div class="list-item">
+				<span class="icon-circle" style="color:var(--crit)"><i class="ph-fill ph-warning-circle"></i></span>
+				<div class="item-content">
+					<div class="row" style="gap:4px;margin-bottom:2px">
+						<span class="t-item c-crit grow">Caixa de adubo vazia</span>
+						<span class="dot crit" style="width:7px;height:7px"></span>
+					</div>
+					<p class="t-caption">Micronutrientes em 16% (7,9 L de 50 L).</p>
+					<p class="t-caption c-crit" style="margin-top:2px">Reabasteça a caixa indicada.</p>
+					<div class="alert-foot">
+						<span class="t-mono-s c-2" style="text-transform:uppercase">Estufa das Ervas · Crítico</span>
+						<span class="t-mono-s c-3">há 4 min · 07:12</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="stripe">
+		<div class="alert-row">
+			<div class="list-item">
+				<span class="icon-circle" style="color:var(--warn)"><i class="ph-fill ph-info"></i></span>
+				<div class="item-content">
+					<div class="row" style="gap:4px;margin-bottom:2px">
+						<span class="t-item c-warn grow">Solo muito seco</span>
+						<span class="dot warn" style="width:7px;height:7px"></span>
+					</div>
+					<p class="t-caption">Umidade em 31,4% na Fieira 2 · posição 9.</p>
+					<p class="t-caption c-warn" style="margin-top:2px">Vá até o ponto indicado: pode ser gotejador entupido.</p>
+					<div class="alert-foot">
+						<span class="t-mono-s c-2" style="text-transform:uppercase">Setor Norte · Atenção</span>
+						<span class="t-mono-s c-3">há 18 min · 06:58</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="stripe">
+		<div class="alert-row">
+			<div class="list-item">
+				<span class="icon-circle" style="color:var(--warn)"><i class="ph-fill ph-info"></i></span>
+				<div class="item-content">
+					<div class="row" style="gap:4px;margin-bottom:2px">
+						<span class="t-item c-warn grow">Sal alto no solo</span>
+						<span class="dot warn" style="width:7px;height:7px"></span>
+					</div>
+					<p class="t-caption">EC em 2,74 mS/cm na Fieira 1 · posição 11, acima da meta do estágio.</p>
+					<p class="t-caption c-warn" style="margin-top:2px">Lave o canteiro com água limpa e reduza a dose na receita do estágio.</p>
+					<div class="alert-foot">
+						<span class="t-mono-s c-2" style="text-transform:uppercase">Setor Sul · Atenção</span>
+						<span class="t-mono-s c-3">há 34 min · 06:42</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="stripe">
+		<div class="alert-row">
+			<div class="list-item">
+				<span class="icon-circle neutral" style="color:var(--ok)"><i class="ph-fill ph-check-circle"></i></span>
+				<div class="item-content">
+					<div class="row" style="gap:4px;margin-bottom:2px">
+						<span class="t-item c-ok grow">Rega concluída</span>
+					</div>
+					<p class="t-caption">Setor Sul recebeu 18,4 L e parou em 55,2% de umidade.</p>
+					<div class="alert-foot">
+						<span class="t-mono-s c-2" style="text-transform:uppercase">Setor Sul · Normal</span>
+						<span class="t-mono-s c-3">há 47 min · 06:29</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="stripe">
+		<div class="alert-row">
+			<div class="list-item">
+				<span class="icon-circle neutral" style="color:var(--ok)"><i class="ph-fill ph-check-circle"></i></span>
+				<div class="item-content">
+					<div class="row" style="gap:4px;margin-bottom:2px">
+						<span class="t-item c-ok grow">Rega iniciada</span>
+					</div>
+					<p class="t-caption">Fertirrigação do Setor Norte iniciada em 40,2% de umidade.</p>
+					<div class="alert-foot">
+						<span class="t-mono-s c-2" style="text-transform:uppercase">Setor Norte · Normal</span>
+						<span class="t-mono-s c-3">há 52 min · 06:24</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="stripe">
+		<div class="alert-row">
+			<div class="list-item">
+				<span class="icon-circle neutral" style="color:var(--ok)"><i class="ph-fill ph-check-circle"></i></span>
+				<div class="item-content">
+					<div class="row" style="gap:4px;margin-bottom:2px">
+						<span class="t-item c-ok grow">Central conectada</span>
+					</div>
+					<p class="t-caption">Todos os 8 sensores responderam no barramento.</p>
+					<div class="alert-foot">
+						<span class="t-mono-s c-2" style="text-transform:uppercase">Sistema · Normal</span>
+						<span class="t-mono-s c-3">há 3 h · 04:10</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</div>
+
+<div class="gap-32"></div>
+
+</body>
+</html>

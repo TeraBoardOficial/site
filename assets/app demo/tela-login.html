@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TeraBoard · Entrar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	/* Única tela do app com fundo verde em tela cheia: marca que o produtor
+	   ainda está "do lado de fora". */
+	body {
+		background: var(--brand-dark);
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 32px;
+		padding: 48px var(--pad);
+		min-height: 100vh;
+	}
+	.brand { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+	.brand img { height: 40px; width: auto; }
+	.login-card {
+		background: var(--surface-app);
+		border-radius: var(--r-card);
+		padding: 24px;
+		display: flex; flex-direction: column; gap: 16px;
+	}
+	.biometric-link {
+		display: flex; align-items: center; justify-content: center; gap: 8px;
+		padding: 12px 0; color: var(--brand-dark); font-size: 15px; font-weight: 600;
+	}
+	.divider { height: 1px; background: var(--line-light); margin: 4px 0; }
+
+	/*
+	 * A ÚNICA coisa clicável em toda a vitrine. É o gesto que abre a
+	 * apresentação — sem ele, a seta pediria um toque que não acontece.
+	 */
+	#entrar {
+		cursor: pointer;
+		pointer-events: auto;
+		animation: chamar 2.4s ease-in-out infinite;
+	}
+	@keyframes chamar {
+		0%, 100% { box-shadow: 0 0 0 0 rgba(30, 199, 140, 0); }
+		50%      { box-shadow: 0 0 0 8px rgba(30, 199, 140, 0.22); }
+	}
+	#entrar:active { opacity: 0.88; animation: none; }
+</style>
+</head>
+<body>
+
+	<div class="brand">
+		<!-- Versão bege: a colorida some sobre o verde escuro. -->
+		<img src="assets/logo-cream.svg" alt="TeraBoard">
+		<div class="t-mono c-onDarkMuted">Sua estufa na palma da mão</div>
+	</div>
+
+	<div class="login-card">
+		<h1 class="t-heading">Entrar</h1>
+
+		<div class="field" style="gap:12px">
+			<span class="input">produtor</span>
+			<div class="input-wrap">
+				<span class="input">••••••••</span>
+				<span class="eye"><i class="ph ph-eye"></i></span>
+			</div>
+		</div>
+
+		<button class="btn full" id="entrar">Entrar</button>
+
+		<span class="biometric-link">
+			<i class="ph ph-fingerprint-simple" style="font-size:22px"></i>
+			Entrar com Impressão digital
+		</span>
+
+		<div class="divider"></div>
+
+		<p class="t-caption c-3 center">
+			Seu acesso fica guardado no cofre do aparelho. A biometria só destrava —
+			nada é enviado para o servidor.
+		</p>
+	</div>
+
+<script>
+	// Avisa a vitrine que o produtor entrou. A partir daí o aparelho desliza
+	// para o lado e o arquivo de telas aparece.
+	document.getElementById("entrar").addEventListener("click", function () {
+		try {
+			window.parent.postMessage({ type: "teraboard:login" }, "*");
+		} catch (e) {
+			/* fora da vitrine a tela é só uma tela */
+		}
+	});
+</script>
+</body>
+</html>

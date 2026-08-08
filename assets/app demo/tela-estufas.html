@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TeraBoard · Suas estufas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	.gh-header { background: var(--brand-dark); padding: 20px var(--pad) 60px; color: var(--on-dark); }
+	.gh-header .top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 32px; }
+	.gh-header .top img { height: 20px; width: auto; }
+	.gh-list { padding: 24px 20px 48px; display: flex; flex-direction: column; gap: 16px; }
+</style>
+</head>
+<body>
+
+	<!-- =====================================================================
+	     Quadro geral. Responde uma pergunta antes de qualquer outra:
+	     em qual estufa eu preciso ir agora? A cor do cartão é a pior condição
+	     lá dentro, então a resposta é visual e não exige ler número nenhum.
+	     ===================================================================== -->
+	<header class="gh-header">
+		<div class="top">
+			<span class="avatar"><i class="ph-fill ph-plant"></i></span>
+			<img src="assets/logo-cream.svg" alt="TeraBoard">
+			<span style="color:var(--beige);font-size:24px;display:flex"><i class="ph ph-sliders-horizontal"></i></span>
+		</div>
+
+		<h1 class="t-greet c-onDark">Olá, Joana</h1>
+		<div class="t-mono c-onDarkMuted" style="margin-top:4px">2 unidades monitoradas</div>
+	</header>
+
+	<!-- Resumo geral, flutuando sobre a faixa verde -->
+	<div class="floating-wrap">
+		<div class="floating-card crit">
+			<div class="row" style="gap:8px">
+				<span class="dot crit" style="width:11px;height:11px"></span>
+				<span class="t-item c-crit">Alertas de Alta prioridade</span>
+			</div>
+			<p class="t-caption c-2" style="margin-top:4px">
+				3 setores · uma rega em andamento · 1 urgente e 2 em atenção
+			</p>
+			<div style="margin-top:12px">
+				<span class="conn-badge"><span class="dot"></span><span>Central conectada · ao vivo</span></span>
+			</div>
+		</div>
+	</div>
+
+	<div class="gh-list">
+
+		<!-- ESTUFA PRINCIPAL — atenção -->
+		<div class="stripe-card">
+			<div class="side bg-warn"></div>
+			<div class="body">
+				<div class="row" style="gap:12px">
+					<span class="icon-circle warn"><i class="ph-fill ph-warehouse"></i></span>
+					<span class="grow">
+						<span class="t-item" style="display:block">Estufa Principal</span>
+						<span class="t-caption c-2">Nova Friburgo · RJ</span>
+					</span>
+					<span class="dot warn"></span>
+				</div>
+
+				<!-- Situação em texto: cor sozinha não basta para daltônico -->
+				<div class="status-bar warn">2 avisos abertos</div>
+
+				<div class="stat-strip">
+					<div class="stat"><span class="k">Setores</span><span class="v">2</span></div>
+					<div class="stat"><span class="k">Regando</span><span class="v">1</span></div>
+					<div class="stat"><span class="k">Umidade</span><span class="v">50%</span></div>
+					<div class="stat"><span class="k">Gasto</span><span class="v">R$ 1,3 mil</span></div>
+				</div>
+			</div>
+		</div>
+
+		<!-- ESTUFA DAS ERVAS — crítico -->
+		<div class="stripe-card">
+			<div class="side bg-crit"></div>
+			<div class="body">
+				<div class="row" style="gap:12px">
+					<span class="icon-circle crit"><i class="ph-fill ph-warehouse"></i></span>
+					<span class="grow">
+						<span class="t-item" style="display:block">Estufa das Ervas</span>
+						<span class="t-caption c-2">Teresópolis · RJ</span>
+					</span>
+					<span class="dot crit"></span>
+				</div>
+
+				<div class="status-bar crit">1 aviso aberto</div>
+
+				<div class="stat-strip">
+					<div class="stat"><span class="k">Setores</span><span class="v">1</span></div>
+					<div class="stat"><span class="k">Regando</span><span class="v">—</span></div>
+					<div class="stat"><span class="k">Umidade</span><span class="v">38%</span></div>
+					<div class="stat"><span class="k">Gasto</span><span class="v">R$ 430,00</span></div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+</body>
+</html>

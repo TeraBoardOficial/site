@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 719 1500" width="719" height="1500" role="img" aria-label="iPhone 17 Pro">
+	<title>iPhone 17 Pro</title>
+
+	<!--
+		Carcaça do aparelho, em unidades de décimo de milímetro do aparelho real
+		(71,9 × 150,0 mm). O RETÂNGULO DA TELA É UM FURO: o corpo é desenhado
+		com `fill-rule="evenodd"`, então o que estiver atrás deste SVG aparece
+		por ali. É isso que deixa a página rodar dentro da moldura, clicável e
+		rolável, sem nenhum truque de recorte por cima.
+
+		Sem botões laterais de propósito: como a moldura é vista sempre de
+		frente, eles só apareciam como abas soltas grudadas na borda.
+
+		Sem ilha dinâmica pelo mesmo motivo prático: ela é desenhada por cima
+		do conteúdo e comia o título das telas internas. Numa vitrine, ler a
+		tela vale mais do que reconhecer o aparelho.
+
+		Área da tela, para quem for posicionar o conteúdo:
+			x = 32 · y = 38 · largura = 655 · altura = 1424 · raio = 85
+	-->
+
+	<defs>
+		<!--
+			Acabamento na cor da marca. O verde do TeraBoard (#1DC78B) fica no
+			meio da rampa, que é onde a diagonal cruza a maior parte da lateral
+			— então é ele que o olho lê como "a cor do aparelho". Os outros
+			quatro tons são o mesmo matiz mais claro e mais escuro, só para dar
+			o torneado de metal: uma cor chapada faria a moldura parecer um
+			retângulo desenhado, não um corpo com volume.
+		-->
+		<linearGradient id="corpo" x1="0" y1="0" x2="1" y2="1">
+			<stop offset="0"    stop-color="#84EBC4"/>
+			<stop offset="0.18" stop-color="#4DE5AD"/>
+			<stop offset="0.46" stop-color="#1DC78B"/>
+			<stop offset="0.74" stop-color="#13865F"/>
+			<stop offset="1"    stop-color="#0B563F"/>
+		</linearGradient>
+
+		<linearGradient id="corpoEdge" x1="0" y1="0" x2="1" y2="0">
+			<stop offset="0"    stop-color="#FFFFFF" stop-opacity="0.55"/>
+			<stop offset="0.12" stop-color="#FFFFFF" stop-opacity="0.06"/>
+			<stop offset="0.88" stop-color="#FFFFFF" stop-opacity="0.06"/>
+			<stop offset="1"    stop-color="#FFFFFF" stop-opacity="0.32"/>
+		</linearGradient>
+
+	</defs>
+
+	<!--
+		Moldura preta com o FURO da tela. `evenodd` faz o segundo contorno
+		virar buraco em vez de preenchimento.
+	-->
+	<path fill="#0E0F12" fill-rule="evenodd"
+		d="M95 0 H624 A95 95 0 0 1 719 95 V1405 A95 95 0 0 1 624 1500 H95 A95 95 0 0 1 0 1405 V95 A95 95 0 0 1 95 0 Z
+		   M117 38 H602 A85 85 0 0 1 687 123 V1377 A85 85 0 0 1 602 1462 H117 A85 85 0 0 1 32 1377 V123 A85 85 0 0 1 117 38 Z"/>
+
+	<!-- Faixa metálica da borda: por cima do preto, larga 14 unidades. -->
+	<path fill="url(#corpo)" fill-rule="evenodd"
+		d="M95 0 H624 A95 95 0 0 1 719 95 V1405 A95 95 0 0 1 624 1500 H95 A95 95 0 0 1 0 1405 V95 A95 95 0 0 1 95 0 Z
+		   M102 14 H617 A88 88 0 0 1 705 102 V1398 A88 88 0 0 1 617 1486 H102 A88 88 0 0 1 14 1398 V102 A88 88 0 0 1 102 14 Z"/>
+
+	<!-- Brilho especular correndo pelas duas laterais da borda. -->
+	<path fill="url(#corpoEdge)" fill-rule="evenodd"
+		d="M95 0 H624 A95 95 0 0 1 719 95 V1405 A95 95 0 0 1 624 1500 H95 A95 95 0 0 1 0 1405 V95 A95 95 0 0 1 95 0 Z
+		   M102 14 H617 A88 88 0 0 1 705 102 V1398 A88 88 0 0 1 617 1486 H102 A88 88 0 0 1 14 1398 V102 A88 88 0 0 1 102 14 Z"/>
+
+</svg>

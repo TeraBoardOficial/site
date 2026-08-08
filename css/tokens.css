@@ -1,0 +1,20 @@
+/* ==========================================================================
+   TeraBoard · Tokens — a paleta e as medidas da marca em um lugar so
+   ========================================================================== */
+
+:root{
+  /* Tema escuro ajustado com a nova paleta para legibilidade perfeita */
+  --porcelain: transparent;             
+  --porcelain-2: rgba(10, 77, 54, 0.4); /* #0A4D36 (Vidro escuro) */
+  --ink: #F0F1E3;                       /* #F0F1E3 (Creme - Texto legível) */
+  --forest: rgba(10, 77, 54, 0.6);      
+  --forest-2: #0A4D36;                  /* #0A4D36 (Fundo Sólido Escuro) */
+  --signal: #1DC78B;                    /* #1DC78B (Verde Vibrante - Destaques) */
+  --signal-deep: #1F8F67;               /* #1F8F67 (Verde Médio - Bordas) */
+  --sage: #A5BCAB;                      /* #A5BCAB (Sálvia - Texto mutado) */
+  --hair: rgba(240, 241, 227, 0.15);
+  --hair-soft: rgba(240, 241, 227, 0.08);
+  --amber: #F5B841;               
+  --clay: #E27B58;
+  --mint: rgba(29, 199, 139, 0.05); 
+}

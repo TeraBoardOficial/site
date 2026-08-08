@@ -1,0 +1,62 @@
+/* =========================================================================
+   Aparelho em SVG
+   -------------------------------------------------------------------------
+   A moldura é `assets/device.svg`, desenhada com o retângulo da tela VAZADO
+   (`fill-rule="evenodd"`). Por isso ela entra por cima como imagem e o
+   conteúdo continua vivo por baixo: sem recorte, sem sobreposição opaca,
+   sem perder o toque.
+
+   Área da tela dentro do viewBox (0 0 719 1500):
+       x = 32 · y = 38 · largura = 655 · altura = 1424
+   Convertida em porcentagem do próprio aparelho, é o que os valores abaixo
+   dizem — e é o que mantém tela e moldura alinhadas em qualquer tamanho.
+   ========================================================================= */
+
+.device {
+	position: relative;
+	aspect-ratio: 719 / 1500;
+	/* Referência: com esta largura a tela fica no 1:1 dos 402 pt do aparelho. */
+	width: 441px;
+	max-width: 100%;
+	flex-shrink: 0;
+	/* A sombra segue o contorno do SVG, não uma caixa retangular. */
+	filter: drop-shadow(0 34px 60px rgba(0, 0, 0, 0.5));
+}
+
+/* Recorte da tela. Cantos retos de propósito: quem arredonda é a moldura,
+   que passa por cima. */
+.device .device-screen {
+	position: absolute;
+	left: 4.45063%;
+	top: 2.53333%;
+	width: 91.09875%;
+	height: 94.93333%;
+	overflow: hidden;
+	background: #FFFFFF;
+}
+
+/*
+ * O iframe carrega no tamanho LÓGICO do aparelho (402 × 874 pt) e é reduzido
+ * por transformação. Deixar o iframe assumir a largura do elemento faria a
+ * página se reorganizar como se fosse outro celular — o ponto da demonstração
+ * é justamente ver o layout do aparelho de verdade.
+ */
+.device .device-screen iframe {
+	width: 402px;
+	height: 874px;
+	border: 0;
+	display: block;
+	background: #FFFFFF;
+	transform-origin: 0 0;
+}
+
+/* A moldura. `pointer-events: none` para não roubar o toque da tela. */
+.device .device-chrome {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	user-select: none;
+	-webkit-user-drag: none;
+}

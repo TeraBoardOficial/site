@@ -1,0 +1,137 @@
+/* ==========================================================================
+   TeraBoard · Pagina: produtos
+   ========================================================================== */
+
+/* ancoras internas nao podem parar embaixo da nav fixa */
+#terasensor,#terasmart{scroll-margin-top:110px}
+  --signal:      #0E5F42;   /* verde de texto  4.93:1 na creme 86% */
+
+/* ==========================================================================
+   PRODUTOS — correcoes e componentes proprios da pagina
+   ========================================================================== */
+
+/* BUG: dentro da faixa creme, --signal vira verde ESCURO (cor de texto),
+   mas .btn-solid usa a mesma variavel como FUNDO -> o botao sumia (1.52:1).
+   Na creme o botao passa a ser verde-escuro com texto creme. */
+.cream .btn-solid,
+.cream .btn-signal{ background:#0A4D36; color:#F0F1E3; }
+.cream .btn-solid:hover,
+.cream .btn-signal:hover{ background:#116B4B; color:#FFFFFF; }
+
+/* faixa creme um pouco mais translucida: deixa a logo 3D respirar por tras */
+.cream{ background: rgba(240, 241, 227, .86); }
+
+/* ---------- comparador interativo ---------- */
+.cmp-opt{
+  display:flex;align-items:center;gap:12px;width:100%;
+  padding:13px 15px;border-radius:12px;cursor:pointer;text-align:left;
+  background:rgba(240,241,227,.05);border:1px solid var(--hair);
+  color:var(--ink);font-family:'Inter',sans-serif;font-size:.99rem;line-height:1.4;
+  transition:background .25s,border-color .25s,transform .25s;
+}
+.cmp-opt:hover{border-color:rgba(29,199,139,.45);transform:translateX(3px)}
+.cmp-opt .box{
+  width:21px;height:21px;border-radius:7px;flex-shrink:0;
+  border:1.5px solid var(--hair);display:grid;place-items:center;
+  font-size:.78rem;color:transparent;transition:background .25s,border-color .25s,color .25s;
+}
+.cmp-opt.on{background:rgba(29,199,139,.13);border-color:rgba(29,199,139,.55)}
+.cmp-opt.on .box{background:var(--signal);border-color:var(--signal);color:#06301f}
+.cmp-row{display:grid;grid-template-columns:96px 1fr 44px;gap:12px;align-items:center;margin-top:12px}
+.cmp-row .nm{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.88rem;color:var(--ink)}
+.cmp-row .pc{font-family:'IBM Plex Mono',monospace;font-size:.82rem;color:var(--sage);text-align:right}
+.cmp-bar{height:7px;border-radius:9999px;background:rgba(240,241,227,.13);overflow:hidden}
+.cmp-bar > i{display:block;height:100%;width:0;border-radius:9999px;background:var(--signal);
+  transition:width .55s cubic-bezier(.16,1,.3,1)}
+.cmp-verdict{
+  margin-top:20px;padding:15px 17px;border-radius:13px;
+  background:rgba(29,199,139,.10);border:1px solid rgba(29,199,139,.28);
+  transition:background .4s,border-color .4s;
+}
+@media(prefers-reduced-motion:reduce){ .cmp-opt:hover{transform:none} }
+
+/* ---------- formulario de perfil ----------
+   As caixas de "qual e o seu caso" continuam sendo a porta de entrada; o
+   formulario so aparece quando alguem marca alguma. Vinte campos abertos na
+   primeira dobra espantam antes de explicar o que sao os dois produtos. */
+.frm-convite{margin-top:20px;padding-top:18px;border-top:1px solid var(--hair-soft)}
+.frm-convite-txt{margin-top:10px;font-size:.88rem;line-height:1.5;color:var(--sage)}
+.frm-convite[hidden]{display:none}
+
+.frm-corpo{margin-top:20px}
+.frm-corpo[hidden],.frm-resultado[hidden],.frm-se-estufa[hidden]{display:none}
+
+.frm-bloco{padding-top:18px;margin-top:4px;border-top:1px solid var(--hair-soft)}
+.frm-bloco-t{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+  font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.02rem;color:var(--ink);
+}
+.frm-num{font-family:'IBM Plex Mono',monospace;font-size:.74rem;color:var(--signal);font-weight:600}
+
+.frm-campo{display:block;margin-bottom:14px}
+.frm-dupla{display:grid;gap:0 14px}
+@media(min-width:560px){ .frm-dupla{grid-template-columns:1fr 1fr} }
+
+.frm-lbl{
+  display:block;margin-bottom:6px;
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.72rem;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--sage);
+}
+.frm-req{color:var(--signal);font-style:normal}
+
+.frm-in{
+  width:100%;padding:12px 14px;min-height:46px;border-radius:11px;
+  background:rgba(240,241,227,.06);border:1px solid var(--hair);color:var(--ink);
+  font-family:'Inter',sans-serif;font-size:.96rem;line-height:1.4;
+  transition:border-color .2s,background .2s;
+}
+.frm-in::placeholder{color:rgba(240,241,227,.38)}
+.frm-in:focus{outline:none;border-color:rgba(29,199,139,.7);background:rgba(240,241,227,.1)}
+textarea.frm-in{resize:vertical;min-height:78px}
+/* A seta nativa some no fundo escuro; esta e desenhada em CSS. */
+select.frm-in{
+  appearance:none;-webkit-appearance:none;padding-right:38px;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,#9FC7B4 50%),
+                   linear-gradient(135deg,#9FC7B4 50%,transparent 50%);
+  background-position:calc(100% - 19px) 21px,calc(100% - 14px) 21px;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;
+}
+select.frm-in option{background:#0B2C1F;color:#F0F1E3}
+
+.frm-com-unidade{display:grid;grid-template-columns:1fr auto;gap:8px}
+.frm-unidade{width:auto;min-width:104px}
+
+/* Radio e checkbox de verdade por baixo: o chip e so a roupa. Assim o
+   teclado, o leitor de tela e a validacao nativa continuam funcionando. */
+.frm-chips{display:flex;flex-wrap:wrap;gap:8px}
+.frm-chip{position:relative;display:inline-flex}
+.frm-chip input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.frm-chip span{
+  display:inline-flex;align-items:center;min-height:44px;padding:10px 15px;border-radius:11px;
+  background:rgba(240,241,227,.05);border:1px solid var(--hair);color:var(--ink);
+  font-size:.93rem;line-height:1.3;transition:background .2s,border-color .2s,color .2s;
+}
+.frm-chip input:checked + span{
+  background:rgba(29,199,139,.16);border-color:rgba(29,199,139,.6);color:#fff;
+}
+.frm-chip input:focus-visible + span{outline:2px solid var(--signal);outline-offset:2px}
+
+/* Campo reprovado pela validacao. */
+.frm-in.invalido,.frm-chips.invalido{border-color:rgba(226,123,88,.85)}
+.frm-chips.invalido{border:1px solid rgba(226,123,88,.85);border-radius:12px;padding:8px}
+
+.frm-armadilha{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+.frm-erro{
+  margin:4px 0 14px;padding:12px 14px;border-radius:11px;font-size:.92rem;line-height:1.5;
+  background:rgba(226,123,88,.12);border:1px solid rgba(226,123,88,.4);color:#FFD9C9;
+}
+.frm-erro[hidden]{display:none}
+
+.frm-enviar{width:100%;justify-content:center;min-height:52px}
+.frm-enviar[disabled]{opacity:.6;cursor:progress}
+.frm-aviso{
+  margin-top:12px;font-size:.8rem;line-height:1.6;color:var(--sage);
+}
+
+.frm-resultado{margin-top:22px}

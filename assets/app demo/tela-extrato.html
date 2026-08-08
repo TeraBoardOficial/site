@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TeraBoard · Extrato</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	.mv { display: flex; gap: 12px; padding: 16px var(--pad); }
+	.mv .ico { font-size: 20px; line-height: 24px; }
+	.mv .tr { display: flex; align-items: baseline; gap: 8px; }
+	.mv .dr { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 2px; }
+	/* O saldo nunca quebra: "Saldo R$" numa linha e "1.524,61" na outra deixa
+	   de ser um numero e vira duas palavras soltas. Quem cede espaco e a
+	   descricao da esquerda, que e texto e aguenta virar linha.
+	   O alvo e `.c-2` — o tom do saldo. `:last-child` nao serve: na linha da
+	   agua a descricao esta sozinha e seria ela a travar. */
+	.mv .dr > .t-mono-s.c-2 { white-space: nowrap; flex-shrink: 0; }
+	.fbar { display: flex; gap: 8px; padding: 0 var(--pad) 16px; }
+	.fbar span { flex: 1; text-align: center; border-radius: var(--r-chip); padding: 9px 0; background: var(--surface-icon); color: var(--ink-2); font-size: 13px; font-weight: 500; }
+	.fbar span.selected { background: var(--brand-dark); color: #fff; }
+</style>
+</head>
+<body>
+
+<!-- =========================================================================
+     Extrato da safra.
+
+     Lançamento a lançamento, com SALDO CORRIDO — o mesmo formato de uma
+     fatura, porque é o formato que todo mundo já sabe ler. O saldo responde a
+     pergunta que o total sozinho não responde: em que ponto a safra virou o
+     jogo.
+     ========================================================================= -->
+
+<div class="top-bar">
+	<span class="back"><i class="ph ph-caret-left"></i></span>
+	<div class="grow">
+		<div class="tb-title">Extrato</div>
+		<div class="tb-sub">Tomate Cherry · Setor Norte</div>
+	</div>
+</div>
+
+<div class="filter-row" style="padding-top:16px">
+	<span class="chip selected">Setor Norte</span>
+	<span class="chip outline">Setor Sul</span>
+</div>
+
+<div style="padding:16px var(--pad)">
+	<div class="panel ok">
+		<div class="t-label c-2">Saldo da safra</div>
+		<div class="t-page c-ok" style="margin-top:2px">R$ 1.246,00</div>
+		<div style="display:flex;gap:12px;margin-top:16px;padding-top:12px;border-top:1px solid var(--line-light)">
+			<div class="grow">
+				<div class="t-mono-s c-2" style="text-transform:uppercase">Saídas</div>
+				<div class="t-metric-s c-crit">−R$ 1.020,00</div>
+			</div>
+			<div class="grow">
+				<div class="t-mono-s c-2" style="text-transform:uppercase">Entradas</div>
+				<div class="t-metric-s c-ok">+R$ 2.266,00</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="fbar">
+	<span class="selected">Tudo</span>
+	<span>Saídas</span>
+	<span>Entradas</span>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- Do mais novo para o mais antigo, como fatura. -->
+
+<div class="stripe">
+	<div class="mv">
+		<span class="ico">💧</span>
+		<div class="grow">
+			<div class="tr"><span class="t-item grow">Água e adubo consumidos</span><span class="t-metric-s c-crit">−R$ 278,61</span></div>
+			<div class="dr">
+				<span class="t-mono-s c-3">06/08/2026 · água R$ 77,76 · macro R$ 117,60 · micro R$ 83,25</span>
+			</div>
+			<div class="dr"><span></span><span class="t-mono-s c-2">Saldo R$ 1.246,00</span></div>
+			<div style="margin-top:8px"><span class="chip mono">Contado pelo sistema</span></div>
+		</div>
+	</div>
+</div>
+
+<div class="stripe">
+	<div class="mv">
+		<span class="ico">🧺</span>
+		<div class="grow">
+			<div class="tr"><span class="t-item grow">Colheita de 100,0 kg</span><span class="t-metric-s c-ok">+R$ 1.280,00</span></div>
+			<div class="dr">
+				<span class="t-mono-s c-3">02/08/2026 · R$ 12,80/kg · classificação extra</span>
+				<span class="t-mono-s c-2">Saldo R$ 1.524,61</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="stripe">
+	<div class="mv">
+		<span class="ico">🧴</span>
+		<div class="grow">
+			<div class="tr"><span class="t-item grow">Calda biológica</span><span class="t-metric-s c-crit">−R$ 51,39</span></div>
+			<div class="dr">
+				<span class="t-mono-s c-3">29/07/2026 · Defensivos</span>
+				<span class="t-mono-s c-2">Saldo R$ 244,61</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="stripe">
+	<div class="mv">
+		<span class="ico">🧺</span>
+		<div class="grow">
+			<div class="tr"><span class="t-item grow">Colheita de 85,0 kg</span><span class="t-metric-s c-ok">+R$ 986,00</span></div>
+			<div class="dr">
+				<span class="t-mono-s c-3">22/07/2026 · R$ 11,60/kg · classificação extra</span>
+				<span class="t-mono-s c-2">Saldo R$ 296,00</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="stripe">
+	<div class="mv">
+		<span class="ico">🪴</span>
+		<div class="grow">
+			<div class="tr"><span class="t-item grow">Substrato e correção</span><span class="t-metric-s c-crit">−R$ 210,00</span></div>
+			<div class="dr">
+				<span class="t-mono-s c-3">04/06/2026 · Substrato e solo</span>
+				<span class="t-mono-s c-2">Saldo −R$ 690,00</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="stripe">
+	<div class="mv">
+		<span class="ico">🌱</span>
+		<div class="grow">
+			<div class="tr"><span class="t-item grow">Mudas de tomate cherry</span><span class="t-metric-s c-crit">−R$ 480,00</span></div>
+			<div class="dr">
+				<span class="t-mono-s c-3">04/06/2026 · Mudas e sementes</span>
+				<span class="t-mono-s c-2">Saldo −R$ 480,00</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div style="padding:20px var(--pad) 32px">
+	<p class="t-caption c-3">
+		O consumo de água e adubo entra como um lançamento único, com o total
+		acumulado até agora — a central mede o volume, não a data de cada gota.
+	</p>
+</div>
+
+</body>
+</html>

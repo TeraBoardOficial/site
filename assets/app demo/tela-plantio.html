@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TeraBoard · Iniciar plantação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	.sec { padding: 20px var(--pad); display: flex; flex-direction: column; gap: 16px; }
+	.sec .ttl { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-2); }
+	.opts { display: flex; flex-wrap: wrap; gap: 8px; }
+	.opt { border-radius: var(--r-chip); padding: 9px 16px; background: var(--surface-icon); color: var(--ink-2); font-size: 13px; font-weight: 500; }
+	.opt.selected { background: var(--brand-dark); color: #fff; }
+	.preset { display: flex; align-items: center; gap: 12px;
+		border: 1.5px solid var(--line-light); border-radius: var(--r-card); padding: 16px; }
+	.preset.selected { border-color: var(--brand-green); background: var(--ok-soft); }
+	.radio { width: 18px; height: 18px; border-radius: 9px; border: 2px solid var(--line-light); flex-shrink: 0; }
+	.preset.selected .radio { border: 6px solid var(--brand-green); }
+	.input-wrap .prefix { position: absolute; left: 16px; font-family: var(--font-mono); font-size: 13px; color: var(--ink-2); pointer-events: none; }
+	.input-wrap .prefix + .input { padding-left: 46px; }
+</style>
+</head>
+<body>
+
+<!-- =========================================================================
+     Iniciar plantação.
+
+     Abre uma safra no setor e registra os custos de partida. A partir daqui,
+     tudo que a estufa consumir naquele setor entra nesta conta — é o que
+     torna possível saber o custo por quilo no fim.
+     ========================================================================= -->
+
+<div class="top-bar">
+	<span class="back"><i class="ph ph-caret-left"></i></span>
+	<div class="grow">
+		<div class="tb-title">Iniciar plantação</div>
+		<div class="tb-sub">Abre uma safra e começa a contar os custos</div>
+	</div>
+</div>
+
+<div class="sec">
+	<div class="ttl">Em qual setor</div>
+	<div class="opts">
+		<span class="opt">Setor Norte</span>
+		<span class="opt">Setor Sul</span>
+		<span class="opt selected">Setor Leste</span>
+	</div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="sec">
+	<div class="field">
+		<span class="flabel">O que vai plantar</span>
+		<div class="input-wrap"><span class="input">Rúcula</span></div>
+	</div>
+
+	<div class="field">
+		<span class="flabel">Quantas plantas</span>
+		<div class="input-wrap">
+			<span class="input">320</span>
+			<span class="suffix">plantas</span>
+		</div>
+		<span class="fhint">Usado para calcular o custo por planta.</span>
+	</div>
+
+	<div class="field">
+		<span class="flabel">Produção esperada</span>
+		<div class="input-wrap">
+			<span class="input">72,0</span>
+			<span class="suffix">kg</span>
+		</div>
+		<span class="fhint">Permite estimar o custo por quilo antes de colher — e perceber cedo se a safra está cara.</span>
+	</div>
+
+	<div class="field">
+		<span class="flabel">Fase inicial</span>
+		<div class="opts">
+			<span class="opt">Preparo do solo</span>
+			<span class="opt selected">Germinação</span>
+			<span class="opt">Crescimento</span>
+			<span class="opt">Floração</span>
+			<span class="opt">Frutificação</span>
+			<span class="opt">Colheita</span>
+		</div>
+	</div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="sec">
+	<div>
+		<div class="ttl">Receita de rega</div>
+		<p class="t-caption c-3" style="margin-top:4px">
+			Escolha uma receita salva ou deixe em branco para usar a que já está
+			configurada no setor.
+		</p>
+	</div>
+
+	<div style="display:flex;flex-direction:column;gap:12px">
+		<div class="preset">
+			<span class="grow">
+				<span class="t-item" style="display:block">Manter a receita atual do setor</span>
+				<span class="t-caption c-2">Não muda nada na configuração de rega.</span>
+			</span>
+			<span class="radio"></span>
+		</div>
+
+		<div class="preset selected">
+			<span class="grow">
+				<span class="row" style="gap:8px;flex-wrap:wrap"><span class="t-item">Folhosas — alface e rúcula</span><span class="chip mono">De fábrica</span></span>
+				<span class="t-caption c-2">Alface · 4 de 6 fases com adubo</span>
+			</span>
+			<span class="radio"></span>
+		</div>
+
+		<div class="preset">
+			<span class="grow">
+				<span class="row" style="gap:8px;flex-wrap:wrap"><span class="t-item">Ervas aromáticas</span><span class="chip mono">De fábrica</span></span>
+				<span class="t-caption c-2">Manjericão · 4 de 6 fases com adubo</span>
+			</span>
+			<span class="radio"></span>
+		</div>
+	</div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="sec">
+	<div>
+		<div class="ttl">Custos iniciais</div>
+		<p class="t-caption c-3" style="margin-top:4px">
+			Água e adubo entram sozinhos conforme a estufa consome. Aqui vai o que
+			você gastou para montar o canteiro.
+		</p>
+	</div>
+
+	<div class="field">
+		<span class="flabel">🌱&nbsp; Mudas e sementes</span>
+		<div class="input-wrap"><span class="prefix">R$</span><span class="input">96,00</span></div>
+	</div>
+	<div class="field">
+		<span class="flabel">🪴&nbsp; Substrato e solo</span>
+		<div class="input-wrap"><span class="prefix">R$</span><span class="input">74,50</span></div>
+	</div>
+	<div class="field">
+		<span class="flabel">📦&nbsp; Embalagem</span>
+		<div class="input-wrap"><span class="prefix">R$</span><span class="input">48,00</span></div>
+	</div>
+	<div class="field">
+		<span class="flabel">🧾&nbsp; Outros</span>
+		<div class="input-wrap"><span class="prefix">R$</span><span class="input">0,00</span></div>
+	</div>
+
+	<div class="panel">
+		<div style="display:flex;align-items:baseline;justify-content:space-between">
+			<span class="t-strong">Total de partida</span>
+			<span class="t-metric">R$ 218,50</span>
+		</div>
+		<p class="t-caption c-2" style="margin-top:4px">R$ 0,68 por planta</p>
+	</div>
+
+	<div class="field">
+		<span class="flabel">Observações</span>
+		<div class="input-wrap"><span class="input" style="height:auto;min-height:72px;padding:14px 16px;line-height:1.45;display:block">Rúcula de folha larga, semeadura direta. Fornecedor Sítio Alvorada.</span></div>
+	</div>
+</div>
+
+<div style="padding:16px var(--pad) 32px">
+	<span class="btn full">Iniciar plantação</span>
+</div>
+
+</body>
+</html>

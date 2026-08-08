@@ -1,0 +1,24 @@
+/* ==========================================================================
+   TeraBoard · Layout — o esqueleto: canvas 3D, container, respiros e reguas
+   ========================================================================== */
+
+/* Contêiner fixo para o modelo 3D no fundo */
+#canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -10; 
+    pointer-events: none; 
+}
+
+.wrap{max-width:1240px;margin:0 auto;padding-left:24px;padding-right:24px; position: relative; z-index: 2;}
+@media(min-width:768px){.wrap{padding-left:44px;padding-right:44px}}
+
+/* ---------- rules & structure ---------- */
+.rule{height:1px;background:var(--hair);width:100%}
+.rule-soft{height:1px;background:var(--hair-soft);width:100%}
+section{position:relative}
+.pad{padding-top:88px;padding-bottom:88px}
+@media(min-width:768px){.pad{padding-top:104px;padding-bottom:104px}}

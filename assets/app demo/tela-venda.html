@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TeraBoard · Post de venda</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	.preview { display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 16px var(--pad) 20px; }
+
+	/* Proporção 4:5 — o formato que melhor ocupa a tela no WhatsApp e no
+	   Instagram. É também o enquadramento em que a foto foi batida. */
+	.card {
+		width: 320px; max-width: 100%; aspect-ratio: 4 / 5;
+		border-radius: var(--r-card); overflow: hidden;
+		background: var(--brand-dark); display: flex; flex-direction: column;
+		box-shadow: 0 10px 24px rgba(11, 77, 54, 0.18);
+	}
+	.card .photo { position: relative; height: 56%; background: var(--beige); overflow: hidden; }
+	.card .photo img {
+		width: 100%; height: 100%; object-fit: cover; display: block;
+		opacity: 0; transform: scale(1.06);
+		transition: opacity 0.5s ease, transform 0.7s ease;
+	}
+	.card .photo img.on { opacity: 1; transform: none; }
+	.card .photo .vazio {
+		position: absolute; inset: 0;
+		display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+		padding: 0 24px; text-align: center; transition: opacity 0.4s;
+	}
+	.card .photo .vazio.off { opacity: 0; }
+	.card .crop-badge {
+		position: absolute; left: 16px; top: 16px; background: var(--beige);
+		border-radius: var(--r-chip); padding: 5px 12px;
+		font-family: var(--font-mono); font-size: 10px; font-weight: 500; letter-spacing: 0.04em;
+		text-transform: uppercase; color: var(--brand-dark); z-index: 2;
+	}
+	.card .info { flex: 1; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+	.card .price-row { display: flex; align-items: flex-end; gap: 12px; }
+	.card .k { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.04em; text-transform: uppercase; color: rgba(255,255,255,0.65); display: block; }
+	.card .price { font-family: var(--font-display); font-size: 26px; font-weight: 700; letter-spacing: -0.02em; color: var(--brand-green); }
+	.card .kg { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: #fff; }
+	.card .contact { display: flex; align-items: center; gap: 8px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.15); }
+	.card .contact .av { width: 36px; height: 36px; border-radius: 18px; object-fit: cover;
+		background: rgba(255,255,255,0.15); flex-shrink: 0; display: block; }
+	.card .brand-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+	.card .brand-row img { height: 16px; width: auto; }
+
+	.sec { padding: 20px var(--pad); display: flex; flex-direction: column; gap: 16px; }
+	.sec .ttl { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-2); }
+	.input-wrap .prefix { position: absolute; left: 16px; font-family: var(--font-mono); font-size: 13px; color: var(--ink-2); pointer-events: none; }
+	.input-wrap .prefix + .input { padding-left: 46px; }
+
+	/* --- Compartilhar --- */
+	.share { display: flex; gap: 10px; }
+	.share .alvo {
+		flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+		padding: 14px 8px; border-radius: var(--r-card);
+		background: var(--surface-icon); color: var(--ink-2);
+		transition: background 0.35s, color 0.35s, transform 0.35s;
+	}
+	.share .alvo i { font-size: 26px; }
+	.share .alvo span { font-size: 12px; font-weight: 600; }
+	.share .alvo.zap.on  { background: #128C7E; color: #fff; transform: translateY(-3px); }
+	.share .alvo.insta.on { background: linear-gradient(135deg, #F9A03F, #D62976 55%, #7A3FF9); color: #fff; transform: translateY(-3px); }
+
+	/* Aviso de envio. Sobe do rodapé e fica. */
+	.toast {
+		position: fixed; left: 16px; right: 16px; bottom: 20px; z-index: 50;
+		background: var(--brand-dark); color: #fff;
+		border-radius: var(--r-card); padding: 14px 16px;
+		display: flex; align-items: center; gap: 10px;
+		box-shadow: 0 10px 28px rgba(0,0,0,0.3);
+		transform: translateY(140%); opacity: 0;
+		transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.2, 1), opacity 0.45s;
+	}
+	.toast.on { transform: none; opacity: 1; }
+	.toast i { font-size: 22px; color: var(--brand-green); }
+	.toast small { display: block; color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 1px; }
+</style>
+</head>
+<body>
+
+<!-- =========================================================================
+     Post de venda.
+
+     Junta a foto da produção com o preço, a quantidade e o contato do
+     produtor num cartão pronto para mandar no WhatsApp. É a ponta comercial
+     do sistema: todo o resto mede e calcula; isto transforma o resultado em
+     venda.
+
+     Nesta vitrine, a foto chega do aparelho — é o morango que a encenação em
+     3D acabou de fotografar, não uma imagem guardada aqui.
+     ========================================================================= -->
+
+<div class="top-bar">
+	<span class="back"><i class="ph ph-caret-left"></i></span>
+	<div class="grow">
+		<div class="tb-title">Post de venda</div>
+		<div class="tb-sub">Morango · Setor Leste</div>
+	</div>
+</div>
+
+<div class="preview">
+	<div class="t-mono-s c-2" style="text-transform:uppercase">Prévia — é assim que vai sair</div>
+
+	<div class="card">
+		<div class="photo">
+			<span class="crop-badge">Morango</span>
+			<img id="foto" src="assets/MorangoApp.webp" alt="Morango colhido">
+			<div class="vazio" id="vazio">
+				<i class="ph ph-camera c-dark" style="font-size:36px"></i>
+				<p class="t-caption c-2">Aguardando a foto da produção</p>
+			</div>
+		</div>
+
+		<div class="info">
+			<div class="price-row">
+				<div class="grow">
+					<span class="k">Preço por quilo</span>
+					<span class="price">R$ 24,90</span>
+				</div>
+				<div style="text-align:right">
+					<span class="k">Disponível</span>
+					<span class="kg">12,0 kg</span>
+				</div>
+			</div>
+
+			<div class="contact">
+				<img class="av" src="assets/ProdutorApp.webp" alt="">
+				<span class="grow">
+					<span class="t-strong" style="color:#fff;display:block">Nome do Produtor</span>
+					<span class="t-mono-s" style="color:rgba(255,255,255,0.75);display:block">(00) 12345-6789 &nbsp;·&nbsp; @Sua_Rede_Social</span>
+					<span class="t-mono-s" style="color:rgba(255,255,255,0.6);display:block;text-transform:uppercase">Sítio do Produtor · Nova Friburgo/RJ</span>
+				</span>
+			</div>
+
+			<div class="brand-row">
+				<img src="assets/logo-cream.svg" alt="TeraBoard">
+				<span class="t-mono-s" style="color:rgba(255,255,255,0.45);text-transform:uppercase">Produção monitorada</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="sec">
+	<div class="ttl">O que vai no post</div>
+
+	<div class="field">
+		<span class="flabel">Quantidade disponível</span>
+		<div class="input-wrap">
+			<span class="input">12,0</span>
+			<span class="suffix">kg</span>
+		</div>
+		<span class="fhint">Última colheita: 12,0 kg</span>
+	</div>
+
+	<div class="field">
+		<span class="flabel">Preço por quilo</span>
+		<div class="input-wrap"><span class="prefix">R$</span><span class="input">24,90</span></div>
+		<span class="fhint">Custo apurado de R$ 17,43/kg com 30% de margem.</span>
+	</div>
+
+	<div class="panel">
+		<div style="display:flex;align-items:baseline;justify-content:space-between">
+			<span class="t-strong">Total do lote</span>
+			<span class="t-metric">R$ 298,80</span>
+		</div>
+		<p class="t-caption c-2" style="margin-top:4px">
+			12,0 kg × R$ 24,90. Este número não vai no post — é só para você conferir.
+		</p>
+	</div>
+</div>
+
+<div class="section-divider"></div>
+
+<div class="sec">
+	<div class="ttl">Compartilhar</div>
+	<div class="share">
+		<span class="alvo zap" id="zap"><i class="ph-fill ph-whatsapp-logo"></i><span>WhatsApp</span></span>
+		<span class="alvo insta" id="insta"><i class="ph-fill ph-instagram-logo"></i><span>Instagram</span></span>
+		<span class="alvo" id="galeria"><i class="ph-fill ph-download-simple"></i><span>Salvar</span></span>
+	</div>
+	<p class="t-caption c-3">
+		A imagem sai em 4:5, o formato que melhor ocupa a tela nos dois aplicativos.
+	</p>
+</div>
+
+<div class="gap-32"></div>
+
+<div class="toast" id="toast">
+	<i class="ph-fill ph-check-circle"></i>
+	<span class="grow">
+		<b class="t-strong" style="color:#fff">Post publicado</b>
+		<small>Enviado no WhatsApp e no Instagram · salvo no álbum TeraBoard</small>
+	</span>
+</div>
+
+<script>
+	/*
+	 * A foto vem da vitrine, por mensagem. Enquanto ela não chega, o cartão
+	 * fica no estado vazio — é o mesmo estado que o app mostra antes de o
+	 * produtor fotografar.
+	 */
+	(function () {
+		var foto = document.getElementById("foto");
+		var vazio = document.getElementById("vazio");
+
+		function receber() {
+			foto.classList.add("on");
+			vazio.classList.add("off");
+
+			// O envio é encenado: acende um alvo, depois o outro, e o aviso sobe.
+			setTimeout(function () { document.getElementById("zap").classList.add("on"); }, 700);
+			setTimeout(function () { document.getElementById("insta").classList.add("on"); }, 1000);
+			setTimeout(function () { document.getElementById("toast").classList.add("on"); }, 1500);
+		}
+
+		addEventListener("message", function (e) {
+			if (e.data && e.data.type === "teraboard:foto") receber();
+		});
+
+		// Avisa a vitrine que já pode mandar — a tela pode ter carregado depois.
+		try { parent.postMessage({ type: "teraboard:venda-pronta" }, "*"); } catch (e) {}
+	})();
+</script>
+</body>
+</html>

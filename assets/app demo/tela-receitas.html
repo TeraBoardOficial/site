@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>TeraBoard · Receitas do setor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	.stage-row { display: flex; align-items: center; gap: 16px; padding: 16px 0; width: 100%; }
+	.stage-body { padding-left: 64px; padding-bottom: 24px; display: flex; flex-direction: column; gap: 16px; }
+	.stage-sep { height: 1px; background: var(--line-light); margin-left: 64px; }
+	.grp-ttl { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-2); }
+
+	.mode { border: 1.5px solid var(--line-light); border-radius: var(--r-card); padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+	.mode.selected { border-color: var(--brand-green); background: var(--ok-soft); }
+	.mode .hd { display: flex; align-items: center; gap: 8px; }
+	.radio { width: 18px; height: 18px; border-radius: 9px; border: 2px solid var(--line-light); flex-shrink: 0; }
+	.mode.selected .radio { border: 6px solid var(--brand-green); }
+
+	.stepper-block { display: flex; flex-direction: column; gap: 8px; }
+</style>
+</head>
+<body>
+
+<!-- =========================================================================
+     Receitas do setor, uma por estágio da cultura.
+
+     A lista segue a ordem real do ciclo (preparo → colheita) e marca qual
+     estágio está valendo agora. A edição abre NO LUGAR, sem trocar de tela:
+     é mais fácil comparar a receita nova com a do estágio vizinho.
+     ========================================================================= -->
+
+<div class="top-bar">
+	<span class="back"><i class="ph ph-caret-left"></i></span>
+	<div class="grow">
+		<div class="tb-title">Receitas</div>
+		<div class="tb-sub">Setor Norte · Tomate Cherry</div>
+	</div>
+</div>
+
+<div style="padding:16px var(--pad) 20px">
+	<p class="t-body c-2">
+		Cada fase da planta pede uma rega diferente. Ajuste aqui quando regar,
+		quando adubar e quanto de cada adubo entra na água.
+	</p>
+</div>
+
+<div class="section-divider"></div>
+
+<div style="padding:12px var(--pad) 0">
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Preparo do solo</span>
+			<span class="t-caption c-2">Rega de 30% a 55% · só água</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+	<div class="stage-sep"></div>
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Germinação</span>
+			<span class="t-caption c-2">Rega de 45% a 60% · macro 3 mL/L + micro 1,5 mL/L · aduba abaixo de 1,0 mS/cm</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+	<div class="stage-sep"></div>
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Crescimento</span>
+			<span class="t-caption c-2">Rega de 38% a 55% · macro 8 mL/L + micro 4 mL/L · aduba abaixo de 1,6 mS/cm</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+	<div class="stage-sep"></div>
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Floração</span>
+			<span class="t-caption c-2">Rega de 38% a 52% · macro 9 mL/L + micro 5 mL/L · aduba abaixo de 1,8 mS/cm</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+	<div class="stage-sep"></div>
+
+	<!-- Estágio em uso, aberto para edição -->
+	<div class="stage-row">
+		<span class="icon-circle lg"><i class="ph-fill ph-plant"></i></span>
+		<span class="grow">
+			<span class="row" style="gap:8px;flex-wrap:wrap">
+				<span class="t-item">Frutificação</span>
+				<span class="chip mono ok">Em uso</span>
+			</span>
+			<span class="t-caption c-2">Rega de 40% a 58% · macro 10 mL/L + micro 5 mL/L · aduba abaixo de 2,0 mS/cm</span>
+		</span>
+		<i class="ph ph-caret-up c-3" style="font-size:20px"></i>
+	</div>
+
+	<div class="stage-body">
+		<div class="grp-ttl">O que este estágio recebe</div>
+
+		<div style="display:flex;flex-direction:column;gap:8px">
+			<div class="mode">
+				<span class="hd"><span class="radio"></span><span class="t-strong">Só água</span></span>
+				<span class="t-caption c-2">Nenhum adubo entra na linha, mesmo com a caixa cheia.</span>
+			</div>
+			<div class="mode">
+				<span class="hd"><span class="radio"></span><span class="t-strong">Sempre adubar</span></span>
+				<span class="t-caption c-2">Toda rega leva adubo, sem olhar a leitura de sal.</span>
+			</div>
+			<div class="mode selected">
+				<span class="hd"><span class="radio"></span><span class="t-strong">Automático (recomendado)</span></span>
+				<span class="t-caption c-2">O sistema decide pela leitura de EC: aduba só quando o solo precisa.</span>
+			</div>
+		</div>
+
+		<div class="grp-ttl">Quando regar</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Começa a regar abaixo de</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">40</span><small>%</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+			<span class="fhint">Umidade do solo em que o sistema abre a água.</span>
+		</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Para de regar em</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">58</span><small>%</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+			<span class="fhint">Precisa ser bem acima do valor de começar, senão a válvula fica batendo.</span>
+		</div>
+
+		<div class="grp-ttl">Dose de adubo</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Macronutriente</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">10,0</span><small>mL/L</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+			<span class="fhint">Quantos mL do concentrado entram em cada litro de água.</span>
+		</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Micronutriente</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">5,0</span><small>mL/L</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+		</div>
+
+		<!-- Estimativa numa rega típica de 20 L: número abstrato esconde erro. -->
+		<div class="panel" style="padding:12px">
+			<p class="t-caption c-2">
+				Numa rega de 20 litros isso dá cerca de <span class="c-ink">200 mL de macro</span>
+				e <span class="c-ink">100 mL de micro</span>.
+			</p>
+		</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Aduba quando o sal estiver abaixo de</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">2,0</span><small>mS/cm</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+			<span class="fhint">Acima disso o sistema manda só água — o solo já tem nutriente.</span>
+		</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Corta o adubo se o sal passar de</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">3,0</span><small>mS/cm</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+			<span class="fhint">Trava de segurança contra salinizar o canteiro.</span>
+		</div>
+
+		<div class="grp-ttl">Limites de segurança</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Máximo de macro por rega</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">4,0</span><small>L</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+		</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Lavagem da linha depois de adubar</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">2,0</span><small>min</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+			<span class="fhint">Água limpa para não deixar adubo parado na mangueira.</span>
+		</div>
+
+		<div class="btn-row" style="margin-top:4px">
+			<span class="btn secondary">Cancelar</span>
+			<span class="btn">Salvar</span>
+		</div>
+	</div>
+
+	<div class="stage-sep"></div>
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Colheita</span>
+			<span class="t-caption c-2">Rega de 35% a 50% · só água</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+
+</div>
+
+<div class="section-divider"></div>
+
+<div style="padding:20px var(--pad) 32px">
+	<span class="btn ghost full">Restaurar receitas de fábrica</span>
+</div>
+
+</body>
+</html>

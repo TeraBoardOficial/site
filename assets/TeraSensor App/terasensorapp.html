@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TeraSensor | TeraBoard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<!--
+  Chart.js servido daqui de dentro, e nao de um CDN.
+
+  O endereco que estava aqui — cdnjs .../Chart.js/4.4.4/chart.umd.min.js —
+  responde 404: essa versao nao existe naquele repositorio. O resultado era
+  silencioso e grave: a aba "Graficos" abria vazia, porque `Chart` nunca
+  chegava a existir. Com o arquivo local nao ha versao para errar nem
+  terceiro para cair, e os graficos sao o centro desta pagina.
+-->
+<script src="chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#f3f2e9;
+    --card:#ffffff;
+    --border:#e4e1d3;
+    --text:#1c2a22;
+    --muted:#6f7b71;
+    --green-900:#0c3d29;
+    --green-800:#0c5a3b;
+    --green-700:#128e66;
+    --green-500:#1db775;
+    --green-100:#e6f3ec;
+    --green-50:#f2f7f2;
+    --disabled-bg:#dcded7;
+    --disabled-text:#93998e;
+    --c-umid:#22a866;
+    --c-temp:#e2833c;
+    --c-ec:#d1af2e;
+    --c-ph:#d6469b;
+    --c-salin:#3d7dca;
+    --c-tds:#8b5cf6;
+    --radius:16px;
+    --radius-sm:10px;
+    font-family:'Space Grotesk',sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:#dedad0;
+    color:var(--text);
+    display:flex;
+    justify-content:center;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .phone{
+    width:100%;
+    max-width:430px;
+    min-height:100vh;
+    background:var(--bg);
+    position:relative;
+    overflow-x:hidden;
+    box-shadow:0 0 60px rgba(0,0,0,.25);
+  }
+  @media(min-width:431px){
+    body{padding:28px 0;}
+    .phone{min-height:844px;border-radius:34px;overflow:hidden;}
+  }
+
+  /* Embutido no aparelho da pagina: quem faz o papel de celular e a moldura
+     de fora, entao a maquete daqui sai de cena — inclusive a sombra e o
+     canto arredondado, que virariam uma borda dentro da outra. */
+  body.embutido{background:var(--bg);padding:0;display:block;}
+  body.embutido .phone{
+    max-width:none;min-height:100vh;border-radius:0;box-shadow:none;overflow:visible;
+  }
+
+  /* ---------- HEADER ---------- */
+  header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 18px;
+    border-bottom:1px solid var(--border);
+    position:sticky;top:0;background:var(--bg);z-index:20;
+  }
+  .icon-btn{
+    background:none;border:none;cursor:pointer;padding:6px;
+    color:var(--green-700);display:flex;align-items:center;justify-content:center;
+    border-radius:8px;transition:background .15s;
+  }
+  .icon-btn:hover{background:var(--green-100);}
+  .icon-btn:active{transform:scale(.94);}
+  /* ---------- marca no cabecalho ---------- */
+  .marca{display:flex;align-items:center;gap:9px;min-width:0;}
+  .marca-sinal{width:27px;height:23px;flex-shrink:0;display:block;}
+  .marca-texto{
+    display:flex;flex-direction:column;line-height:1;
+    font-weight:700;font-size:17px;letter-spacing:-.02em;color:var(--green-900);
+  }
+  .marca-texto em{
+    font-style:normal;font-weight:600;font-size:7.5px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--muted);margin-top:3px;
+  }
+
+  /* ---------- passo a passo ----------
+     O visitante nao conhece o aparelho: sem uma linha dizendo o que fazer,
+     ele para na primeira tela e nunca ve os graficos nem o laudo. */
+  .guia{
+    display:flex;align-items:flex-start;gap:10px;
+    background:var(--green-100);border:1px solid #cfe6d9;
+    border-radius:var(--radius-sm);padding:11px 13px;margin-bottom:12px;
+  }
+  .guia .n{
+    flex-shrink:0;width:21px;height:21px;border-radius:50%;
+    background:var(--green-800);color:#fff;
+    font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;
+  }
+  .guia .t{font-size:13.5px;line-height:1.45;color:var(--green-900);}
+  .guia .t b{font-weight:700;}
+  .guia .t span{display:block;color:var(--muted);font-size:12.5px;margin-top:2px;}
+
+  /* ---------- LAYOUT ---------- */
+  main{padding:16px 16px 100px;}
+  .btn{
+    width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+    padding:14px 16px;border-radius:var(--radius-sm);border:none;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15px;
+    cursor:pointer;transition:filter .15s, transform .1s;margin-bottom:12px;
+  }
+  .btn:active{transform:scale(.98);}
+  .btn[disabled]{cursor:not-allowed;}
+  .btn-bt-off{background:var(--disabled-bg);color:var(--disabled-text);}
+  .btn-bt-on{background:var(--green-500);color:#fff;}
+  .btn-import-off{background:#e9ece7;color:#a7ac9f;}
+  .btn-import-on{background:var(--green-800);color:#fff;}
+  .btn-import-on:hover{filter:brightness(1.08);}
+  .btn-save{background:var(--green-500);color:#fff;flex:1;}
+  .btn-export{background:#fff;color:var(--green-800);border:2px solid var(--green-800);flex:1;}
+  .btn-export[disabled]{border-color:var(--disabled-bg);color:var(--disabled-text);}
+  .row-actions{display:flex;gap:10px;}
+
+  .banner-success{
+    background:var(--green-500);color:#fff;font-weight:600;font-size:14px;
+    padding:12px 14px;border-radius:var(--radius-sm);display:flex;align-items:center;gap:8px;
+    margin-bottom:12px; animation:slideDown .3s ease;
+  }
+  @keyframes slideDown{from{opacity:0;transform:translateY(-8px);}to{opacity:1;transform:translateY(0);}}
+
+  .empty-card{
+    background:var(--card);border-radius:var(--radius);padding:40px 24px;
+    text-align:center;border:1px solid var(--border);
+  }
+  .empty-card .circle{
+    width:56px;height:56px;border-radius:50%;background:var(--green-50);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:var(--green-700);
+  }
+  .empty-card p{color:var(--muted);font-size:14.5px;margin:0;line-height:1.5;}
+
+  .meta-card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:14px;margin-bottom:12px;
+  }
+  .field{
+    display:flex;align-items:center;gap:10px;background:var(--green-50);
+    border:1px solid var(--border);border-radius:var(--radius-sm);
+    padding:11px 13px;margin-bottom:10px;
+  }
+  .field:last-child{margin-bottom:0;}
+  .field svg{flex-shrink:0;color:var(--green-700);}
+  .field input{
+    border:none;background:transparent;outline:none;width:100%;
+    font-family:'Space Grotesk',sans-serif;font-size:14.5px;color:var(--text);
+  }
+  .field input::placeholder{color:#9aa39a;}
+
+  .tabs{
+    display:flex;background:#e9e7db;border-radius:12px;padding:4px;margin:14px 0;
+  }
+  .tab{
+    flex:1;text-align:center;padding:10px;border-radius:9px;font-weight:600;font-size:14px;
+    cursor:pointer;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:6px;
+    transition:all .15s;
+  }
+  .tab.active{background:#fff;color:var(--green-800);box-shadow:0 1px 3px rgba(0,0,0,.08);}
+
+  .reading-card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px;margin-bottom:14px;animation:fadeIn .35s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+  .reading-card h3{margin:0 0 10px;color:var(--green-800);font-size:16px;font-weight:700;}
+  .anno-input{
+    width:100%;border:1px solid var(--border);background:var(--green-50);
+    border-radius:var(--radius-sm);padding:10px 12px;font-family:'Space Grotesk',sans-serif;
+    font-size:14px;margin-bottom:12px;outline:none;color:var(--text);
+  }
+  .anno-input::placeholder{color:#9aa39a;}
+  .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .metric-box{
+    border:1px solid var(--border);border-radius:var(--radius-sm);
+    padding:10px 12px;display:flex;align-items:center;justify-content:space-between;
+    background:#fbfbf8;
+  }
+  .metric-box .lbl{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:13px;font-weight:600;}
+  .metric-box .val{font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;color:var(--text);}
+  .del-reading{
+    background:none;border:none;color:#c0392b;font-size:12px;font-weight:600;cursor:pointer;
+    float:right;padding:0;opacity:.7;
+  }
+  .del-reading:hover{opacity:1;}
+
+  .chart-card{
+    background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px;margin-bottom:14px;
+  }
+  .chart-card .chead{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+  .chart-card h4{margin:0;font-size:15px;font-weight:700;}
+  .ideal-box{
+    display:flex;align-items:center;gap:6px;background:var(--green-50);
+    border:1px solid var(--border);border-radius:8px;padding:5px 8px;font-size:12px;color:var(--muted);
+  }
+  .ideal-box input{
+    width:46px;border:none;background:transparent;outline:none;border-bottom:1px solid var(--green-700);
+    font-family:'IBM Plex Mono',monospace;font-weight:600;color:var(--green-800);font-size:12.5px;text-align:center;
+  }
+  .chart-wrap{height:170px;}
+
+  /* ---------- MODALS / OVERLAYS ---------- */
+  .overlay{
+    position:fixed;inset:0;background:rgba(10,20,15,.45);z-index:100;
+    display:flex;align-items:center;justify-content:center;padding:24px;
+    opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .overlay.show{opacity:1;pointer-events:all;}
+  .modal{
+    background:#fff;border-radius:18px;padding:30px 26px;text-align:center;max-width:320px;width:100%;
+    box-shadow:0 20px 50px rgba(0,0,0,.25);
+  }
+  .spinner{
+    width:34px;height:34px;border:3px solid var(--green-100);border-top-color:var(--green-700);
+    border-radius:50%;margin:0 auto 16px;animation:spin .8s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .modal p{margin:0;font-weight:600;color:var(--text);font-size:15px;}
+
+  .drawer{
+    position:fixed;top:0;left:0;bottom:0;width:78%;max-width:300px;background:#fff;z-index:110;
+    transform:translateX(-105%);transition:transform .25s ease;box-shadow:4px 0 30px rgba(0,0,0,.2);
+    display:flex;flex-direction:column;padding:20px;
+  }
+  .drawer.show{transform:translateX(0);}
+  .drawer-scrim{
+    position:fixed;inset:0;background:rgba(10,20,15,.4);z-index:109;opacity:0;pointer-events:none;transition:opacity .2s;
+  }
+  .drawer-scrim.show{opacity:1;pointer-events:all;}
+  .drawer h2{font-size:18px;color:var(--green-800);margin:6px 0 20px;}
+  .drawer-item{
+    display:flex;align-items:center;gap:12px;padding:13px 8px;border-radius:10px;cursor:pointer;
+    color:var(--text);font-weight:600;font-size:14.5px;
+  }
+  .drawer-item:hover{background:var(--green-50);}
+  .drawer-item.danger{color:#c0392b;}
+  .drawer-footer{margin-top:auto;font-size:11.5px;color:var(--muted);line-height:1.5;}
+
+  .settings-modal{max-width:340px;text-align:left;}
+  .settings-modal h2{font-size:17px;color:var(--green-800);margin:0 0 18px;text-align:center;}
+  .set-row{display:flex;align-items:center;justify-content:space-between;padding:11px 0;border-bottom:1px solid var(--border);font-size:14px;}
+  .set-row:last-of-type{border-bottom:none;}
+  .set-row select, .set-row input[type=number]{
+    font-family:'IBM Plex Mono',monospace;border:1px solid var(--border);border-radius:8px;padding:6px 8px;font-size:13px;background:var(--green-50);
+  }
+  .switch{position:relative;width:42px;height:24px;background:var(--disabled-bg);border-radius:20px;cursor:pointer;transition:.2s;flex-shrink:0;}
+  .switch::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .switch.on{background:var(--green-500);}
+  .switch.on::after{left:20px;}
+  .close-x{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--muted);cursor:pointer;}
+  .modal-relative{position:relative;}
+
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--green-900);color:#fff;padding:12px 20px;border-radius:30px;font-size:13.5px;font-weight:600;
+    z-index:200;opacity:0;transition:all .25s;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.3);
+    max-width:90%;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <!-- HEADER -->
+  <header>
+    <button class="icon-btn" id="menuBtn" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <!-- A marca de verdade: os tres poligonos de assets/logo/teraboard-mark.svg,
+         em linha porque o app roda dentro de um iframe e nao deve depender de
+         mais um arquivo pela rede so para desenhar o cabecalho. -->
+    <div class="marca">
+      <svg class="marca-sinal" viewBox="0 0 682780 589816" aria-hidden="true">
+        <polygon fill="#1EC78C" points="168251,2 337388,146003 161154,286712 0,144673"/>
+        <polygon fill="#0B4D36" points="682780,149136 335613,434034 336055,589816 682780,298678"/>
+        <polygon fill="#1F8F68" points="513643,446 161154,286267 0,144673 0,296016 336055,589375 336055,435393 682780,149136"/>
+      </svg>
+      <span class="marca-texto">
+        Teraboard
+        <em>Smart Farming</em>
+      </span>
+    </div>
+    <button class="icon-btn" id="settingsBtn" aria-label="Configurações">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <!-- Passo a passo: sempre diz a proxima acao, e so ela. -->
+    <div class="guia" id="guia">
+      <span class="n" id="guiaN">1</span>
+      <span class="t" id="guiaT"></span>
+    </div>
+
+    <!-- CONNECTION -->
+    <div id="bannerZone"></div>
+    <button class="btn btn-bt-off" id="btBtn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="btIcon"><path d="M6.5 6.5l11 11L12 23V1l5.5 5.5-11 11"/></svg>
+      <span id="btLabel">Conectar Bluetooth</span>
+    </button>
+    <button class="btn btn-import-off" id="importBtn" disabled>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      <span>Importar Leituras</span>
+    </button>
+
+    <!-- EMPTY STATE -->
+    <div class="empty-card" id="emptyState">
+      <div class="circle">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      </div>
+      <p id="emptyText">Ligue o Bluetooth para acessar o sensor de solo.</p>
+    </div>
+
+    <!-- DATA CONTENT (hidden until import) -->
+    <div id="dataZone" style="display:none;">
+      <div class="meta-card">
+        <div class="field">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <input type="text" id="operadorInput" placeholder="Nome do Operador (Opcional)">
+        </div>
+        <div class="field">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <input type="text" id="localInput" placeholder="Localização (ex: Estufa TeraBoard)">
+        </div>
+      </div>
+
+      <div class="row-actions">
+        <button class="btn btn-save" id="saveBtn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Salvar
+        </button>
+        <button class="btn btn-export" id="exportBtn" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Exportar PDF
+        </button>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tabLeituras">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Leituras
+        </div>
+        <div class="tab" id="tabGraficos">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Gráficos
+        </div>
+      </div>
+
+      <div id="leiturasPanel"></div>
+      <div id="graficosPanel" style="display:none;"></div>
+    </div>
+  </main>
+</div>
+
+<!-- DRAWER -->
+<div class="drawer-scrim" id="drawerScrim"></div>
+<div class="drawer" id="drawer">
+  <h2>TeraBoard · TeraSensor</h2>
+  <div class="drawer-item" id="drawerNovaSessao">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+    Nova sessão de leitura
+  </div>
+  <div class="drawer-item" id="drawerHistorico">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><path d="M12 7v5l4 2"/></svg>
+    Relatórios salvos
+  </div>
+  <div class="drawer-item danger" id="drawerLimpar">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+    Limpar dados locais
+  </div>
+  <div class="drawer-footer">TeraSensor · Diagnóstico portátil de solo<br>Plataforma TeraBoard Smart Farming</div>
+</div>
+
+<!-- SETTINGS OVERLAY -->
+<div class="overlay" id="settingsOverlay">
+  <div class="modal settings-modal modal-relative">
+    <button class="close-x" id="closeSettings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <h2>Configurações</h2>
+    <div class="set-row">
+      <span>Unidade de EC</span>
+      <select id="ecUnit"><option value="mS/cm">mS/cm</option><option value="µS/cm">µS/cm</option></select>
+    </div>
+    <div class="set-row">
+      <span>Registrar hora nas leituras</span>
+      <div class="switch on" id="switchTime"></div>
+    </div>
+  </div>
+</div>
+
+<!-- IMPORT OVERLAY -->
+<div class="overlay" id="importOverlay">
+  <div class="modal">
+    <div class="spinner"></div>
+    <p>Importando dados do<br>TeraSensor...</p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- STATE ---------------- */
+/* Os alvos sao os mesmos impressos no laudo — 45%, 25 °C, 1600, 6.5, 500 e
+   720 — para a linha tracejada do app cair no mesmo lugar da do documento. */
+const METRICS = [
+  {key:'umid', label:'Umid.', unit:'%', color:'#22a866', title:'Umidade', decimals:1, icon:'droplet', default_ideal:45},
+  {key:'temp', label:'Temp.', unit:'°C', color:'#e2833c', title:'Temperatura', decimals:1, icon:'thermo', default_ideal:25},
+  {key:'ec', label:'EC', unit:'', color:'#d1af2e', title:'Condutividade (EC)', decimals:0, icon:'bolt', default_ideal:1600},
+  {key:'ph', label:'pH', unit:'', color:'#d6469b', title:'pH', decimals:1, icon:'flask', default_ideal:6.5},
+  {key:'salin', label:'Salin.', unit:'', color:'#3d7dca', title:'Salinidade', decimals:0, icon:'wave', default_ideal:500},
+  {key:'tds', label:'TDS', unit:'', color:'#8b5cf6', title:'TDS', decimals:0, icon:'pulse', default_ideal:720},
+];
+
+let state = {
+  connected: false,
+  readings: [],
+  operador: '',
+  local: '',
+  ideals: {},
+  activeTab: 'leituras',
+  ecUnit: 'mS/cm'
+};
+METRICS.forEach(m => state.ideals[m.key] = m.default_ideal);
+
+let charts = {};
+const $ = id => document.getElementById(id);
+
+/* ---------------- PASSO A PASSO ----------------
+   Este app e uma vitrine: quem abre nao conhece o aparelho e nao tem um
+   TeraSensor na mao para parear. Sem uma linha dizendo qual e a proxima
+   acao, o visitante para na primeira tela e nunca chega aos graficos nem
+   ao laudo — que e justamente o que a pagina quer mostrar.             */
+const PASSOS = {
+  1: ['Toque em <b>Conectar Bluetooth</b>.',
+      'Sem um sensor por perto, o app entra em modo demonstração.'],
+  2: ['Agora toque em <b>Importar Leituras</b>.',
+      'Descem as três leituras feitas na estufa de teste.'],
+  3: ['Abra a aba <b>Gráficos</b>.',
+      'Cada parâmetro compara as três leituras entre si, contra a linha do alvo.'],
+  4: ['Toque em <b>Exportar PDF</b>.',
+      'O laudo completo aparece logo abaixo do aparelho.'],
+};
+function passo(n){
+  const p = PASSOS[n];
+  if(!p) return;
+  $('guiaN').textContent = n;
+  $('guiaT').innerHTML = p[0] + '<span>' + p[1] + '</span>';
+}
+
+/* ---------------- PERSISTENCE ---------------- */
+function loadState(){
+  try{
+    const saved = JSON.parse(localStorage.getItem('terasensor_session') || 'null');
+    if(saved){
+      state.readings = saved.readings || [];
+      state.operador = saved.operador || '';
+      state.local = saved.local || '';
+      state.ideals = Object.assign(state.ideals, saved.ideals || {});
+    }
+  }catch(e){}
+}
+function persist(){
+  localStorage.setItem('terasensor_session', JSON.stringify({
+    readings: state.readings, operador: state.operador, local: state.local, ideals: state.ideals
+  }));
+}
+
+/* ---------------- TOAST ---------------- */
+let toastTimer;
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+/* ---------------- BLUETOOTH ---------------- */
+$('btBtn').addEventListener('click', async () => {
+  if(state.connected) return;
+  const btn = $('btBtn');
+  btn.disabled = true;
+  $('btLabel').textContent = 'Conectando...';
+
+  /*
+   * Na vitrine do site NAO se pede Bluetooth de verdade.
+   *
+   * `requestDevice()` abre o seletor de dispositivos do sistema — uma janela
+   * do sistema operacional no meio de uma pagina de produto, para alguem que
+   * so queria ver o app funcionando e nao tem um TeraSensor na mesa. Pior:
+   * dentro de um iframe sem permissao concedida, a promessa pode nunca
+   * resolver, e o botao fica preso em "Conectando..." para sempre.
+   *
+   * Aberto direto (fora do iframe) o app continua tentando o aparelho real,
+   * que e o comportamento certo para quem tem um na mao.
+   */
+  let realDeviceName = null;
+  const naVitrine = parent !== window;
+  if (!naVitrine) {
+    try{
+      if(navigator.bluetooth && await navigator.bluetooth.getAvailability()){
+        const device = await navigator.bluetooth.requestDevice({acceptAllDevices:true});
+        realDeviceName = device.name || 'Sensor';
+      }
+    }catch(err){
+      // usuário cancelou o seletor ou navegador sem suporte -> modo demonstração
+    }
+  }
+
+  await new Promise(r=>setTimeout(r, 900));
+  state.connected = true;
+  btn.disabled = false;
+  btn.classList.remove('btn-bt-off');
+  btn.classList.add('btn-bt-on');
+  $('btLabel').textContent = 'Bluetooth Conectado';
+  $('importBtn').disabled = false;
+  $('importBtn').classList.remove('btn-import-off');
+  $('importBtn').classList.add('btn-import-on');
+
+  $('bannerZone').innerHTML = `<div class="banner-success">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    Conectado com sucesso!${realDeviceName ? ' ('+realDeviceName+')' : ''}
+  </div>`;
+  setTimeout(()=>{ $('bannerZone').innerHTML=''; }, 3500);
+
+  $('emptyText').textContent = 'Clique em importar para obter os dados do sensor.';
+  passo(2);
+});
+
+/* ---------------- IMPORTAR LEITURAS ----------------
+
+   Estas tres leituras nao sao inventadas: sao as do laudo real que a pagina
+   exibe logo abaixo do aparelho (assets/TeraSensor App/laudo-amostra.webp),
+   medidas na estufa de teste em 18/07/2026. Numero aleatorio aqui produziria
+   um app que contradiz o documento que ele mesmo gera — e o visitante
+   compara os dois na mesma tela.
+
+   L2 e a solucao de calibracao, nao solo: e por isso que ela estoura em EC,
+   salinidade e TDS. Ter uma leitura fora da curva e o que torna o grafico
+   comparativo util de olhar.                                              */
+const LEITURAS_DO_LAUDO = [
+  { note:'Teste substrato 1', umid:47.6, temp:25.1, ec:315,  ph:6.7, salin:113,  tds:103  },
+  { note:'Solução',           umid:96.3, temp:24.1, ec:2549, ph:7.3, salin:1546, tds:1346 },
+  { note:'Teste substrato 2', umid:40.0, temp:24.3, ec:262,  ph:9.0, salin:94,   tds:85   },
+];
+
+$('importBtn').addEventListener('click', async () => {
+  if(!state.connected) return;
+  $('importOverlay').classList.add('show');
+  await new Promise(r=>setTimeout(r, 1600));
+  $('importOverlay').classList.remove('show');
+
+  state.readings = LEITURAS_DO_LAUDO.map((l, i) =>
+    Object.assign({ id: Date.now() + '_' + i }, l));
+
+  // O laudo tras estes dois preenchidos; deixar em branco faria o visitante
+  // achar que o app perdeu a informacao no caminho.
+  if(!state.operador) state.operador = 'Gabriel';
+  if(!state.local)    state.local    = 'Estufa de Teste Teraboard';
+
+  persist();
+  toast(state.readings.length + ' leituras importadas do TeraSensor');
+  passo(3);
+  render();
+});
+
+/* ---------------- TABS ---------------- */
+$('tabLeituras').addEventListener('click', ()=>{ state.activeTab='leituras'; render(); });
+$('tabGraficos').addEventListener('click', ()=>{ state.activeTab='graficos'; render(); });
+
+/* ---------------- META FIELDS ---------------- */
+$('operadorInput').addEventListener('input', e=>{ state.operador = e.target.value; persist(); });
+$('localInput').addEventListener('input', e=>{ state.local = e.target.value; persist(); });
+
+/* ---------------- SAVE ---------------- */
+$('saveBtn').addEventListener('click', ()=>{
+  persist();
+  $('exportBtn').disabled = state.readings.length===0;
+  toast('Sessão salva com sucesso');
+});
+
+/* ---------------- DRAWER ---------------- */
+$('menuBtn').addEventListener('click', ()=>{ $('drawer').classList.add('show'); $('drawerScrim').classList.add('show'); });
+$('drawerScrim').addEventListener('click', closeDrawer);
+function closeDrawer(){ $('drawer').classList.remove('show'); $('drawerScrim').classList.remove('show'); }
+$('drawerNovaSessao').addEventListener('click', ()=>{
+  state.readings=[]; state.operador=''; state.local=''; persist();
+  $('operadorInput').value=''; $('localInput').value='';
+  closeDrawer(); render(); toast('Nova sessão iniciada');
+});
+$('drawerHistorico').addEventListener('click', ()=>{ closeDrawer(); toast('Nenhum relatório salvo neste dispositivo ainda'); });
+$('drawerLimpar').addEventListener('click', ()=>{
+  if(confirm('Limpar todos os dados locais do TeraSensor?')){
+    localStorage.removeItem('terasensor_session');
+    state.readings=[]; state.operador=''; state.local='';
+    $('operadorInput').value=''; $('localInput').value='';
+    render(); toast('Dados locais apagados');
+  }
+  closeDrawer();
+});
+
+/* ---------------- SETTINGS ---------------- */
+$('settingsBtn').addEventListener('click', ()=> $('settingsOverlay').classList.add('show'));
+$('closeSettings').addEventListener('click', ()=> $('settingsOverlay').classList.remove('show'));
+$('settingsOverlay').addEventListener('click', e=>{ if(e.target.id==='settingsOverlay') $('settingsOverlay').classList.remove('show'); });
+$('ecUnit').addEventListener('change', e=>{ state.ecUnit = e.target.value; render(); });
+$('switchTime').addEventListener('click', function(){ this.classList.toggle('on'); });
+
+/* ---------------- RENDER ---------------- */
+function iconSvg(name){
+  const icons = {
+    droplet:'<path d="M12 2s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/>',
+    thermo:'<path d="M14 4v10.5a3.5 3.5 0 1 1-4 0V4a2 2 0 0 1 4 0z"/>',
+    bolt:'<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>',
+    flask:'<path d="M9 2h6M10 2v6l-5 9a2 2 0 0 0 1.8 3h10.4a2 2 0 0 0 1.8-3l-5-9V2"/>',
+    wave:'<path d="M2 12c2-3 4-3 6 0s4 3 6 0 4-3 6 0"/>',
+    pulse:'<polyline points="2 12 7 12 9 6 13 18 15 12 22 12"/>'
+  };
+  return `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icons[name]}</svg>`;
+}
+
+function render(){
+  const hasData = state.readings.length > 0;
+  $('emptyState').style.display = hasData ? 'none' : 'block';
+  $('dataZone').style.display = hasData ? 'block' : 'none';
+  $('exportBtn').disabled = !hasData;
+  $('operadorInput').value = state.operador;
+  $('localInput').value = state.local;
+
+  $('tabLeituras').classList.toggle('active', state.activeTab==='leituras');
+  $('tabGraficos').classList.toggle('active', state.activeTab==='graficos');
+  $('leiturasPanel').style.display = state.activeTab==='leituras' ? 'block':'none';
+  $('graficosPanel').style.display = state.activeTab==='graficos' ? 'block':'none';
+
+  if(state.activeTab==='leituras') renderLeituras(); else renderGraficos();
+}
+
+function renderLeituras(){
+  const panel = $('leiturasPanel');
+  panel.innerHTML = state.readings.map((r,i)=>`
+    <div class="reading-card">
+      <button class="del-reading" data-idx="${i}">remover</button>
+      <h3>Leitura ${i+1}</h3>
+      <input class="anno-input" data-idx="${i}" placeholder="Adicionar anotação (ex: Setor Norte)..." value="${r.note.replace(/"/g,'&quot;')}">
+      <div class="metric-grid">
+        ${METRICS.map(m=>`
+          <div class="metric-box">
+            <span class="lbl" style="color:${m.color}">${iconSvg(m.icon)} ${m.label}</span>
+            <span class="val">${r[m.key]}${m.key==='ec' ? '' : m.unit}</span>
+          </div>`).join('')}
+      </div>
+    </div>
+  `).join('');
+
+  panel.querySelectorAll('.anno-input').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      state.readings[+e.target.dataset.idx].note = e.target.value;
+      persist();
+    });
+  });
+  panel.querySelectorAll('.del-reading').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      state.readings.splice(+e.target.dataset.idx,1);
+      persist(); render();
+    });
+  });
+}
+
+function renderGraficos(){
+  const panel = $('graficosPanel');
+  panel.innerHTML = METRICS.map(m=>`
+    <div class="chart-card">
+      <div class="chead">
+        <h4 style="color:${m.color}">${m.title}</h4>
+        <div class="ideal-box">IDEAL: <input type="number" step="any" data-key="${m.key}" class="idealInput" value="${state.ideals[m.key]}"> ${m.key==='ec' ? state.ecUnit : (m.key==='temp'?'°C':(m.key==='umid'?'%':''))}</div>
+      </div>
+      <div class="chart-wrap"><canvas id="chart_${m.key}"></canvas></div>
+    </div>
+  `).join('');
+
+  panel.querySelectorAll('.idealInput').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      state.ideals[e.target.dataset.key] = parseFloat(e.target.value)||0;
+      persist();
+      drawChart(e.target.dataset.key);
+    });
+  });
+
+  METRICS.forEach(m => drawChart(m.key));
+}
+
+/* Escreve o valor em cima de cada ponto, como no laudo impresso. Sem isto o
+   grafico mostra o DESENHO da comparacao mas esconde os numeros — e a
+   pergunta de quem olha e sempre "quanto deu na leitura 2?". */
+const marcaValores = {
+  id: 'marcaValores',
+  afterDatasetsDraw(g, args, opc){
+    const linha = g.getDatasetMeta(0);
+    if(!linha || linha.hidden) return;
+    const c = g.ctx;
+    c.save();
+    c.font = '600 10px "IBM Plex Mono", monospace';
+    c.fillStyle = opc.cor || '#333';
+    c.textAlign = 'center';
+    linha.data.forEach((ponto, i) => {
+      const v = g.data.datasets[0].data[i];
+      if(v === null || v === undefined) return;
+      // Perto do topo o rotulo sairia do quadro: nesse caso vai por baixo.
+      const acima = ponto.y > 20;
+      c.textBaseline = acima ? 'bottom' : 'top';
+      c.fillText(String(v), ponto.x, ponto.y + (acima ? -7 : 8));
+    });
+    c.restore();
+  }
+};
+
+function drawChart(key){
+  const m = METRICS.find(x=>x.key===key);
+  const ctx = document.getElementById('chart_'+key);
+  if(!ctx) return;
+  // Se a biblioteca nao subir, a aba diz o que houve em vez de ficar em
+  // branco e derrubar o resto do render com uma excecao.
+  if(typeof Chart === 'undefined'){
+    ctx.closest('.chart-wrap').innerHTML =
+      '<p style="font-size:12.5px;color:#6f7b71;padding:14px;text-align:center">' +
+      'Não foi possível carregar os gráficos. Os valores continuam na aba Leituras.</p>';
+    return;
+  }
+  if(charts[key]) charts[key].destroy();
+
+  const labels = state.readings.map((_,i)=>'L'+(i+1));
+  const data   = state.readings.map(r=>r[key]);
+  const alvo   = state.ideals[key];
+
+  /* A escala precisa caber as leituras E a linha do alvo. Deixada no
+     automatico, um alvo fora da faixa medida ficaria escondido — e a linha
+     tracejada e metade da leitura. */
+  const todos = data.concat([alvo]).filter(v => typeof v === 'number');
+  const folga = (Math.max(...todos) - Math.min(...todos)) * 0.18 || 1;
+
+  charts[key] = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets:[
+      {
+        label:m.title, data, borderColor:m.color, backgroundColor:m.color+'26',
+        fill:true, tension:.35, pointRadius:4, pointHoverRadius:6,
+        pointBackgroundColor:'#fff', pointBorderColor:m.color, pointBorderWidth:2, borderWidth:2.5
+      },
+      {
+        label:'Alvo', data: labels.map(()=>alvo), borderColor:m.color+'99',
+        borderDash:[5,4], pointRadius:0, borderWidth:1.5, fill:false
+      }
+    ]},
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      layout:{ padding:{ top:14, bottom:2 } },
+      plugins:{
+        legend:{display:false},
+        marcaValores:{ cor:m.color },
+        tooltip:{
+          callbacks:{
+            // Diz QUAL leitura e, nao so "L2": e o nome que o produtor deu.
+            title: itens => {
+              const i = itens[0].dataIndex;
+              const nome = (state.readings[i] && state.readings[i].note) || '';
+              return 'Leitura ' + (i+1) + (nome ? ' · ' + nome : '');
+            },
+            label: it => it.datasetIndex === 0
+              ? m.title + ': ' + it.formattedValue
+              : 'Alvo: ' + alvo
+          }
+        }
+      },
+      scales:{
+        x:{ grid:{display:false}, ticks:{font:{size:10}} },
+        y:{
+          suggestedMin: Math.min(...todos) - folga,
+          suggestedMax: Math.max(...todos) + folga,
+          grid:{color:'#eee'}, ticks:{font:{size:10}}
+        }
+      }
+    },
+    plugins:[marcaValores]
+  });
+}
+
+/* ---------------- EXPORTAR O LAUDO ----------------
+
+   Aqui NAO se gera PDF. O app roda dentro do aparelho na pagina do
+   TeraSensor, e o laudo de verdade ja esta publicado logo abaixo, no
+   visualizador. Baixar um arquivo a partir de um iframe seria pior de duas
+   maneiras: o visitante sairia da pagina para ver o resultado, e a pagina
+   perderia justamente o controle que ela tem sobre o que se pode levar.
+
+   Entao o botao avisa a pagina, que rola ate o documento. Se o app estiver
+   aberto sozinho (fora do iframe), o aviso nao acha ninguem e a mensagem na
+   tela explica onde o laudo mora.                                        */
+$('exportBtn').addEventListener('click', () => {
+  if (state.readings.length === 0) return;
+
+  const noSite = parent !== window;
+  if (noSite) parent.postMessage({ type: 'terasensor:verLaudo' }, '*');
+
+  toast(noSite ? 'Abrindo o laudo abaixo do aparelho…'
+               : 'O laudo completo fica na pagina do TeraSensor.');
+  passo(4);
+});
+
+/* ---------------- INIT ---------------- */
+
+/* Dentro do aparelho da pagina do TeraSensor o app ocupa a tela inteira: a
+   moldura ja e o celular, e a maquete de celular do proprio app viraria uma
+   segunda borda dentro da primeira. */
+if (parent !== window) document.body.classList.add('embutido');
+
+/* A vitrine tem de comecar sempre do zero. Sem isto, quem ja abriu a pagina
+   uma vez volta com as leituras salvas e nunca ve o passo a passo — que e
+   metade do que a secao quer mostrar. */
+if (parent !== window) {
+  try { localStorage.removeItem('terasensor_session'); } catch (e) {}
+} else {
+  loadState();
+}
+
+passo(state.readings.length ? 3 : 1);
+render();
+</script>
+</body>
+</html>

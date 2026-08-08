@@ -1,0 +1,24 @@
+/* ==========================================================================
+   TeraBoard · Pagina: index
+   ========================================================================== */
+
+/* ---------- planta do simulador (three.js) ----------
+   O palco e uma <div> com proporcao fixa: o canvas le a largura DELA, nao a
+   da janela. Sem uma altura declarada o canvas nasceria com zero e a cena
+   nunca apareceria. */
+.planta-stage{
+  width:100%;max-width:430px;margin:0 auto;
+  aspect-ratio:23/20;min-height:230px;
+  border-radius:16px;overflow:hidden;
+}
+.planta-stage canvas{display:block;width:100%;height:100%}
+
+.planta-fallback{
+  width:100%;height:100%;display:flex;flex-direction:column;gap:12px;
+  align-items:center;justify-content:center;text-align:center;padding:24px;
+  color:#9FC7B4;
+}
+.planta-fallback i{font-size:2.4rem;color:#1DC78B}
+.planta-fallback p{font-size:.9rem;line-height:1.5;max-width:32ch}
+
+@media(max-width:640px){ .planta-stage{min-height:200px} }
