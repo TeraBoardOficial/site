@@ -486,27 +486,7 @@
 
                 shapes.forEach((shape) => {
                     if (isPin) {
-                        const tempGeo = new THREE.ShapeGeometry(shape);
-                        tempGeo.computeBoundingBox();
-                        const box = tempGeo.boundingBox;
-                        
-                        const w = box.max.x - box.min.x; 
-                        const h = box.max.y - box.min.y; 
-                        const cx = (box.max.x + box.min.x) / 2; 
-                        const minY = box.min.y; 
-                        
-                        const radius = w / 2;
-                        const tipHeight = radius * 3.5; 
-                        const cylHeight = Math.max(0, h - tipHeight);
-                        
-                        const cylGeo = new THREE.CylinderGeometry(radius, radius, cylHeight, 32);
-                        cylGeo.translate(cx, minY + cylHeight / 2, 100);
-                        
-                        const coneGeo = new THREE.ConeGeometry(radius, tipHeight, 32);
-                        coneGeo.translate(cx, minY + cylHeight + tipHeight / 2, 100);
-                        
-                        probeGroup.add(new THREE.Mesh(cylGeo, probeMat));
-                        probeGroup.add(new THREE.Mesh(coneGeo, probeMat));
+                        return;
                     } else {
                         const probeGeo = new THREE.ExtrudeGeometry(shape, {
                             depth: 200, bevelEnabled: true, bevelSegments: 2, steps: 1, bevelSize: 10, bevelThickness: 15
