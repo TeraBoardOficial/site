@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="loading">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeraBoard · Instrumentos de precisão para o solo</title>
+<meta name="description" content="TeraBoard: hardware e software de precisão agrícola. TeraSensor (diagnóstico portátil) e TeraSmart (irrigação autônoma em malha fechada).">
+
+<link rel="canonical" href="https://teraboard.com.br/">
+
+<!-- Compartilhamento em redes sociais -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TeraBoard">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://teraboard.com.br/">
+<meta property="og:title" content="TeraBoard · Instrumentos de precisão para o solo">
+<meta property="og:description" content="TeraBoard: hardware e software de precisão agrícola. TeraSensor (diagnóstico portátil) e TeraSmart (irrigação autônoma em malha fechada).">
+<meta property="og:image" content="https://teraboard.com.br/assets/img/fotos/estufas.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TeraBoard · Instrumentos de precisão para o solo">
+<meta name="twitter:description" content="TeraBoard: hardware e software de precisão agrícola. TeraSensor (diagnóstico portátil) e TeraSmart (irrigação autônoma em malha fechada).">
+<meta name="twitter:image" content="https://teraboard.com.br/assets/img/fotos/estufas.webp">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="assets/logo/teraboard-mark.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0B4D36">
+
+<!-- Tipografia -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Estilos: os compartilhados primeiro, o da pagina por ultimo -->
+<link rel="stylesheet" href="./css/tokens.css">
+<link rel="stylesheet" href="./css/utilitarios.css">
+<link rel="stylesheet" href="./css/base.css">
+<link rel="stylesheet" href="./css/layout.css">
+<link rel="stylesheet" href="./css/loader.css">
+<link rel="stylesheet" href="./css/nav.css">
+<link rel="stylesheet" href="./css/components.css">
+<link rel="stylesheet" href="./css/themes.css">
+<link rel="stylesheet" href="./css/pages/index.css">
+
+<!-- Icones -->
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
+
+<!-- Dados estruturados: e o que faz o buscador mostrar nome, logo,
+     contato e produtos direito, em vez de adivinhar pelo texto. -->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Organization",
+   "@id": "https://teraboard.com.br/#organizacao",
+   "name": "TeraBoard",
+   "alternateName": "TeraBoard Systems",
+   "url": "https://teraboard.com.br/",
+   "logo": "https://teraboard.com.br/assets/logo/teraboard-mark-512.png",
+   "description": "Agtech da Serra Fluminense que projeta hardware e software de precisão para o solo.",
+   "address": {
+    "@type": "PostalAddress",
+    "addressRegion": "RJ",
+    "addressCountry": "BR",
+    "addressLocality": "Serra Fluminense"
+   },
+   "areaServed": {
+    "@type": "Country",
+    "name": "Brasil"
+   },
+   "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "vendas",
+    "telephone": "+55-22-99874-5065",
+    "availableLanguage": [
+     "Portuguese"
+    ]
+   },
+   "sameAs": [
+    "https://instagram.com/teraboard_oficial",
+    "https://wa.me/5522998745065"
+   ]
+  },
+  {
+   "@type": "WebSite",
+   "@id": "https://teraboard.com.br/#site",
+   "url": "https://teraboard.com.br/",
+   "name": "TeraBoard",
+   "inLanguage": "pt-BR",
+   "publisher": {
+    "@id": "https://teraboard.com.br/#organizacao"
+   }
+  }
+ ]
+}
+</script>
+</head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+<noscript>
+  <!-- Sem JavaScript o loader nunca sairia da frente: aqui ele e removido na marra. -->
+  <style>html.loading{overflow:auto!important}.site-loader{display:none!important}
+    .reveal{opacity:1!important;transform:none!important}</style>
+</noscript>
+
+<!-- LOADING -->
+<div class="site-loader" id="siteLoader" data-min-ms="1400" data-phrases="Preparando o terreno|Calibrando os sensores|Lendo o solo|Irrigando sua evolução">
+  <div id="travelLight" aria-hidden="true"></div>
+  <div class="loader-halo">
+    <img class="loader-mark" id="loaderMark" src="assets/logo/teraboard-mark.svg" alt="TeraBoard">
+  </div>
+  <span class="loader-label" id="loaderLabel">Preparando o terreno</span>
+  <div class="loader-bar"><i id="loaderBar"></i></div>
+</div>
+<script src="js/loader.js"></script>
+
+<!-- Contêiner fixo para o renderizador 3D -->
+<div id="canvas-container" data-scale="0.0000030" data-intro-fade="true"></div>
+
+<nav class="top" id="topnav">
+  <div class="inner">
+    <a href="index.html" aria-label="TeraBoard — início" class="brand-wrap">
+              <span class="logo-glow" aria-hidden="true"></span>
+              <img class="brand-logo brand-logo-mono" src="assets/logo/teraboard-wordmark-cream.svg" alt="" aria-hidden="true">
+              <img class="brand-logo brand-logo-color" src="assets/logo/teraboard-wordmark-color.svg" alt="TeraBoard">
+              </a>
+    <div class="navlinks"><a href="index.html" class="navlink active">Início</a><a href="produtos.html" class="navlink">Produtos</a><a href="terasensor.html" class="navlink">TeraSensor</a><a href="terasmart.html" class="navlink">TeraSmart</a><a href="equipe.html" class="navlink">Equipe</a></div>
+    <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-signal navcta">Falar com a equipe</a>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"><span class="num">01</span>Início</a><a href="produtos.html"><span class="num">02</span>Produtos</a><a href="terasensor.html"><span class="num">03</span>TeraSensor</a><a href="terasmart.html"><span class="num">04</span>TeraSmart</a><a href="equipe.html"><span class="num">05</span>Equipe</a>
+  <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" style="font-size:1.3rem;color:var(--signal)"><span class="num">→</span>WhatsApp</a>
+</div>
+
+<main id="conteudo" tabindex="-1">
+<!-- INTRO: logo 3D sozinha -->
+<section class="intro-screen" id="introScreen">
+  <div class="intro-scroll">
+    <span class="intro-scroll-text font-mono">Role para explorar</span>
+    <span class="intro-scroll-track"></span>
+  </div>
+</section>
+
+<!-- HERO -->
+<section class="pad" style="padding-top:70px">
+  <div class="wrap">
+    <div style="display:grid;gap:56px" class="lg:grid-cols-[1.05fr_.95fr] lg:items-center">
+      <div>
+        <span class="eyebrow reveal">Instrumentos de precisão agrícola</span>
+        <h1 class="display d1 reveal s1" style="margin-top:26px">
+          O solo,<br>finalmente <em>legível</em>.
+        </h1>
+        <p class="lede reveal s2" style="margin-top:30px;max-width:34ch">
+          A TeraBoard projeta hardware e software que transformam medições do solo em decisões técnicas —
+          do diagnóstico portátil à irrigação que se comanda sozinha.
+        </p>
+        <div class="reveal s3" style="display:flex;flex-wrap:wrap;gap:14px;margin-top:36px">
+          <a href="produtos.html" class="btn btn-solid"><i class="ph-bold ph-arrow-right"></i> Conhecer os produtos</a>
+          <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-ghost">Falar com a equipe</a>
+        </div>
+        <div class="reveal s4" style="display:flex;gap:28px;margin-top:44px;flex-wrap:wrap">
+          <div><div class="readout-num" style="font-size:1.7rem">6</div><div class="kicker">parâmetros do solo</div></div>
+          <div class="rule" style="width:1px;height:44px"></div>
+          <div><div class="readout-num" style="font-size:1.7rem">24/7</div><div class="kicker">malha fechada</div></div>
+          <div class="rule" style="width:1px;height:44px"></div>
+          <div><div class="readout-num" style="font-size:1.7rem">E-ink</div><div class="kicker">legível ao sol</div></div>
+        </div>
+      </div>
+      <div class="reveal s2">
+<div class="plate" style="padding:22px" id="heroPlate">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+    <span class="kicker">TeraSensor · leitura ao vivo</span>
+    <span class="tag"><span class="dot" id="hpDot"></span><span id="hpState" style="color: var(--ink);">em espera</span></span>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr;gap:16px">
+    <div style="background:var(--porcelain-2);border:1px solid var(--hair-soft);border-radius:12px;padding:16px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+        <span class="kicker">pH do solo · setor morango</span>
+        <span class="kicker" style="color:var(--signal)">Alvo 6.0</span>
+      </div>
+      <svg viewBox="0 0 300 108" class="w-full" style="display:block">
+        <line x1="0" y1="34" x2="300" y2="34" class="ideal-line"/>
+        <text x="4" y="28" class="font-mono" font-size="8" fill="var(--signal)">ideal 6.0</text>
+        <polyline id="hpLine" fill="none" stroke="var(--clay)" stroke-width="2.4"
+          points="24,84 90,80 156,86 222,82 276,84" style="transition:all 1.1s cubic-bezier(.16,1,.3,1)"/>
+        <g id="hpDots" fill="var(--clay)">
+          <circle cx="24" cy="84" r="3"/><circle cx="90" cy="80" r="3"/><circle cx="156" cy="86" r="3"/><circle cx="222" cy="82" r="3"/><circle cx="276" cy="84" r="3"/>
+        </g>
+      </svg>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+      <div style="text-align:center;padding:12px 6px;border:1px solid var(--hair-soft);border-radius:10px">
+        <div class="kicker" style="font-size:.7rem">pH</div>
+        <div class="readout-num" id="rpH" style="font-size:1.5rem;color:var(--clay)">4.8</div>
+      </div>
+      <div style="text-align:center;padding:12px 6px;border:1px solid var(--hair-soft);border-radius:10px">
+        <div class="kicker" style="font-size:.7rem">Umidade</div>
+        <div class="readout-num" id="rUm" style="font-size:1.5rem">21<span style="font-size:.9rem">%</span></div>
+      </div>
+      <div style="text-align:center;padding:12px 6px;border:1px solid var(--hair-soft);border-radius:10px">
+        <div class="kicker" style="font-size:.7rem">EC</div>
+        <div class="readout-num" id="rEC" style="font-size:1.5rem">0.4<span style="font-size:.85rem">mS</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="sim-wrap" style="position:relative;margin-top:46px">
+    <span class="click-hint" id="heroHint"><i class="ph-fill ph-cursor-click"></i> Toque para medir</span>
+    <button id="heroBtn" class="btn btn-solid" style="width:100%;justify-content:center">
+      <i class="ph-bold ph-scan"></i> Medir agora
+    </button>
+  </div>
+</div>
+</div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee" style="margin:72px 0">
+  <div class="track">
+    <span>Medir o solo</span><span>Decidir com dado</span><span>Irrigar na dose certa</span><span>Economizar água</span><span>Colher mais</span>
+    <span>Medir o solo</span><span>Decidir com dado</span><span>Irrigar na dose certa</span><span>Economizar água</span><span>Colher mais</span>
+  </div>
+</div>
+
+<!-- QUEM SOMOS -->
+<section class="pad cream">
+  <div class="wrap">
+    <div style="display:grid;gap:56px" class="lg:grid-cols-[.42fr_.58fr]">
+      <div class="reveal">
+        <span class="eyebrow" style="color:var(--signal-deep)">A empresa</span>
+        <h2 class="display d2" style="margin-top:22px;color:var(--forest-2)">Uma casa de<br>engenharia do solo.</h2>
+      </div>
+      <div class="reveal s1" style="align-self:end">
+        <p style="font-size:1.15rem;line-height:1.7;max-width:52ch;color:var(--forest-2)">
+          Somos uma <strong>agtech da Serra Fluminense</strong> que constrói instrumentos para quem vive do solo.
+          Nascemos ouvindo produtores e agrônomos da região: a decisão de campo boa depende de <em style="font-style:normal;color:var(--signal-deep);font-weight:600">dado confiável, na hora, no lugar certo</em>.
+          Foi disso que vieram os dois produtos da casa.
+        </p>
+        <div class="rule-soft" style="margin:28px 0;border-color:rgba(10,77,54,.18)"></div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
+          <div><div class="kicker" style="color:var(--signal-deep)">Onde</div><div class="font-mono" style="margin-top:8px;font-weight:600;font-size:1.05rem;color:var(--forest-2)">Serra Fluminense · RJ</div></div>
+          <div><div class="kicker" style="color:var(--signal-deep)">Foco</div><div class="font-mono" style="margin-top:8px;font-weight:600;font-size:1.05rem;color:var(--forest-2)">Hardware + SaaS</div></div>
+          <div><div class="kicker" style="color:var(--signal-deep)">Cultura</div><div class="font-mono" style="margin-top:8px;font-weight:600;font-size:1.05rem;color:var(--forest-2)">Estufa · campo</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSSISTEMA / DOIS PRODUTOS -->
+<section class="pad" style="background: rgba(18, 53, 40, 0.4); backdrop-filter: blur(8px);">
+  <div class="wrap">
+    <div class="reveal" style="max-width:60ch">
+      <span class="eyebrow">O ecossistema</span>
+      <h2 class="display d2" style="margin-top:22px">Duas ferramentas,<br>uma <em>linguagem</em>.</h2>
+      <p class="lede" style="margin-top:24px;color:rgba(255,255,255,.78)">
+        Uma vai no bolso e diagnostica; a outra fica na estufa e executa. Juntas, cobrem o caminho inteiro — do sensor à decisão, da decisão à válvula.
+      </p>
+    </div>
+
+    <div style="display:grid;gap:24px;margin-top:56px" class="md:grid-cols-2">
+      <!-- TeraSensor card -->
+      <a href="terasensor.html" class="reveal s1 plate-dark" style="display:block;text-decoration:none;color:inherit;padding:32px;transition:transform .4s,border-color .4s"
+         onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='rgba(27,190,134,.5)'"
+         onmouseout="this.style.transform='';this.style.borderColor='rgba(255,255,255,.12)'">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <span class="tag" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.9)"><span class="dot"></span>Portátil</span>
+          <span class="font-mono" style="opacity:.4;font-size:.7rem">01</span>
+        </div>
+        <h3 class="display" style="font-size:2.2rem;margin-top:26px">TeraSensor</h3>
+        <p class="muted" style="margin-top:12px;line-height:1.65;max-width:42ch;color:rgba(255,255,255,.7)">
+          Analisador de solo de bolso. Basta inserir a sonda para ler 6 parâmetros na tela E-ink, guardar até 50 leituras e sincronizar com o app por Bluetooth.
+        </p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:22px">
+          <span class="tag" style="border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.85)">E-ink</span>
+          <span class="tag" style="border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.85)">Bluetooth</span>
+          <span class="tag" style="border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.85)">Laudo em PDF</span>
+        </div>
+        <div class="imgframe" style="aspect-ratio:16/9;margin-top:22px;border-color:rgba(255,255,255,.14)">
+          <img width="634" height="445" src="assets/img/fotos/TeraSensorFoto.webp" alt="TeraSensor com a tela E-ink ligada, ao lado do carregador">
+        </div>
+        <div class="link-under" style="margin-top:24px;display:inline-block;">Ver TeraSensor →</div>
+      </a>
+      <!-- TeraSmart card -->
+      <a href="terasmart.html" class="reveal s2 plate-dark" style="display:block;text-decoration:none;color:inherit;padding:32px;transition:transform .4s,border-color .4s"
+         onmouseover="this.style.transform='translateY(-6px)';this.style.borderColor='rgba(27,190,134,.5)'"
+         onmouseout="this.style.transform='';this.style.borderColor='rgba(255,255,255,.12)'">
+        <div style="display:flex;justify-content:space-between;align-items:start">
+          <span class="tag" style="border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.9)"><span class="dot"></span>Fixo · autônomo</span>
+          <span class="font-mono" style="opacity:.4;font-size:.7rem">02</span>
+        </div>
+        <h3 class="display" style="font-size:2.2rem;margin-top:26px">TeraSmart</h3>
+        <p class="muted" style="margin-top:12px;line-height:1.65;max-width:42ch;color:rgba(255,255,255,.7)">
+          Plataforma fixa (hardware + app) que monitora solo e clima da estufa e comanda a irrigação e a fertirrigação sozinha, em malha fechada.
+        </p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:22px">
+          <span class="tag" style="border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.85)">Malha fechada</span>
+          <span class="tag" style="border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.85)">Fertirrigação</span>
+          <span class="tag" style="border-color:rgba(255,255,255,.16);color:rgba(255,255,255,.85)">24/7</span>
+        </div>
+        <div class="imgframe" style="aspect-ratio:16/9;margin-top:22px;border-color:rgba(255,255,255,.14)">
+          <img width="1280" height="851" src="assets/img/fotos/estufas.webp" onerror="this.onerror=null;this.src='assets/img/fotos/painel-dados.webp'" alt="Estufa monitorada pelo TeraSmart">
+        </div>
+        <div class="link-under" style="margin-top:24px;display:inline-block;">Ver TeraSmart →</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- COMO SE ENCAIXAM -->
+<section class="pad tint">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="eyebrow" style="margin-bottom:34px">Do sensor à ação</span>
+      <div style="display:grid;gap:16px" class="md:grid-cols-3">
+        <div class="icard"><div class="ic"><i class="ph-fill ph-scan"></i></div>
+          <div class="kicker" style="color:var(--signal-deep);margin-bottom:6px">Passo 01</div>
+          <h3>Medir</h3><p>O TeraSensor lê o solo em campo e nomeia cada ponto.</p></div>
+        <div class="icard"><div class="ic"><i class="ph-fill ph-flask"></i></div>
+          <div class="kicker" style="color:var(--signal-deep);margin-bottom:6px">Passo 02</div>
+          <h3>Decidir</h3><p>O dado vira diagnóstico e receita — no app, com o agrônomo.</p></div>
+        <div class="icard"><div class="ic"><i class="ph-fill ph-drop"></i></div>
+          <div class="kicker" style="color:var(--signal-deep);margin-bottom:6px">Passo 03</div>
+          <h3>Executar</h3><p>Na estufa, o TeraSmart aplica água e nutriente na dose certa, sozinho.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SIMULADOR INTERATIVO (arraste) -->
+<section class="pad" id="brinque" style="background: rgba(10, 77, 54, 0.4); backdrop-filter: blur(8px);">
+  <div class="wrap">
+    <div class="reveal" style="max-width:58ch">
+      <span class="eyebrow">Experimente · arraste</span>
+      <h2 class="display d2" style="margin-top:18px">O que o seu solo<br>está <em>pedindo</em>?</h2>
+      <p class="lede" style="margin-top:20px;max-width:50ch">
+        Mexa nos controles e veja a planta reagir na hora. É exatamente essa leitura que o TeraSensor entrega em campo — e que o TeraSmart usa para agir sozinho.
+      </p>
+    </div>
+
+    <div class="reveal s1 plate" style="margin-top:44px;padding:30px">
+      <div style="display:grid;gap:36px" class="lg:grid-cols-[.46fr_.54fr] lg:items-center">
+        <!-- planta viva (three.js — ver js/pages/index-planta-3d.js) -->
+        <div>
+          <div class="planta-stage" id="plantaStage" role="img"
+               aria-label="Planta em 3D reagindo aos parâmetros do solo"></div>
+          <div id="verdict" class="verdict" style="margin-top:18px;background:rgba(27,190,134,.1);border:1px solid rgba(27,190,134,.3)">
+            <div style="display:flex;align-items:center;gap:10px">
+              <i id="vIcon" class="ph-fill ph-check-circle" style="color:var(--signal-deep);font-size:1.4rem"></i>
+              <strong id="vTitle" style="font-family:'Space Grotesk',sans-serif;font-size:1.05rem">Condição ideal</strong>
+            </div>
+            <p id="vText" class="muted" style="margin-top:6px;font-size:.98rem;line-height:1.5">O solo está na faixa alvo. Nenhuma correção necessária agora.</p>
+          </div>
+        </div>
+
+        <!-- controles -->
+        <div>
+          <div class="drag-hint" style="margin-bottom:18px"><i class="ph-fill ph-hand-grabbing"></i> Arraste os controles</div>
+
+          <div style="margin-bottom:24px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+              <span class="kicker">pH do solo</span>
+              <span class="readout-num" id="oPh" style="font-size:2.1rem">6.0</span>
+            </div>
+            <input type="range" class="srange" id="sPh" min="3.5" max="9" step="0.1" value="6">
+            <div class="kicker" style="font-size:.74rem;margin-top:6px;color:var(--signal)">Faixa ideal 5.8 – 6.5</div>
+          </div>
+
+          <div style="margin-bottom:24px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+              <span class="kicker">Umidade</span>
+              <span class="readout-num" id="oUm" style="font-size:2.1rem">62%</span>
+            </div>
+            <input type="range" class="srange" id="sUm" min="5" max="100" step="1" value="62">
+            <div class="kicker" style="font-size:.74rem;margin-top:6px;color:var(--signal)">Faixa ideal 55 – 70%</div>
+          </div>
+
+          <div style="margin-bottom:24px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px">
+              <span class="kicker">EC · nutrientes</span>
+              <span class="readout-num" id="oEc" style="font-size:2.1rem">1.4</span>
+            </div>
+            <input type="range" class="srange" id="sEc" min="0" max="3.5" step="0.1" value="1.4">
+            <div class="kicker" style="font-size:.74rem;margin-top:6px;color:var(--signal)">Faixa ideal 1.0 – 1.8 mS/cm</div>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;padding-top:18px;border-top:1px solid var(--hair-soft)">
+            <div>
+              <div class="kicker">Saúde da lavoura</div>
+              <div class="readout-num" id="oScore" style="font-size:2.6rem;color:var(--signal)">100%</div>
+            </div>
+            <button id="btnIdeal" class="btn btn-signal"><i class="ph-bold ph-magic-wand"></i> Corrigir</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="muted" style="margin-top:18px;font-size:.92rem;color:rgba(240,241,227,.55)">
+      <i class="ph-bold ph-info"></i>&nbsp; Faixas ilustrativas para cultivo protegido — no produto, cada cultura tem o seu alvo configurável.
+    </p>
+  </div>
+</section>
+
+<!-- VALIDAÇÃO EM CAMPO -->
+<section class="pad cream">
+  <div class="wrap">
+    <div class="plate reveal" style="padding:36px">
+      <div style="display:grid;gap:40px" class="lg:grid-cols-[.4fr_.6fr]">
+        <div>
+          <span class="eyebrow">Status de engenharia</span>
+          <h2 class="display d3" style="margin-top:20px">Validação em<br>campo · <em>em andamento</em></h2>
+          <p class="muted" style="margin-top:18px;line-height:1.65;max-width:40ch">
+            Ainda não temos cases de safra fechada — e não vamos inventar. O que temos é registro aberto do que já roda. É assim que a gente prefere ganhar confiança.
+          </p>
+        </div>
+        <div style="align-self:center">
+          <div class="log-row"><span class="s ok"></span><span class="k">Firmware v1.1</span><span class="v">E-ink · BLE · ESP32 — validado em bancada</span></div>
+          <div class="log-row"><span class="s ok"></span><span class="k">App companion</span><span class="v">Leituras, gráficos e laudo em PDF operando</span></div>
+          <div class="log-row"><span class="s run"></span><span class="k">Piloto de campo</span><span class="v">Em preparação com produtores da Serra</span></div>
+          <div class="log-row"><span class="s run"></span><span class="k">TeraSmart</span><span class="v">Malha fechada em ensaio controlado</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="pad grad-green">
+  <div class="wrap" style="text-align:center">
+    <div class="reveal" style="max-width:640px;margin:0 auto">
+      <span class="eyebrow" style="justify-content:center">Próximo passo</span>
+      <h2 class="display d2" style="margin-top:22px">Vamos medir<br>o seu solo?</h2>
+    </div>
+    <div class="reveal s1" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:38px">
+      <a href="terasensor.html" class="btn btn-solid"><i class="ph-bold ph-device-mobile"></i> Quero o TeraSensor</a>
+      <a href="terasmart.html" class="btn btn-ghost"><i class="ph-bold ph-plant"></i> Automatizar minha estufa</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer style="background:var(--forest-2); border-top: 1px solid var(--hair-soft);">
+  <div class="wrap" style="padding-top:64px;padding-bottom:40px">
+    <div style="display:grid;gap:44px" class="md:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+<a href="index.html" style="display:inline-block"><img src="assets/logo/teraboard-stacked-cream.svg" alt="TeraBoard" style="height:104px;width:auto;display:block"></a>
+        <p class="font-mono muted" style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-top:20px;line-height:1.9">
+          TeraBoard Systems &middot; © 2026<br>Instrumentos de precisão para o solo<br>Serra Fluminense &middot; Rio de Janeiro, BR
+        </p>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Navegar</h2>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <a href="produtos.html" class="navlink" style="color:var(--ink);opacity:.72">Produtos</a>
+          <a href="terasensor.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSensor</a>
+          <a href="terasmart.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSmart</a>
+          <a href="equipe.html" class="navlink" style="color:var(--ink);opacity:.72">Equipe</a>
+        </div>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Contato</h2>
+        <div style="display:flex;gap:18px;align-items:center">
+          <a href="https://instagram.com/teraboard_oficial" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/instagram.svg" alt="Instagram"></a>
+          <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/whatsapp.svg" alt="WhatsApp"></a>
+        </div>
+        <p class="font-mono muted" style="font-size:.72rem;margin-top:20px;letter-spacing:.06em">@teraboard_oficial</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js"></script>
+
+<script src="js/pages/index.js"></script>
+
+<!-- Bibliotecas via CDN para o modelo 3D e GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/SVGLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<!-- A planta do simulador. Depois do three.js, que ela usa. -->
+<script src="js/pages/index-planta-3d.js"></script>
+
+<script src="js/scene-3d.js"></script>
+</body>
+</html>
