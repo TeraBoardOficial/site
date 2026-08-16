@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<!-- data-marca liga o carimbo de js/protecao.js. Dentro do iframe da pagina
+     terahecta.html ele nao aparece — quem cobre ali e o carimbo da pagina de
+     fora. Serve para quando alguem abre /terahecta/ direto pela URL, que e
+     justamente o caminho de quem esta contornando o portao. -->
+<html lang="pt-BR" class="tb-trancado" data-marca>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TeraHecta — Monitoramento de Solo por Hectare · Gêmeo Digital 3D</title>
+
+<meta name="description" content="Gêmeo digital de uma lavoura de café com 4 hectares: 4 estações autônomas e 24 sensores de solo a 30 cm. Percorra o terreno em 3D, veja a topografia mandar na água e assista ao filme de 3 minutos com narração.">
+<meta name="author" content="TeraBoard">
+<meta name="theme-color" content="#0b1a12">
+
+<!-- Fora de busca: a maquete vive atrás da Área do Investidor e não deve ser
+     indexada. Esta linha é o que realmente tira a página do Google, e vale em
+     qualquer endereço onde a pasta for publicada. Ver o README, seção
+     "Manter fora das buscas" — em especial por que NÃO se deve bloquear esta
+     pasta no robots.txt. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+
+<!-- Area restrita: a maquete nasce trancada e so abre para quem passou pelo
+     portao. Notas de manutencao em _originais-nao-publicar/NOTAS-PROTECAO.md,
+     fora desta pasta. -->
+<style>
+  html.tb-trancado body > *{display:none}
+  html.tb-trancado body::before{
+    content:"Área restrita · TeraBoard\A Esta maquete fica atrás da Área do Investidor.";
+    white-space:pre-wrap;
+    display:block;
+    max-width:42ch;
+    margin:22vh auto 0;
+    padding:0 24px;
+    font-family:monospace;
+    font-size:.8rem;
+    line-height:2.1;
+    text-align:center;
+    color:#A5BCAB;
+  }
+</style>
+<script>
+  try {
+    if (sessionStorage.getItem('tb:investidor') === 'ok') {
+      document.documentElement.classList.remove('tb-trancado');
+    } else {
+      location.replace('../investidor.html');
+    }
+  } catch (e) {
+    document.documentElement.classList.remove('tb-trancado');
+  }
+</script>
+
+<link rel="icon" href="assets/img/favicon.ico" sizes="any">
+<link rel="apple-touch-icon" href="assets/img/logo-teraboard.png">
+
+<meta property="og:type" content="website">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:site_name" content="TeraBoard">
+<meta property="og:title" content="TeraHecta — Gêmeo Digital 3D">
+<meta property="og:description" content="4 hectares, 4 estações, 24 sensores de solo. A lavoura inteira em 3D, com o filme de 3 minutos narrado.">
+<meta property="og:image" content="assets/img/preview.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TeraHecta — Gêmeo Digital 3D">
+<meta name="twitter:description" content="4 hectares, 4 estações, 24 sensores de solo. A lavoura inteira em 3D, com o filme de 3 minutos narrado.">
+<meta name="twitter:image" content="assets/img/preview.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="assets/css/terahecta.css">
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="../css/protecao.css">
+<script src="../js/protecao.js"></script>
+</head>
+<body>
+<div id="loading">
+  <div id="loading-msg">Carregando modelos 3D…</div>
+  <div id="loading-bar"><div id="loading-fill"></div></div>
+  <div id="loading-err"></div>
+</div>
+
+<div id="story-progress"></div>
+<div id="rain-status"></div>
+<div id="story-chapter"></div>
+<div id="story-caption"></div>
+
+<div id="mobile-panels">
+  <details id="alert-hud" class="panel panelbox">
+    <summary id="alert-summary">Alertas ativos: 0</summary>
+    <div id="alert-list"></div>
+  </details>
+
+  <div id="right-stack">
+  <details id="meteo-hud" class="panel panelbox">
+    <summary class="mt">Estação Meteorológica</summary>
+    <div class="mrow"><span>Temperatura</span><span id="mt-temp">—</span></div>
+    <div class="mrow"><span>Umidade do ar</span><span id="mt-hum">—</span></div>
+    <div class="mrow"><span>Vento</span><span id="mt-wind">—</span></div>
+    <div class="mrow"><span>Chuva acumulada</span><span id="mt-rain">—</span></div>
+    <div id="meteo-fc">Previsão: —</div>
+  </details>
+
+  <details id="data-hud" class="panel panelbox">
+    <summary>Leituras dos sensores</summary>
+    <div id="area-tabs"></div>
+    <div class="table-scroll">
+      <table class="data-table">
+        <thead><tr><th>ID</th>
+          <th title="Umidade do solo">UMI(%)</th>
+          <th title="Temperatura do solo">TEMP(°C)</th>
+          <th title="Condutividade elétrica: quanto sal e adubo há dissolvido no solo">EC(µS)</th>
+          <th title="Acidez do solo">pH</th>
+          <th title="Salinidade">SAL(ppt)</th>
+          <th title="Sólidos dissolvidos totais">TDS(ppm)</th></tr></thead>
+        <tbody id="sensor-table-body"></tbody>
+      </table>
+    </div>
+    <div class="table-nota">
+      <b>EC</b> e <b>TDS</b> medem quanto sal e adubo há dissolvido no solo ·
+      <b>SAL</b> é a salinidade
+    </div>
+  </details>
+  </div>
+
+  <details id="legend-hud" class="panel panelbox">
+    <summary>Legenda</summary>
+    <div class="legend-item"><span class="swatch" style="background:#3DB988"></span>Sonda verde — leituras normais</div>
+    <div class="legend-item"><span class="swatch" style="background:#f4c542"></span>Sonda âmbar — atenção</div>
+    <div class="legend-item"><span class="swatch" style="background:#ff3b30"></span>Sonda vermelha — crítico</div>
+    <div class="legend-item"><span class="swatch" style="background:#3ffa8b"></span>Zona que seca primeiro — drena rápido</div>
+    <div class="legend-item"><span class="swatch" style="background:#e8b64f"></span>Zona equilibrada — nem seca nem encharca</div>
+    <div class="legend-item"><span class="swatch" style="background:#d97757"></span>Zona que acumula — grota, bacia e sopé</div>
+    <div class="legend-item"><span class="swatch line" style="background:#3ffa8b"></span>Ligação dos sensores até a estação</div>
+    <div class="legend-item"><span class="swatch line" style="background:#e8b64f"></span>Envio da estação → Caixa Principal</div>
+    <div class="legend-item"><span class="swatch" style="background:#5aa9e6"></span>Acúmulo de água — drenagem em estudo</div>
+    <div class="legend-item"><span class="swatch line" style="background:#2f7fe6"></span>Dreno proposto (ilustrativo)</div>
+    <div class="legend-note">
+      O <b>regador</b> na cena é ilustrativo: representa uma correção manual pontual.
+      Esta cena mostra a <b>Fase 1</b> do TeraHecta, que é monitorar. O acionamento da
+      irrigação e da fertirrigação (Fase 2) e a drenagem (Fase 3) ainda estão em
+      desenvolvimento.
+    </div>
+  </details>
+
+  <details id="credits-hud" class="panel panelbox">
+    <summary>Créditos dos modelos 3D</summary>
+    <div class="credit-line">Coffee plant by <b>Poly by Google</b> [CC-BY]
+      (<a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC-BY 3.0</a>)
+      via <a href="https://poly.pizza/m/dam5c-OPC8w" target="_blank" rel="noopener">Poly Pizza</a></div>
+    <div class="credit-line">Farmer by <b>Quaternius</b> — <a href="https://poly.pizza/m/7pn3R6hPvE" target="_blank" rel="noopener">poly.pizza</a></div>
+    <div class="credit-line">Watering Can by <b>Isa Lousberg</b> — <a href="https://poly.pizza/m/V8J1TC441f" target="_blank" rel="noopener">poly.pizza</a></div>
+    <div class="credit-line">House by <b>Quaternius</b> — <a href="https://poly.pizza/m/oJJIRwv6Bo" target="_blank" rel="noopener">poly.pizza</a></div>
+    <div class="credit-line">Solar Panel Ground by <b>Quaternius</b></div>
+    <div class="credit-line">Roof Antenna by <b>Quaternius</b></div>
+  </details>
+</div>
+
+<div id="profile-hud" class="panelbox">
+  <div id="profile-title">Perfil do terreno — corte norte→sul · 4 hectares</div>
+  <canvas id="profile-cvs" width="1480" height="260"></canvas>
+</div>
+
+<div id="canvas-wrap"></div>
+
+<div class="hud" id="title-hud">
+  <div class="eyebrow">TeraHecta · Gêmeo Digital</div>
+  <h1>4 Hectares · 4 Estações · 24 Sensores</h1>
+  <div class="sub">Leitura do solo a 30&nbsp;cm · café em curvas de nível · tudo reunido na Caixa Principal</div>
+</div>
+
+<button id="btn-sound" class="btn">🔊 SOM</button>
+
+<div id="toolbar">
+  <button id="btn-topo" class="btn">Topografia</button>
+  <button id="btn-rain" class="btn">Simular chuva</button>
+  <button id="btn-story" class="btn">▶ Modo filme</button>
+</div>
+
+<div class="hud" id="hint-hud">arraste para girar · scroll para zoom<br>
+  ↑ ↓ ← → ou W A S D para percorrer o campo<br>
+  clique num equipamento para saber o que ele é</div>
+
+<div id="info-card">
+  <button id="info-close" aria-label="fechar">✕</button>
+  <div id="info-kind"></div>
+  <h2 id="info-name"></h2>
+  <div id="info-desc"></div>
+  <div id="info-read"></div>
+  <a id="info-link" href="#" target="_blank" rel="noopener" style="display:none"></a>
+</div>
+
+<div id="nav-pad"><div id="nav-knob"></div></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "./vendor/three/three.module.min.js",
+  "three/addons/": "./vendor/three/addons/"
+} }
+</script>
+<script type="module" src="assets/js/terahecta.js"></script>
+</body>
+</html>

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="loading">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Fora das buscas enquanto os tres produtos estao em desenvolvimento. Esta
+     linha e o que realmente tira a pagina do Google.
+     E o robots.txt continua com Allow: / de proposito — "Disallow" impediria o
+     buscador de BAIXAR a pagina, e sem baixar ele nunca leria este noindex: a
+     URL ficaria presa no indice, sem titulo nem descricao. Primeiro sai do
+     indice, depois se discute bloquear o rastreio. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<title>TeraSensor · Analisador de solo portátil | TeraBoard</title>
+<meta name="description" content="TeraSensor: analisador de solo portátil com tela E-ink, seis parâmetros lidos na hora, Bluetooth e laudo técnico em PDF.">
+
+<link rel="canonical" href="https://teraboardoficial.github.io/site/terasensor.html">
+
+<!-- Compartilhamento em redes sociais -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TeraBoard">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://teraboardoficial.github.io/site/terasensor.html">
+<meta property="og:title" content="TeraSensor · Analisador de solo portátil | TeraBoard">
+<meta property="og:description" content="TeraSensor: analisador de solo portátil com tela E-ink, seis parâmetros lidos na hora, Bluetooth e laudo técnico em PDF.">
+<meta property="og:image" content="https://teraboardoficial.github.io/site/assets/img/produtos/terasensor-capa-verde.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TeraSensor · Analisador de solo portátil | TeraBoard">
+<meta name="twitter:description" content="TeraSensor: analisador de solo portátil com tela E-ink, seis parâmetros lidos na hora, Bluetooth e laudo técnico em PDF.">
+<meta name="twitter:image" content="https://teraboardoficial.github.io/site/assets/img/produtos/terasensor-capa-verde.webp">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="assets/logo/teraboard-mark.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0B4D36">
+
+<!-- Tipografia -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Estilos: os compartilhados primeiro, o da pagina por ultimo -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/utilitarios.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/loader.css">
+<link rel="stylesheet" href="css/nav.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/themes.css">
+<!-- A moldura do aparelho, a mesma da vitrine do TeraSmart -->
+<link rel="stylesheet" href="assets/app demo/assets/device.css">
+<link rel="stylesheet" href="css/pages/terasensor.css">
+
+<!-- Icones -->
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+
+<!-- Dados estruturados: e o que faz o buscador mostrar nome, logo,
+     contato e produtos direito, em vez de adivinhar pelo texto. -->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Product",
+   "name": "TeraSensor",
+   "description": "Analisador de solo portátil com tela E-ink: seis parâmetros lidos na hora, memória para 50 leituras, sincronização por Bluetooth e laudo técnico em PDF.",
+   "url": "https://teraboardoficial.github.io/site/terasensor.html",
+   "image": "https://teraboardoficial.github.io/site/assets/img/produtos/terasensor-capa-verde.webp",
+   "category": "Instrumento de análise de solo",
+   "brand": {
+    "@type": "Brand",
+    "name": "TeraBoard"
+   },
+   "manufacturer": {
+    "@id": "https://teraboardoficial.github.io/site/#organizacao"
+   }
+  }
+ ]
+}
+</script>
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="css/protecao.css">
+<script src="js/protecao.js"></script>
+</head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+<noscript>
+  <!-- Sem JavaScript o loader nunca sairia da frente: aqui ele e removido na marra. -->
+  <style>html.loading{overflow:auto!important}.site-loader{display:none!important}
+    .reveal{opacity:1!important;transform:none!important}</style>
+</noscript>
+
+<!-- LOADING -->
+<div class="site-loader" id="siteLoader" data-min-ms="900" data-phrases="Calibrando a sonda">
+  <div id="travelLight" aria-hidden="true"></div>
+  <div class="loader-halo">
+    <img class="loader-mark" id="loaderMark" src="assets/logo/teraboard-mark.svg" alt="TeraBoard">
+  </div>
+  <span class="loader-label" id="loaderLabel">Calibrando a sonda</span>
+  <div class="loader-bar"><i id="loaderBar"></i></div>
+</div>
+<script src="js/loader.js"></script>
+
+<!-- Contêiner fixo para o renderizador 3D -->
+<div id="canvas-container" data-scale="0.0000024"></div>
+
+<nav class="top" id="topnav">
+  <div class="inner">
+    <a href="index.html" aria-label="TeraBoard — início" class="brand-wrap">
+              <span class="logo-glow" aria-hidden="true"></span>
+              <img class="brand-logo brand-logo-mono" src="assets/logo/teraboard-wordmark-cream.svg" alt="" aria-hidden="true">
+              <img class="brand-logo brand-logo-color" src="assets/logo/teraboard-wordmark-color.svg" alt="TeraBoard">
+              </a>
+    <div class="navlinks"><a href="index.html" class="navlink">Início</a><a href="produtos.html" class="navlink">Produtos</a><a href="terasensor.html" class="navlink active">TeraSensor</a><a href="terasmart.html" class="navlink">TeraSmart</a><a href="equipe.html" class="navlink">Equipe</a><a href="investidor.html" class="navlink navlink-restrito">Área do Investidor</a></div>
+    <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-signal navcta">Falar com a equipe</a>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"><span class="num">01</span>Início</a><a href="produtos.html"><span class="num">02</span>Produtos</a><a href="terasensor.html"><span class="num">03</span>TeraSensor</a><a href="terasmart.html"><span class="num">04</span>TeraSmart</a><a href="equipe.html"><span class="num">05</span>Equipe</a><a href="investidor.html"><span class="num">06</span>Área do Investidor</a>
+  <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" style="font-size:1.3rem;color:var(--signal)"><span class="num">→</span>WhatsApp</a>
+</div>
+
+<main id="conteudo" tabindex="-1">
+
+<!-- HERO — mundo claro: portátil, campo, luz do dia -->
+<section class="pad cream hero-ts">
+  <div class="wrap" style="width:100%">
+    <div id="heroGrid">
+
+      <div class="hg-copy" id="hgCopy">
+        <div style="display:flex;align-items:center;gap:14px" class="reveal">
+          <span class="readout-num" style="font-size:.95rem;color:var(--signal-deep)">01</span>
+          <span class="tag"><span class="dot"></span>Diagnóstico portátil</span>
+        </div>
+        <h1 class="display d1 reveal s1" style="margin-top:22px;color:var(--forest-2)">
+          Tera<em>Sensor</em>
+        </h1>
+        <p class="reveal s1" style="margin-top:12px;font-size:1.3rem;font-weight:600;color:var(--signal-deep)">
+          Decisões técnicas na palma da mão.
+        </p>
+        <p class="lede reveal s2" style="margin-top:22px;max-width:44ch">
+          Analisador de solo de bolso para produtores e agrônomos. Insira a sonda, leia seis parâmetros na hora
+          e transforme cada leitura num laudo assinável — sem laboratório, sem infraestrutura fixa.
+        </p>
+
+        <div class="reveal s3" style="display:flex;gap:12px;flex-wrap:wrap;margin-top:30px">
+          <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-solid">
+            <i class="ph-bold ph-whatsapp-logo"></i> Solicitar o TeraSensor
+          </a>
+          <a href="#simular" class="btn btn-ghost"><i class="ph-bold ph-flask"></i> Ver o simulador</a>
+        </div>
+
+        <div class="reveal s4" style="display:flex;gap:30px;margin-top:38px;flex-wrap:wrap">
+          <div><div class="readout-num" style="font-size:1.7rem;color:var(--forest-2)">6</div><div class="kicker">parâmetros</div></div>
+          <div class="rule" style="width:1px;height:42px;background:rgba(10,77,54,.18)"></div>
+          <div><div class="readout-num" style="font-size:1.7rem;color:var(--forest-2)">50</div><div class="kicker">leituras salvas</div></div>
+          <div class="rule" style="width:1px;height:42px;background:rgba(10,77,54,.18)"></div>
+          <div><div class="readout-num" style="font-size:1.7rem;color:var(--forest-2)">E-ink</div><div class="kicker">legível ao sol</div></div>
+        </div>
+      </div>
+
+      <div class="hg-device reveal s2">
+        <div class="device-wrap">
+          <div class="device-stage" id="deviceStage" role="img" aria-label="TeraSensor em 3D, girando"></div>
+          <div class="device-pedestal"></div>
+          <span class="device-hint"><i class="ph-fill ph-hand-grabbing"></i> Arraste para girar</span>
+        </div>
+        <button class="device-idle-hint" id="deviceIdleHint" type="button">
+          <i class="ph-fill ph-cursor-click"></i>
+          <span>Toque no aparelho para começar a demonstração</span>
+        </button>
+        <button class="demo-reset" id="demoReset" type="button">
+          <i class="ph-bold ph-arrow-counter-clockwise"></i> Reiniciar demonstração
+        </button>
+      </div>
+
+      <div class="hg-panels" id="hgPanels">
+        <div class="device-guide" id="deviceGuide">
+          <div class="dg-step" id="dgStep">Passo 1 de 4</div>
+          <div class="dg-title" id="dgTitle"><i class="ph-fill ph-power"></i> Ligue o aparelho</div>
+          <div class="dg-desc" id="dgDesc">Toque no botão de <strong>power</strong> (o redondo, embaixo) para iniciar. A sonda desce e a leitura começa.</div>
+        </div>
+        <div class="screen-mirror" id="screenMirror">
+          <span class="screen-mirror-label"><i class="ph-fill ph-device-mobile-camera"></i> Tela do aparelho — em tempo real</span>
+          <div class="device-face">
+            <img class="device-face-screen" id="screenMirrorImg" alt="Conteúdo atual da tela E-ink do TeraSensor">
+            <img width="371" height="313" class="device-face-capa" src="assets/img/produtos/terasensor-capa-superior.webp" alt="" aria-hidden="true">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE: mesmo recurso, conteúdo do fluxo de uso deste produto -->
+<div class="marquee">
+  <div class="track">
+    <span>Inserir a sonda</span><span>Ler na hora</span><span>Nomear o ponto</span><span>Comparar</span><span>Exportar o laudo</span>
+    <span>Inserir a sonda</span><span>Ler na hora</span><span>Nomear o ponto</span><span>Comparar</span><span>Exportar o laudo</span>
+  </div>
+</div>
+
+<!-- OS 6 PARÂMETROS (escuro) -->
+<section class="pad" style="background:rgba(10,77,54,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <div class="reveal" style="max-width:56ch">
+      <span class="eyebrow">O que ele lê</span>
+      <h2 class="display d2" style="margin-top:18px">Seis parâmetros,<br>uma <em>inserção</em>.</h2>
+      <p class="lede" style="margin-top:18px;max-width:46ch">
+        Uma única inserção da sonda entrega o retrato químico e físico do solo — direto na tela E-ink.
+      </p>
+    </div>
+    <div style="display:grid;gap:16px;margin-top:44px" class="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="icard reveal"><div class="ic"><i class="ph-fill ph-flask"></i></div><h3>pH</h3><p>Acidez do solo — faixa 3.5 a 9.0.</p></div>
+      <div class="icard reveal s1"><div class="ic"><i class="ph-fill ph-lightning"></i></div><h3>EC · Condutividade</h3><p>Salinidade efetiva disponível às plantas.</p></div>
+      <div class="icard reveal s2"><div class="ic"><i class="ph-fill ph-drop"></i></div><h3>Umidade</h3><p>Teor de água em % volumétrica.</p></div>
+      <div class="icard reveal"><div class="ic"><i class="ph-fill ph-thermometer-simple"></i></div><h3>Temperatura</h3><p>Temperatura do solo em °C.</p></div>
+      <div class="icard reveal s1"><div class="ic"><i class="ph-fill ph-wave-sine"></i></div><h3>Salinidade</h3><p>Índice salino do substrato.</p></div>
+      <div class="icard reveal s2"><div class="ic"><i class="ph-fill ph-dots-three-outline"></i></div><h3>TDS</h3><p>Sólidos dissolvidos totais.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SIMULADOR (interativo) -->
+<section id="simular" class="pad" style="background:rgba(10,77,54,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <div class="reveal" style="max-width:60ch">
+      <span class="eyebrow" style="color:rgba(244,242,236,.6)">Do solo à receita · interativo</span>
+      <h2 class="display d2" style="margin-top:20px">Da sonda ao <em>receituário</em>.</h2>
+      <p class="lede" style="margin-top:22px;color:rgba(244,242,236,.78)">
+        Este é o coração da proposta. Toque no botão e veja como uma única leitura de solo vira, cientificamente, uma recomendação de produtos do estoque da loja agropecuária.
+      </p>
+    </div>
+    <div class="reveal s1" style="margin-top:44px">
+<div style="display:grid;gap:16px" class="lg:grid-cols-3">
+  <!-- 1: mede no campo -->
+  <div class="plate-dark" style="padding:20px;display:flex;flex-direction:column;border-radius:12px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <span class="readout-num" style="width:26px;height:26px;border-radius:9999px;background:var(--signal);color:var(--forest-2);display:flex;align-items:center;justify-content:center;font-size:.85rem">1</span>
+      <span class="kicker" style="color:var(--signal)">Mede no campo</span>
+    </div>
+    <div style="background:var(--porcelain);border-radius:10px;padding:14px;flex:1">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px">
+        <span class="kicker" style="color:var(--sage)">pH · setor morango</span>
+        <span class="kicker" style="color:var(--signal-deep)">alvo 6.0</span>
+      </div>
+      <svg viewBox="0 0 260 120" class="w-full">
+        <line x1="0" y1="40" x2="260" y2="40" class="ideal-line"/>
+        <text x="4" y="34" class="font-mono" font-size="8" fill="var(--signal-deep)">ideal 6.0</text>
+        <polyline id="ph-line" fill="none" stroke="var(--clay)" stroke-width="2.5" points="20,88 80,84 140,90 200,86 240,88"/>
+        <g fill="var(--clay)"><circle cx="20" cy="88" r="3.2"/><circle cx="80" cy="84" r="3.2"/><circle cx="140" cy="90" r="3.2"/><circle cx="200" cy="86" r="3.2"/><circle cx="240" cy="88" r="3.2"/></g>
+        <text x="130" y="112" class="font-mono" font-size="9" fill="var(--clay)" font-weight="600" text-anchor="middle" id="ph-label">lido: pH 4.8 (ácido)</text>
+      </svg>
+    </div>
+    <p class="muted" style="margin-top:12px;font-size:.82rem;line-height:1.55;color:rgba(244,242,236,.62)">A linha tracejada é o alvo. A leitura, muito abaixo, prova a acidez — na tela, na frente do produtor.</p>
+  </div>
+
+  <!-- 2: diagnóstico -->
+  <div class="plate-dark" style="padding:20px;display:flex;flex-direction:column;border-radius:12px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <span class="readout-num" style="width:26px;height:26px;border-radius:9999px;background:var(--signal);color:var(--forest-2);display:flex;align-items:center;justify-content:center;font-size:.85rem">2</span>
+      <span class="kicker" style="color:var(--signal)">Diagnostica</span>
+    </div>
+    <div id="diag-box" style="background:var(--porcelain);border-radius:10px;padding:16px;flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;transition:all .5s;color:var(--ink)">
+      <i class="ph-fill ph-magnifying-glass" style="font-size:2.2rem;color:var(--hair);margin:0 auto 10px"></i>
+      <p class="muted" style="font-size:.9rem">Aguardando análise…</p>
+    </div>
+  </div>
+
+  <!-- 3: receita -->
+  <div class="plate-dark" style="padding:20px;display:flex;flex-direction:column;border-radius:12px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <span class="readout-num" style="width:26px;height:26px;border-radius:9999px;background:var(--signal);color:var(--forest-2);display:flex;align-items:center;justify-content:center;font-size:.85rem">3</span>
+      <span class="kicker" style="color:var(--signal)">Vira receita</span>
+    </div>
+    <div id="rx-box" style="background:var(--porcelain);border-radius:10px;padding:16px;flex:1;display:flex;flex-direction:column;justify-content:center;text-align:center;transition:all .5s;color:var(--ink)">
+      <i class="ph-fill ph-shopping-cart-simple" style="font-size:2.2rem;color:var(--hair);margin:0 auto 10px"></i>
+      <p class="muted" style="font-size:.9rem">A lista de compras aparece aqui.</p>
+    </div>
+  </div>
+</div>
+<div style="display:flex;justify-content:center;margin-top:26px">
+  <div class="sim-wrap" style="position:relative;margin-top:46px">
+    <span class="click-hint" id="rx-hint"><i class="ph-fill ph-cursor-click"></i> Toque para ver</span>
+    <button id="btn-rx" onclick="runRxSim()" class="btn btn-signal"><i class="ph-bold ph-flask"></i> Simular diagnóstico → receita</button>
+  </div>
+</div>
+</div>
+  </div>
+</section>
+
+<!-- RECURSOS (claro) -->
+<section class="pad cream">
+  <div class="wrap">
+    <div class="reveal" style="max-width:54ch">
+      <span class="eyebrow">Recursos</span>
+      <h2 class="display d2" style="margin-top:18px;color:var(--forest-2)">Tudo na palma<br>da <em>mão</em>.</h2>
+    </div>
+    <div style="display:grid;gap:16px;margin-top:44px" class="grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="icard reveal"><div class="ic"><i class="ph-fill ph-monitor"></i></div><h3>Tela E-ink</h3><p>Leitura nítida mesmo sob luz solar direta, com consumo mínimo de bateria.</p></div>
+      <div class="icard reveal s1"><div class="ic"><i class="ph-fill ph-bookmark-simple"></i></div><h3>50 leituras nomeadas</h3><p>Salve cada ponto no aparelho — “Setor Norte · Morango” — e compare depois.</p></div>
+      <div class="icard reveal s2"><div class="ic"><i class="ph-fill ph-bluetooth"></i></div><h3>Bluetooth + app</h3><p>Sincronize com um toque e gere gráficos comparativos no celular.</p></div>
+      <div class="icard reveal"><div class="ic"><i class="ph-fill ph-file-pdf"></i></div><h3>Laudo em PDF</h3><p>Relatório completo pronto para impressora, e-mail ou WhatsApp.</p></div>
+      <div class="icard reveal s1"><div class="ic"><i class="ph-fill ph-target"></i></div><h3>Linha de valor ideal</h3><p>Defina o alvo e veja na hora o que está dentro ou fora do padrão.</p></div>
+      <div class="icard reveal s2"><div class="ic"><i class="ph-fill ph-seal-check"></i></div><h3>Calibração rastreável</h3><p>Aferido com soluções tampão de pH e de condutividade rastreáveis.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- APP COMPANION (escuro) -->
+<section class="pad" style="background:rgba(10,77,54,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <div style="display:grid;gap:56px" class="lg:grid-cols-[.55fr_.45fr] lg:items-center">
+      <div class="reveal">
+        <span class="eyebrow">App companion</span>
+        <h2 class="display d2" style="margin-top:18px">O laudo que<br><em>fecha a venda</em>.</h2>
+        <p class="lede" style="margin-top:20px;max-width:46ch">
+          O aplicativo transforma leituras cruas em um documento técnico que o produtor entende e o agrônomo
+          assina — tudo no celular, ainda no meio da lavoura.
+        </p>
+        <div style="display:grid;gap:14px;margin-top:30px" class="sm:grid-cols-2">
+          <div class="icard"><div class="ic"><i class="ph-fill ph-tag"></i></div><h3>Cada leitura tem nome</h3><p>Organize os pontos por talhão e por cultura.</p></div>
+          <div class="icard"><div class="ic"><i class="ph-fill ph-chart-bar"></i></div><h3>Gráficos comparativos</h3><p>Veja num relance qual setor está fora do padrão.</p></div>
+          <div class="icard"><div class="ic"><i class="ph-fill ph-target"></i></div><h3>Linha de valor ideal</h3><p>Defina o alvo e enxergue o desvio na hora.</p></div>
+          <div class="icard"><div class="ic"><i class="ph-fill ph-file-pdf"></i></div><h3>Laudo em PDF</h3><p>Parecer do agrônomo e exportação por WhatsApp.</p></div>
+        </div>
+      </div>
+      <!-- O aparelho e o mesmo da vitrine do TeraSmart: a moldura vazada em
+           SVG com o app de verdade rodando dentro, rolavel e nitido em
+           qualquer resolucao. Ver assets/app demo/assets/device.css. -->
+      <div class="reveal s1 ts-app">
+        <div class="device">
+          <div class="device-screen">
+            <iframe id="tsApp" title="Aplicativo do TeraSensor"
+                    src="assets/TeraSensor%20App/terasensorapp.html"
+                    width="402" height="874" loading="lazy"></iframe>
+          </div>
+          <img class="device-chrome" src="assets/app%20demo/assets/device.svg" alt="" aria-hidden="true">
+        </div>
+        <p class="ts-app-dica">
+          <i class="ph-bold ph-hand-tap"></i> Toque nos botões — o aparelho responde de verdade
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- O LAUDO (visualizador) -->
+<section id="laudo" class="pad" style="background:rgba(18,53,40,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <div class="reveal laudo-head">
+      <div>
+        <span class="eyebrow">O documento &middot; amostra real</span>
+        <h2 class="display d3" style="margin-top:16px">É este o papel<br>que sai do <em>app</em>.</h2>
+      </div>
+      <p style="line-height:1.65;color:var(--ink);opacity:.9">
+        Um laudo de verdade, gerado pelo TeraSensor numa estufa de teste: as leituras nomeadas,
+        os seis parâmetros em gráfico contra a linha do valor ideal e o parecer técnico com a
+        estimativa de custo do tratamento. Aproxime para ler.
+      </p>
+    </div>
+
+    <!-- O laudo e exibido, nao entregue: nao ha link para o arquivo, nao ha
+         botao de baixar e o visualizador do PDF do navegador (que traz os
+         proprios botoes de download e impressao) fica fora da jogada. -->
+    <div class="reveal s1 laudo-quadro">
+      <div class="laudo-barra">
+        <span class="laudo-tag"><i class="ph-fill ph-file-text"></i> Relatório analítico de solo</span>
+        <div class="laudo-zoom">
+          <button type="button" class="btn btn-ghost" id="laudoMenos" aria-label="Afastar"><i class="ph-bold ph-minus"></i></button>
+          <span class="laudo-pc" id="laudoPc">100%</span>
+          <button type="button" class="btn btn-ghost" id="laudoMais" aria-label="Aproximar"><i class="ph-bold ph-plus"></i></button>
+        </div>
+      </div>
+
+      <div class="laudo-palco" id="laudoPalco" tabindex="0"
+           role="img" aria-label="Laudo analítico de solo gerado pelo TeraSensor: tabela de três leituras, seis gráficos com linha de valor ideal e parecer técnico do operador.">
+        <div class="laudo-pagina" id="laudoPagina"></div>
+      </div>
+
+      <p class="laudo-nota">
+        <i class="ph-bold ph-info"></i>&nbsp; Amostra de demonstração, para leitura na tela.
+        O arquivo em PDF é entregue ao cliente pelo próprio aplicativo.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- CALIBRAÇÃO (claro) -->
+<section class="pad cream">
+  <div class="wrap">
+    <div style="display:grid;gap:48px" class="lg:grid-cols-[.44fr_.56fr] lg:items-center">
+      <div class="reveal">
+        <span class="eyebrow">Padrões de aferição</span>
+        <h2 class="display d3" style="margin-top:18px;color:var(--forest-2)">Calibração<br>rastreável.</h2>
+        <p class="muted" style="margin-top:16px;font-size:1.05rem;line-height:1.6;max-width:38ch">
+          Cada unidade é aferida contra soluções-tampão de referência antes de sair — e você pode recalibrar
+          em campo quando quiser.
+        </p>
+      </div>
+      <div class="reveal s1 plate" style="padding:30px">
+        <div class="spec-row"><span class="k">Tampão de pH</span><span class="v">4.00 · 7.00</span></div>
+        <div class="spec-row"><span class="k">Condutividade baixa</span><span class="v">1413 µS/cm</span></div>
+        <div class="spec-row"><span class="k">Condutividade alta</span><span class="v">12.88 mS/cm</span></div>
+        <div class="spec-row" style="border-bottom:none"><span class="k">Rastreabilidade</span><span class="v">por unidade</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="pad grad-green">
+  <div class="wrap" style="text-align:center">
+    <div class="reveal" style="max-width:640px;margin:0 auto">
+      <span class="eyebrow" style="justify-content:center">Próximo passo</span>
+      <h2 class="display d2" style="margin-top:22px">Leve o laboratório para o campo.</h2>
+      <p class="lede" style="margin-top:20px">Fale direto com quem projetou o instrumento.</p>
+    </div>
+    <div class="reveal s1" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:36px">
+      <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-solid"><i class="ph-bold ph-whatsapp-logo"></i> Solicitar o TeraSensor</a>
+      <a href="terasmart.html" class="btn btn-ghost"><i class="ph-bold ph-plant"></i> Conhecer o TeraSmart</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer style="background:var(--forest-2); border-top: 1px solid var(--hair-soft);">
+  <div class="wrap" style="padding-top:64px;padding-bottom:40px">
+    <div style="display:grid;gap:44px" class="md:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+<a href="index.html" style="display:inline-block"><img src="assets/logo/teraboard-stacked-cream.svg" alt="TeraBoard" style="height:104px;width:auto;display:block"></a>
+        <p class="font-mono muted" style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-top:20px;line-height:1.9">
+          TeraBoard Systems &middot; © 2026<br>Instrumentos de precisão para o solo<br>Serra Fluminense &middot; Rio de Janeiro, BR
+        </p>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Navegar</h2>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <a href="produtos.html" class="navlink" style="color:var(--ink);opacity:.72">Produtos</a>
+          <a href="terasensor.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSensor</a>
+          <a href="terasmart.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSmart</a>
+          <a href="equipe.html" class="navlink" style="color:var(--ink);opacity:.72">Equipe</a>
+        </div>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Contato</h2>
+        <div style="display:flex;gap:18px;align-items:center">
+          <a href="https://instagram.com/teraboard_oficial" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/instagram.svg" alt="Instagram"></a>
+          <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/whatsapp.svg" alt="WhatsApp"></a>
+        </div>
+        <p class="font-mono muted" style="font-size:.72rem;margin-top:20px;letter-spacing:.06em">@teraboard_oficial</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js"></script>
+
+<!-- Encaixa a tela do app no furo da moldura. Sem isto o iframe fica no
+     tamanho logico de 402 pt e vaza para fora do aparelho. -->
+<script src="assets/app demo/assets/device.js"></script>
+
+
+<!-- Bibliotecas via CDN para o modelo 3D e GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/SVGLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script src="js/scene-3d.js"></script>
+
+
+<script src="js/pages/terasensor.js"></script>
+
+<script src="js/pages/terasensor-device-3d.js"></script>
+</body>
+</html>

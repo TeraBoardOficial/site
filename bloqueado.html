@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Captura bloqueada · TeraBoard</title>
+
+<!-- Fora das buscas: esta página não é conteúdo, é consequência. Não deve
+     aparecer em resultado nenhum e não deve gerar prévia em link colado. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<meta name="theme-color" content="#0B4D36">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/protecao.css">
+
+<style>
+  html,body{background:#030806;min-height:100%}
+  body{
+    display:flex;align-items:center;justify-content:center;
+    padding:32px 22px;
+    font-family:'Inter',sans-serif;
+    color:#F0F1E3;
+  }
+  .bq{max-width:60ch;width:100%;text-align:center}
+
+  /* Âmbar, e não o vermelho da marca (--clay). A diferença entre "atenção" e
+     "alarme" é essa, e quem chega aqui na primeira vez quase sempre só
+     encostou na tecla errada. */
+  .bq-selo{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:8px 15px;border-radius:999px;
+    border:1px solid rgba(245,184,65,.4);background:rgba(245,184,65,.09);
+    font-family:'IBM Plex Mono',monospace;font-size:.66rem;
+    letter-spacing:.16em;text-transform:uppercase;color:#F5B841;
+  }
+  .bq-selo::before{content:'';width:7px;height:7px;border-radius:50%;background:#F5B841}
+
+  .bq h1{
+    margin:26px 0 0;
+    font-family:'Space Grotesk',sans-serif;
+    font-size:clamp(1.9rem,6vw,3rem);font-weight:700;line-height:1.1;
+    letter-spacing:-.01em;
+  }
+  .bq h1 em{font-style:normal;color:#1DC78B}
+
+  .bq-lede{
+    margin:18px auto 0;max-width:48ch;
+    font-size:1.02rem;line-height:1.6;color:#A5BCAB;
+  }
+
+  /* Os três degraus. O que já passou fica aceso; o que vem, apagado — a
+     pessoa vê onde está e o que acontece se insistir, sem precisar ler. */
+  .bq-degraus{
+    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+    margin-top:34px;
+  }
+  .bq-degrau{
+    flex:1 1 128px;max-width:168px;
+    padding:14px 12px;border-radius:12px;
+    border:1px solid var(--hair,rgba(240,241,227,.15));
+    background:rgba(6,44,31,.3);
+    font-family:'IBM Plex Mono',monospace;
+    text-align:left;
+  }
+  .bq-degrau b{
+    display:block;font-size:.62rem;letter-spacing:.14em;text-transform:uppercase;
+    color:#47584D;margin-bottom:7px;font-weight:600;
+  }
+  .bq-degrau span{display:block;font-size:.72rem;line-height:1.6;color:#47584D}
+  .bq-degrau.feito{border-color:rgba(245,184,65,.32);background:rgba(245,184,65,.06)}
+  .bq-degrau.feito b{color:rgba(245,184,65,.75)}
+  .bq-degrau.feito span{color:#A5BCAB}
+  .bq-degrau.agora{border-color:rgba(245,184,65,.8);background:rgba(245,184,65,.14)}
+  .bq-degrau.agora b{color:#F5B841}
+  .bq-degrau.agora span{color:#F0F1E3}
+  /* O último degrau é o único que continua avermelhado: ali a consequência
+     deixa de ser aviso e vira bloqueio, e a cor tem que dizer isso. */
+  .bq-degrau#deg5.agora{border-color:rgba(226,123,88,.8);background:rgba(226,123,88,.14)}
+  .bq-degrau#deg5.agora b{color:#E27B58}
+
+  .bq-regra{
+    margin-top:32px;padding:18px 20px;
+    border:1px solid var(--hair,rgba(240,241,227,.15));border-radius:14px;
+    background:rgba(6,44,31,.28);
+    text-align:left;
+  }
+  .bq-regra p{
+    margin:0;font-family:'IBM Plex Mono',monospace;
+    font-size:.74rem;line-height:1.95;color:#A5BCAB;
+  }
+  .bq-regra p + p{margin-top:11px}
+  .bq-regra strong{color:#F0F1E3;font-weight:600}
+
+  .bq-erro{
+    margin:16px 0 0;min-height:20px;
+    font-family:'Space Grotesk',sans-serif;font-size:.88rem;font-weight:600;
+    color:#FFE0D7;
+  }
+  .bq-erro:empty{display:none}
+
+  .bq-acoes{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+  /* O botão de voltar nasce apagado e só acende com a caixinha marcada. Não
+     desabilito de verdade (disabled) de propósito: clicar num botão morto não
+     explica nada, e clicando aqui a pessoa recebe o motivo escrito. */
+  .bq-btn-solid:not(.pronto){background:rgba(29,199,139,.25);color:rgba(4,21,14,.55)}
+  .bq-btn-solid:not(.pronto):hover{background:rgba(29,199,139,.35)}
+  .bq-btn{
+    display:inline-flex;align-items:center;gap:9px;
+    padding:13px 24px;border-radius:999px;
+    font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:600;
+    text-decoration:none;cursor:pointer;border:1px solid transparent;
+    transition:background .18s ease,border-color .18s ease;
+  }
+  .bq-btn-solid{background:#1DC78B;color:#04150E}
+  .bq-btn-solid:hover{background:#3BDFA4}
+  .bq-btn-ghost{border-color:var(--hair,rgba(240,241,227,.15));color:#A5BCAB}
+  .bq-btn-ghost:hover{border-color:rgba(240,241,227,.4);color:#F0F1E3}
+
+  .bq-rodape{
+    margin-top:26px;
+    font-family:'IBM Plex Mono',monospace;font-size:.66rem;
+    letter-spacing:.05em;line-height:1.9;color:#47584D;
+  }
+</style>
+</head>
+<body>
+
+<main class="bq">
+  <span class="bq-selo">Captura bloqueada</span>
+
+  <h1>Essa página <em>ainda</em> não pode ser copiada.</h1>
+
+  <p class="bq-lede" id="bqLede">
+    Nada de grave. Os três produtos da TeraBoard estão em desenvolvimento, e até o
+    lançamento o conteúdo do site fica fechado.
+  </p>
+
+  <div class="bq-degraus">
+    <div class="bq-degrau" id="deg1">
+      <b>1ª vez</b>
+      <span>Só este aviso. Nada muda no site.</span>
+    </div>
+    <div class="bq-degrau" id="deg2">
+      <b>2ª vez</b>
+      <span>Ainda só um aviso. Continua tudo como estava.</span>
+    </div>
+    <div class="bq-degrau" id="deg3">
+      <b>3ª vez</b>
+      <span>A marca d'água passa a acompanhar todas as páginas.</span>
+    </div>
+    <div class="bq-degrau" id="deg4">
+      <b>4ª vez</b>
+      <span>Último aviso antes do bloqueio.</span>
+    </div>
+    <div class="bq-degrau" id="deg5">
+      <b>5ª vez</b>
+      <span>O conteúdo deixa de ser carregado até você recarregar a aba.</span>
+    </div>
+  </div>
+
+  <div class="bq-regra">
+    <p><strong>Por que o site é assim.</strong> O que está publicado aqui é material
+      de apresentação, e não de distribuição. Informação de projeto que circula antes
+      da hora deixa de ser vantagem de quem passou os últimos meses construindo — é
+      só isso que estamos protegendo.</p>
+    <p><strong>O que pedimos.</strong> Que o conteúdo não saia daqui: sem print, sem
+      cópia, sem reencaminhar. Os termos completos estão logo abaixo, e são curtos.</p>
+    <p><strong>Precisa do material?</strong> É só pedir — existe versão preparada
+      para compartilhar, e ela chega bem melhor do que uma foto de tela.</p>
+  </div>
+
+  <!-- ================= TERMOS DE USO =================
+       Voltar ao site passa por aqui. Não é obstáculo por obstáculo: é o
+       momento em que a pessoa tem o texto na frente e diz que leu — o que
+       o "Voltar" sozinho, no fim de uma página que ninguém termina de ler,
+       não conseguia produzir. -->
+  <details class="termos" id="bqTermos">
+    <summary>
+      <i aria-hidden="true">§</i>
+      Termos de uso — são sete linhas
+    </summary>
+    <div class="termos-corpo">
+      <p><strong>1. O que é este site.</strong> Uma apresentação de produtos em
+        desenvolvimento da TeraBoard. Não é catálogo comercial nem documentação
+        pública.</p>
+      <p><strong>2. O que você pode fazer.</strong> Navegar e ler à vontade, para
+        conhecer o trabalho.</p>
+      <p><strong>3. O que pedimos que não faça.</strong> Copiar, reproduzir, capturar
+        tela, gravar, imprimir, republicar ou redistribuir o conteúdo — textos,
+        imagens, dados técnicos, telas de aplicativo, maquetes 3D — sem autorização
+        da TeraBoard.</p>
+      <p><strong>4. Por quê.</strong> É material de trabalho, e material de trabalho que
+        circula antes da hora deixa de ser vantagem de quem construiu.</p>
+      <p><strong>5. Propriedade.</strong> Navegar aqui não transfere direito, licença
+        nem titularidade sobre a tecnologia, a marca ou o conteúdo, que é protegido
+        pela Lei nº 9.610/1998.</p>
+      <p><strong>6. Registro.</strong> Tentativas de captura são contadas durante a
+        visita, e a marca d'água que atravessa as páginas identifica a sessão.</p>
+      <p><strong>7. Precisando do material.</strong> É só pedir: existe versão preparada
+        para compartilhar, e ela é entregue sem que ninguém precise fotografar tela.</p>
+    </div>
+  </details>
+
+  <label class="aceite" for="bqAceite">
+    <input type="checkbox" id="bqAceite">
+    <span>Li e aceito os termos de uso, e combinado: não copio, não capturo
+      nem repasso o conteúdo do site.</span>
+  </label>
+
+  <p class="bq-erro" id="bqErro" role="alert" aria-live="polite"></p>
+
+  <div class="bq-acoes">
+    <button type="button" class="bq-btn bq-btn-solid" id="bqVoltar">Aceitar e continuar navegando</button>
+    <a class="bq-btn bq-btn-ghost" href="https://wa.me/5522998745065" target="_blank" rel="noopener">
+      Pedir o material
+    </a>
+  </div>
+
+  <p class="bq-rodape">
+    TeraBoard · conteúdo protegido<br>
+    <span id="bqCarimbo"></span>
+  </p>
+</main>
+
+<script>
+/* ==========================================================================
+   Esta página é a consequência, e o estado dela vem de fora: js/protecao.js
+   conta as tentativas e manda para cá com ?v=<numero>. Aqui só se lê o número
+   e se acende o degrau correspondente.
+
+   Sem o parâmetro (alguém abriu /bloqueado.html na mão, por curiosidade) a
+   página se explica igual, sem acusar ninguém de nada.
+   ========================================================================== */
+(function () {
+  var TOTAL = 5;
+  var p = new URLSearchParams(location.search);
+  var n = parseInt(p.get('v'), 10);
+  if (!(n > 0)) n = 0;
+
+  /* Os degraus: o que já passou fica aceso, o de agora fica em destaque, o que
+     vem continua apagado. A pessoa vê onde está e o que acontece se insistir
+     sem precisar ler uma linha. */
+  for (var i = 1; i <= TOTAL; i++) {
+    var d = document.getElementById('deg' + i);
+    if (!d) continue;
+    if (i < n) d.classList.add('feito');
+    if (i === n) d.classList.add('agora');
+  }
+
+  /* O tom sobe junto com o degrau, e não antes dele. Nas duas primeiras vezes
+     a página não acusa ninguém de nada: a tecla PrtScn fica colada no Delete
+     e quem esbarrou nela merece um aviso, não um sermão. */
+  var lede = document.getElementById('bqLede');
+  if (n === 1) {
+    lede.innerHTML = 'Foi só um aviso — <strong style="color:#F0F1E3">nada mudou no site</strong>. '
+                   + 'Acontece, essa tecla fica num lugar ruim do teclado. Marque o aceite aí '
+                   + 'embaixo e siga navegando.';
+  } else if (n === 2) {
+    lede.innerHTML = 'Segunda vez, e <strong style="color:#F0F1E3">ainda sem nenhuma consequência</strong>. '
+                   + 'Só um lembrete de que a partir da próxima o site começa a se proteger sozinho.';
+  } else if (n === 3) {
+    lede.innerHTML = 'A partir de agora a marca d’água acompanha <strong style="color:#F0F1E3">todas '
+                   + 'as páginas</strong>, e cada imagem que sair daqui vai carimbada.';
+  } else if (n === 4) {
+    lede.innerHTML = 'Último aviso: <strong style="color:#F0F1E3">na próxima tentativa o conteúdo '
+                   + 'do site deixa de ser carregado</strong> e a visita se encerra por aqui.';
+  }
+
+  /* Para onde o botão devolve. Só aceito caminho interno: um "de=https://outro-site"
+     transformaria esta página num redirecionador aberto hospedado no nosso
+     domínio — presente de aniversário para quem monta phishing. */
+  var destino = 'index.html';
+  var de = p.get('de') || '';
+  if (de.charAt(0) === '/' && de.charAt(1) !== '/') destino = de;
+
+  var caixa   = document.getElementById('bqAceite');
+  var botao   = document.getElementById('bqVoltar');
+  var erro    = document.getElementById('bqErro');
+  var termos  = document.getElementById('bqTermos');
+
+  function pintarBotao() {
+    botao.classList.toggle('pronto', caixa.checked);
+    if (caixa.checked) erro.textContent = '';
+    var etiqueta = caixa.closest('.aceite');
+    if (etiqueta && caixa.checked) etiqueta.classList.remove('falta');
+  }
+  caixa.addEventListener('change', pintarBotao);
+  pintarBotao();
+
+  botao.addEventListener('click', function () {
+    if (!caixa.checked) {
+      erro.textContent = 'Marque o aceite dos termos para continuar';
+      /* Abre os termos junto: mandar marcar uma caixa sem mostrar o que ela
+         aceita seria pedir assinatura em papel fechado. */
+      if (termos) termos.open = true;
+      var etiqueta = caixa.closest('.aceite');
+      if (etiqueta) {
+        etiqueta.classList.remove('falta');
+        void etiqueta.offsetWidth;         // reinicia a animação em cliques seguidos
+        etiqueta.classList.add('falta');
+      }
+      caixa.focus();
+      return;
+    }
+    /* O aceite fica só no navegador de quem aceitou — não chega até a
+       TeraBoard, então não é prova que se possa apresentar depois. Para virar
+       registro de verdade, teria de ser enviado a algum lugar no momento em
+       que acontece. */
+    try { sessionStorage.setItem('tb:termos', new Date().toISOString()); } catch (e) {}
+    location.replace(destino);
+  });
+
+  document.getElementById('bqCarimbo').textContent =
+    new Date().toLocaleString('pt-BR', { day:'2-digit', month:'2-digit', year:'numeric',
+                                         hour:'2-digit', minute:'2-digit' });
+})();
+</script>
+
+<!-- A folha da proteção já veio no <head>; aqui entra só o comportamento.
+     Apertar PrtScn nesta página também conta: é o degrau seguinte. -->
+<script src="js/protecao.js"></script>
+</body>
+</html>

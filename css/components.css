@@ -1,0 +1,138 @@
+/* ==========================================================================
+   TeraBoard · Componentes — cards, botoes, tags e todo o resto reutilizavel
+   ========================================================================== */
+
+/* ---------- cards (Glassmorphism) ---------- */
+.plate, .plate-dark, .icard{
+  position:relative;
+  background-color:var(--porcelain-2);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border:1px solid var(--hair);
+  border-radius:18px;
+  box-shadow:0 22px 45px -34px rgba(0,0,0,.8);
+  color:var(--ink);
+}
+.plate .muted, .plate-dark .muted{color:var(--sage)}
+.plate .display em, .plate-dark .display em{color:var(--signal)}
+.readout-num{font-family:'IBM Plex Mono',monospace;font-weight:600;letter-spacing:-.02em;color:var(--ink);}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:.6rem;
+  font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:600;
+  letter-spacing:.01em;
+  padding:14px 26px;border-radius:12px;cursor:pointer;
+  transition:all .3s cubic-bezier(.2,.8,.2,1);border:1.5px solid transparent;text-decoration:none;
+}
+.btn-solid{background:var(--signal);color:var(--forest-2);}
+.btn-solid:hover{background:var(--ink);color:var(--forest-2);transform:translateY(-2px);box-shadow:0 16px 26px -16px rgba(255,255,255,.2)}
+.btn-signal{background:var(--signal);color:var(--forest-2)}
+.btn-signal:hover{background:var(--ink);color:var(--forest-2);transform:translateY(-2px);box-shadow:0 16px 30px -14px rgba(29, 199, 139,.65)}
+.btn-ghost{background:rgba(255,255,255,0.05);color:var(--ink);border-color:var(--hair)}
+.btn-ghost:hover{border-color:var(--signal);background:rgba(255,255,255,.1);transform:translateY(-2px)}
+.link-under{font-family:'Space Grotesk',sans-serif;font-size:.85rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--signal);text-decoration:none;border-bottom:1.5px solid rgba(29, 199, 139, 0.4);padding-bottom:3px;transition:.3s}
+.link-under:hover{border-color:var(--signal);color:var(--ink)}
+
+/* ---------- tags / pills ---------- */
+.tag{display:inline-flex;align-items:center;gap:.45rem;font-family:'Space Grotesk',sans-serif;font-size:.78rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink);border:1px solid rgba(29, 199, 139, 0.28);
+  background:rgba(29, 199, 139, 0.15);border-radius:9999px;padding:5px 13px}
+.tag .dot{width:7px;height:7px;border-radius:9999px;background:var(--signal)}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(34px);transition:opacity 1s cubic-bezier(.16,1,.3,1),transform 1s cubic-bezier(.16,1,.3,1)}
+.reveal.vis{opacity:1;transform:none}
+.reveal.s1{transition-delay:.08s}.reveal.s2{transition-delay:.16s}.reveal.s3{transition-delay:.24s}.reveal.s4{transition-delay:.32s}
+
+/* ---------- misc ---------- */
+.imgframe{position:relative;overflow:hidden;border:1px solid var(--hair);border-radius:14px;background:var(--forest)}
+.imgframe img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.88) contrast(1.06) brightness(.93) sepia(.1) hue-rotate(-6deg)}
+.imgframe::after{content:"";position:absolute;inset:0;background:linear-gradient(175deg, rgba(10,77,54,.1), rgba(6,38,27,.4));mix-blend-mode:multiply;pointer-events:none}
+.spec-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:18px 0;border-bottom:1px solid var(--hair-soft)}
+.spec-row .k{font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:600;letter-spacing:.02em;color:var(--sage)}
+.spec-row .v{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.98rem;text-align:right;color:var(--ink)}
+
+.click-hint{position:absolute;left:50%;top:-40px;transform:translateX(-50%);z-index:40;display:inline-flex;align-items:center;gap:6px;
+  background:var(--signal);color:var(--forest-2);font-family:'IBM Plex Mono',monospace;font-size:.66rem;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;padding:6px 12px;border-radius:9999px;white-space:nowrap;box-shadow:0 8px 18px -6px rgba(29, 199, 139,.6);
+  pointer-events:none;animation:hintB 1.3s ease-in-out infinite}
+.click-hint::after{content:'';position:absolute;bottom:-5px;left:50%;transform:translateX(-50%);width:0;height:0;
+  border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--signal)}
+@keyframes hintB{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,-6px)}}
+
+.ideal-line{stroke:var(--signal);stroke-width:1.6;stroke-dasharray:5 5}
+.tint{background:var(--mint)}
+.grad-green{background:linear-gradient(135deg, rgba(31, 143, 103, 0.4) 0%, rgba(10, 77, 54, 0.7) 100%); backdrop-filter: blur(12px);}
+
+/* Ajustes específicos para iCards e Logs */
+.icard{padding:24px 22px;height:100%;transition:transform .3s,box-shadow .3s}
+.icard:hover{transform:translateY(-4px);box-shadow:0 22px 40px -26px rgba(0,0,0,.9)}
+.icard .ic{width:56px;height:56px;border-radius:16px;background:var(--forest-2);color:var(--signal);border: 1px solid var(--signal-deep);
+  display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:18px;}
+.icard h3, .icard h4{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.18rem;letter-spacing:-.01em;color:var(--ink);margin-bottom:6px}
+.icard p{color:var(--sage);font-size:1rem;line-height:1.55}
+
+.log-row{display:grid;grid-template-columns:14px 150px 1fr;gap:14px;align-items:center;padding:14px 0;border-bottom:1px solid var(--hair-soft)}
+.log-row .s{width:9px;height:9px;border-radius:9999px}
+.log-row .s.ok{background:var(--signal)}
+.log-row .s.run{background:var(--amber);box-shadow:0 0 0 0 rgba(245,184,65,.5);animation:pl 1.8s infinite}
+@keyframes pl{0%{box-shadow:0 0 0 0 rgba(245,184,65,.45)}70%{box-shadow:0 0 0 7px rgba(245,184,65,0)}100%{box-shadow:0 0 0 0 rgba(245,184,65,0)}}
+.log-row .k{font-family:'IBM Plex Mono',monospace;font-size:.74rem;letter-spacing:.06em;font-weight:500; color: var(--ink)}
+.log-row .v{font-size:.92rem;color:var(--sage)}
+@media(max-width:640px){.log-row{grid-template-columns:14px 1fr}.log-row .v{grid-column:2}}
+
+/* CSS DO SIMULADOR (arraste)
+   O controle tem 44 px de ALTURA DE TOQUE, com a trilha de 8 px desenhada
+   dentro por gradiente. Antes o elemento inteiro media 8 px: no dedo, o
+   alvo praticamente nao existia — e arrastar esses tres controles e o
+   proposito da secao. A trilha continua fina; o que cresceu foi o alvo. */
+.srange{-webkit-appearance:none;appearance:none;width:100%;
+  height:44px;padding:0;margin:0;border-radius:9999px;
+  background:linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,.16))
+             center/100% 8px no-repeat;
+  outline:none;cursor:grab;touch-action:pan-y}
+.srange:active{cursor:grabbing}
+.srange:focus-visible{outline:2px solid var(--signal);outline-offset:3px}
+.srange::-webkit-slider-runnable-track{height:8px;border-radius:9999px;background:transparent}
+.srange::-moz-range-track{height:8px;border-radius:9999px;background:transparent}
+.srange::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:26px;height:26px;border-radius:9999px;
+  margin-top:-9px;   /* centra o botao na trilha de 8 px */
+  background:var(--signal);border:3px solid #fff;cursor:grab;box-shadow:0 6px 16px -4px rgba(27,190,134,.8)}
+.srange::-moz-range-thumb{width:26px;height:26px;border-radius:9999px;background:var(--signal);border:3px solid #fff;cursor:grab;box-shadow:0 6px 16px -4px rgba(27,190,134,.8)}
+.drag-hint{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--signal);display:inline-flex;align-items:center;gap:6px}
+.verdict{border-radius:14px;padding:16px 18px;transition:all .45s cubic-bezier(.2,.8,.2,1)}
+
+/* CSS DA CTA */
+.grad-green{background:linear-gradient(135deg,#1BBE86 0%,#0E9E6E 55%,#0C7A54 100%)}
+.grad-green .eyebrow{color:#eafff6}
+.grad-green .eyebrow::before{background:#eafff6}
+.grad-green .display,.grad-green .lede,.grad-green .muted{color:#f2fff9}
+.grad-green .btn-ghost{color:#fff;border-color:rgba(255,255,255,.5)}
+.grad-green .btn-ghost:hover{background:rgba(255,255,255,.12);border-color:#fff}
+
+/* CSS DO MARQUEE */
+.marquee{overflow:hidden;white-space:nowrap;border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12);
+  padding:20px 0;background:rgba(255,255,255,.04)}
+.marquee .track{display:flex;width:max-content;gap:44px;align-items:center;animation:mq 28s linear infinite;will-change:transform}
+.marquee:hover .track{animation-play-state:paused}
+.marquee span{flex:0 0 auto;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.5rem;letter-spacing:-.01em;color:var(--ink);display:inline-flex;align-items:center;gap:44px}
+.marquee span::after{content:"";width:10px;height:10px;border-radius:3px;background:var(--signal);display:inline-block}
+@keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.marquee .track{animation-duration:90s}}
+
+/* ---------- icones de contato do rodape ----------
+   Sao SVG creme em <img>, entao o tamanho vem daqui (o <i> da Phosphor
+   usava font-size). A cor ja vem gravada no proprio arquivo. */
+.social-ic{width:24px;height:24px;display:block;transition:transform .25s ease}
+/* Icone de 24 px dentro de um alvo de 44 px. As margens negativas devolvem
+   o espaco que o preenchimento tomou, entao o desenho do rodape nao muda. */
+.social-link{display:inline-flex;align-items:center;justify-content:center;
+  min-width:44px;min-height:44px;margin:-10px;opacity:.8;transition:opacity .25s ease}
+.social-link:hover{opacity:1}
+.social-link:hover .social-ic{transform:translateY(-2px)}
+
+/* spinner usado nos botoes em estado de carregamento */
+@keyframes spin{to{transform:rotate(360deg)}}

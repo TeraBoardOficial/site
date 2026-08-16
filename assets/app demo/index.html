@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Fora das buscas enquanto os tres produtos estao em desenvolvimento. Esta
+     linha e o que realmente tira a pagina do Google.
+     E o robots.txt continua com Allow: / de proposito — "Disallow" impediria o
+     buscador de BAIXAR a pagina, e sem baixar ele nunca leria este noindex: a
+     URL ficaria presa no indice, sem titulo nem descricao. Primeiro sai do
+     indice, depois se discute bloquear o rastreio. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<title>TeraBoard · Sua estufa na palma da mão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/device.css">
+<script type="importmap">
+{
+	"imports": {
+		"three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+		"three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+	}
+}
+</script>
+<style>
+	/* =====================================================================
+	   Vitrine de propaganda.
+
+	   Abre no login, com o aparelho centralizado e uma seta pedindo o toque.
+	   Entrou, o aparelho desliza para a esquerda e o arquivo de fichas
+	   aparece à direita — clicar numa ficha troca a tela do aparelho.
+
+	   As telas do aparelho NÃO SÃO CLICÁVEIS. A única exceção em toda a
+	   vitrine é o botão "Entrar", que é justamente o gesto de abertura.
+	   ===================================================================== */
+
+	:root {
+		--brand-dark: #0B4D36;
+		--brand-green: #1EC78C;
+		--beige: #F0F1E3;
+		--ink-on-dark: #F4F7F4;
+		--ink-muted: #9FBBAC;
+		--font-display: 'Space Grotesk', system-ui, sans-serif;
+		--font-body: 'Inter', system-ui, sans-serif;
+		--font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+	}
+
+	* { margin: 0; padding: 0; box-sizing: border-box; }
+
+	body {
+		background:
+			radial-gradient(90% 60% at 15% 0%, #10684A 0%, transparent 60%),
+			radial-gradient(80% 70% at 95% 100%, #0A3A29 0%, transparent 55%),
+			#08301F;
+		color: var(--ink-on-dark);
+		font-family: var(--font-body);
+		-webkit-font-smoothing: antialiased;
+		min-height: 100vh;
+	}
+
+	button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+
+	.wrap { max-width: 1240px; margin: 0 auto; padding: 64px 32px 80px; }
+
+	/* --- Cabeçalho ------------------------------------------------------ */
+
+	.intro {
+		max-width: 660px;
+		margin: 0 auto 48px;
+		text-align: center;
+		transition: max-width 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+		            margin 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	.intro img { height: 26px; width: auto; margin: 0 auto 26px; display: block; }
+	.intro h1 {
+		font-family: var(--font-display);
+		font-size: clamp(30px, 4.2vw, 48px);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		line-height: 1.08;
+	}
+	.intro h1 em { font-style: normal; color: var(--brand-green); }
+	.intro p {
+		margin: 18px auto 0;
+		font-size: 17px;
+		line-height: 1.6;
+		color: var(--ink-muted);
+		max-width: 54ch;
+	}
+
+	/* Aberta a apresentação, o texto se alinha à esquerda e cede o palco. */
+	body.aberto .intro { max-width: 720px; margin-left: 0; text-align: left; }
+	body.aberto .intro img { margin-left: 0; }
+	body.aberto .intro p { margin-left: 0; }
+
+	/* --- Palco ---------------------------------------------------------- */
+
+	.showcase {
+		display: grid;
+		grid-template-columns: minmax(0, 420px) minmax(0, 0fr);
+		gap: 0;
+		justify-content: center;
+		align-items: start;
+		transition: grid-template-columns 0.75s cubic-bezier(0.4, 0, 0.2, 1),
+		            gap 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+	}
+	body.aberto .showcase {
+		grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+		gap: 64px;
+	}
+
+	.phone-col { position: relative; }
+	body.aberto .phone-col { position: sticky; top: 40px; }
+	.palco { position: relative; }
+	.phone-col .device { width: 100%; transition: opacity 0.3s; }
+
+	/*
+	 * Palco da encenação em 3D. Ocupa exatamente a caixa da moldura em SVG e
+	 * troca de lugar com ela — a câmera do three.js está calibrada para o
+	 * aparelho sair do mesmo tamanho, então a troca não dá salto.
+	 */
+	.cena3d {
+		position: absolute; inset: 0; z-index: 3;
+		opacity: 0; pointer-events: none;
+		transition: opacity 0.3s;
+	}
+	.cena3d canvas { width: 100% !important; height: 100% !important; display: block; }
+	body.encenando .cena3d { opacity: 1; }
+	body.encenando .device { opacity: 0; }
+
+	/* Mira e estouro do flash, por cima do palco. */
+	.mira {
+		position: absolute; inset: 0; z-index: 4; pointer-events: none;
+		opacity: 0; transition: opacity 0.3s;
+	}
+	body.mirando .mira { opacity: 1; }
+	/* Posição e tamanho vêm do foto3d.js, que projeta o morango na tela a cada
+	   quadro. Os valores abaixo são só o estado inicial, antes do primeiro
+	   quadro chegar. */
+	.mira .quadro {
+		position: absolute; left: var(--mira-x, 68%); top: var(--mira-y, 42%);
+		width: var(--mira-d, 96px); height: var(--mira-d, 96px);
+		transform: translate(-50%, -50%);
+		border: 2px solid rgba(30, 199, 140, 0.9); border-radius: 10px;
+		animation: focar 1.1s ease-in-out infinite;
+	}
+	.mira .quadro::before, .mira .quadro::after {
+		content: ""; position: absolute; background: rgba(30, 199, 140, 0.9);
+	}
+	.mira .quadro::before { left: 50%; top: -9px; width: 1px; height: 18px; }
+	.mira .quadro::after  { top: 50%; left: -9px; height: 1px; width: 18px; }
+	@keyframes focar {
+		0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.95; }
+		50%      { transform: translate(-50%, -50%) scale(0.9); opacity: 0.6; }
+	}
+
+	.estouro {
+		position: absolute; inset: 0; z-index: 5; pointer-events: none;
+		opacity: 0;
+		background:
+			radial-gradient(38% 26% at 44% 31%, rgba(255,255,255,0.98) 0%, rgba(255,246,222,0.55) 38%, rgba(255,240,200,0) 72%),
+			radial-gradient(120% 90% at 44% 31%, rgba(255,252,238,0.42) 0%, rgba(255,252,238,0) 60%);
+	}
+	.estouro.bate { animation: estourar 0.5s cubic-bezier(0.1, 0.8, 0.3, 1); }
+	@keyframes estourar {
+		0%   { opacity: 0; transform: scale(0.82); }
+		9%   { opacity: 1;  transform: scale(1); }
+		100% { opacity: 0; transform: scale(1.18); }
+	}
+
+	/* Enquanto os 6 MB do modelo descem. */
+	.carregando {
+		position: absolute; inset: 0; z-index: 6;
+		display: none; align-items: center; justify-content: center;
+		background: rgba(8, 48, 31, 0.72); border-radius: 40px;
+		font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+		text-transform: uppercase; color: var(--ink-muted);
+	}
+	body.carregando3d .carregando { display: flex; }
+	.phone-col .caption {
+		margin-top: 22px;
+		font-family: var(--font-mono);
+		font-size: 10px;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--ink-muted);
+		text-align: center;
+		opacity: 0;
+		transition: opacity 0.4s 0.5s;
+	}
+	body.aberto .phone-col .caption { opacity: 1; }
+
+	/* --- A seta que pede o toque ---------------------------------------- */
+
+	.cue {
+		position: absolute;
+		left: calc(100% + 18px);
+		top: 56%;
+		display: flex;
+		align-items: center;
+		gap: 10px;
+		white-space: nowrap;
+		animation: acenar 1.9s ease-in-out infinite;
+		transition: opacity 0.35s;
+	}
+	.cue svg { width: 76px; height: 44px; flex-shrink: 0; }
+	.cue span {
+		font-family: var(--font-display);
+		font-size: 18px;
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		color: var(--brand-green);
+	}
+	@keyframes acenar {
+		0%, 100% { transform: translateX(0); }
+		50%      { transform: translateX(10px); }
+	}
+	body.aberto .cue { opacity: 0; pointer-events: none; }
+
+	@media (max-width: 1180px) {
+		.cue { left: auto; right: calc(100% + 18px); top: 56%; flex-direction: row-reverse; }
+		.cue svg { transform: scaleX(-1); }
+	}
+
+	/* =====================================================================
+	   O arquivo de fichas
+
+	   Cada ficha mostra só a aba; as de baixo somem atrás da de cima, como
+	   pastas numa gaveta. A ficha aberta cresce e empurra as outras.
+	   ===================================================================== */
+
+	.deck {
+		display: flex;
+		flex-direction: column;
+		opacity: 0;
+		transform: translateX(28px);
+		pointer-events: none;
+		transition: opacity 0.5s 0.55s,
+		            transform 0.6s 0.55s cubic-bezier(0.4, 0, 0.2, 1),
+		            max-height 0s 0.55s;
+
+		/*
+		 * Enquanto a coluna do grid abre (0fr → 1fr), esta caixa passa por
+		 * uma largura perto de ZERO — e conteúdo sem largura não some, ele
+		 * quebra palavra por palavra e fica altíssimo: 2.275 px medidos,
+		 * contra 735 px de verdade. Como a linha do grid cresce até o item
+		 * mais alto, isso pendurava mais de mil pixels de nada embaixo do
+		 * aparelho.
+		 *
+		 * Então a pilha fica recolhida até a coluna terminar de abrir, aos
+		 * 0,55 s — e é também quando ela começa a aparecer, o que dá uma
+		 * ordem melhor de leitura: a gaveta abre, depois as fichas entram.
+		 */
+		max-height: 0;
+		overflow: hidden;
+
+		/* `overflow: hidden` fica de pé mesmo depois de aberta, senão o
+		   recolhimento não segura nada. A folga abaixo é o espaço para a
+		   ficha ativa deslizar 18 px para a esquerda e para a sombra dela
+		   não bater na parede da caixa. */
+		padding: 0 0 34px 34px;
+		margin: 0 0 -34px -34px;
+	}
+	body.aberto .deck {
+		opacity: 1; transform: none; pointer-events: auto;
+		/* Teto folgado, não medida: só precisa ser maior que a pilha, que
+		   passa de 1.400 px nem na tela mais estreita. */
+		max-height: 6000px;
+	}
+
+	.file {
+		position: relative;
+		/* A sobreposição é o que dá o ar de documento empilhado. */
+		margin-top: -14px;
+		border-radius: 20px 20px 14px 14px;
+		color: #10231A;
+		box-shadow:
+			0 -10px 22px rgba(0, 0, 0, 0.28),
+			0 1px 0 rgba(255, 255, 255, 0.7) inset;
+		transition: transform 0.34s cubic-bezier(0.2, 0.8, 0.2, 1),
+		            background 0.34s, box-shadow 0.34s, margin 0.34s;
+		text-align: left;
+		width: 100%;
+		display: block;
+		overflow: hidden;
+	}
+	.file:first-child { margin-top: 0; }
+
+	/* Cada ficha um tom mais clara que a de baixo: sem isso a pilha vira
+	   um bloco só e não se lê onde uma termina e a outra começa. */
+	.file:nth-child(1) { background: #E2E5D3; }
+	.file:nth-child(2) { background: #E6E9D8; }
+	.file:nth-child(3) { background: #EAECDD; }
+	.file:nth-child(4) { background: #EDF0E2; }
+	.file:nth-child(5) { background: #F1F3E7; }
+	.file:nth-child(6) { background: #F4F6EC; }
+	.file:nth-child(7) { background: #F7F8F0; }
+	.file:nth-child(8) { background: #FAFBF5; }
+	.file:nth-child(9) { background: #FFFFFF; }
+
+	/* A ficha da encenação em 3D se anuncia como diferente das outras. */
+	.file.cena .name { color: #0B4D36; }
+	.file.cena .selo {
+		display: inline-flex; align-items: center; gap: 5px;
+		margin-top: 8px; padding: 4px 10px; border-radius: 999px;
+		background: rgba(30, 199, 140, 0.16); color: #0B7A55;
+		font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+		letter-spacing: 0.06em; text-transform: uppercase;
+	}
+	.file.cena.rodando .selo { background: rgba(196, 115, 43, 0.18); color: #A25D1E; }
+
+	.file:hover { transform: translateX(-8px); }
+
+	.file.active {
+		background: #FFFFFF;
+		transform: translateX(-18px);
+		margin-bottom: 14px;
+		box-shadow:
+			0 18px 40px rgba(0, 0, 0, 0.36),
+			0 0 0 2px var(--brand-green);
+	}
+
+	.file .tab { display: flex; align-items: center; gap: 16px; padding: 20px 24px; width: 100%; }
+
+	.file .num {
+		font-family: var(--font-mono);
+		font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+		color: #7E9A8B; padding-top: 3px;
+	}
+	.file.active .num { color: var(--brand-green); }
+
+	.file .name {
+		font-family: var(--font-display);
+		font-size: 18px; font-weight: 700; letter-spacing: -0.02em;
+		flex: 1;
+	}
+	.file .lead {
+		display: block;
+		font-family: var(--font-body);
+		font-size: 13px; font-weight: 400; letter-spacing: 0;
+		color: #52705F; margin-top: 3px;
+	}
+
+	.file .mark {
+		width: 30px; height: 30px; border-radius: 50%;
+		background: rgba(11, 77, 54, 0.08);
+		display: flex; align-items: center; justify-content: center;
+		flex-shrink: 0;
+		transition: background 0.3s, transform 0.3s;
+	}
+	.file .mark::after {
+		content: "";
+		width: 8px; height: 8px; border-radius: 50%;
+		background: #7E9A8B;
+		transition: background 0.3s;
+	}
+	.file.active .mark { background: rgba(30, 199, 140, 0.16); transform: scale(1.1); }
+	.file.active .mark::after { background: var(--brand-green); }
+
+	/* Corpo recolhido. `grid-template-rows` de 0fr para 1fr é o único jeito
+	   de animar altura automática sem chutar um `max-height`. */
+	.file .body {
+		display: grid;
+		grid-template-rows: 0fr;
+		transition: grid-template-rows 0.34s cubic-bezier(0.2, 0.8, 0.2, 1);
+	}
+	.file.active .body { grid-template-rows: 1fr; }
+	/* Tudo dentro da ficha é `<span>`: um `<button>` só aceita conteúdo de
+	   frase, e o navegador expulsaria um `<div>` ou `<p>` para fora dele. */
+	.file .body > .clip { overflow: hidden; }
+	.file .body .txt {
+		display: block;
+		padding: 0 24px 22px 62px;
+		font-size: 15px; line-height: 1.62; color: #3C5A4A;
+	}
+	.file .body strong { color: #10231A; font-weight: 600; }
+
+	/* --- Rodapé --------------------------------------------------------- */
+
+	.foot {
+		margin-top: 56px; padding-top: 26px;
+		border-top: 1px solid rgba(255, 255, 255, 0.12);
+		font-family: var(--font-mono);
+		font-size: 10px; letter-spacing: 0.09em; text-transform: uppercase;
+		color: var(--ink-muted);
+		opacity: 0; transition: opacity 0.5s 0.4s;
+	}
+	body.aberto .foot { opacity: 1; }
+
+	/* --- Embutida numa página do site ------------------------------------ */
+
+	/*
+	 * Com `?embutido=1` a vitrine vira só o palco: quem hospeda já deu o
+	 * cabeçalho, o fundo e o rodapé. Sem isso o visitante leria o mesmo
+	 * título duas vezes, uma dentro da moldura do site e outra fora.
+	 */
+	body.embutido { background: transparent; min-height: 0; }
+	body.embutido .intro,
+	body.embutido .foot { display: none; }
+	body.embutido .wrap { padding: 8px 16px 16px; }
+
+	/* Embutida, a vitrine divide a tela com o resto da página — o aparelho em
+	   tamanho de vitrine avulsa comia um monitor inteiro. */
+	body.embutido .showcase { grid-template-columns: minmax(0, 330px) minmax(0, 0fr); }
+	body.embutido.aberto .showcase { grid-template-columns: minmax(0, 330px) minmax(0, 1fr); gap: 44px; }
+	body.embutido .file .tab { padding: 15px 20px; }
+	body.embutido .file .name { font-size: 16px; }
+	body.embutido .file .lead { font-size: 12px; }
+	body.embutido .file .body .txt { padding: 0 20px 18px 54px; font-size: 14px; }
+
+	/* --- Telas estreitas ------------------------------------------------ */
+
+	@media (max-width: 980px) {
+		.wrap { padding: 44px 20px 60px; }
+		.showcase, body.aberto .showcase { grid-template-columns: 1fr; gap: 40px; }
+		.phone-col, body.aberto .phone-col { position: static; justify-self: center; max-width: 380px; width: 100%; }
+		.file:hover, .file.active { transform: none; }
+		.cue { left: 50%; right: auto; top: auto; bottom: -70px; transform: translateX(-50%); flex-direction: column; gap: 4px; }
+		.cue svg { transform: rotate(-90deg) scaleX(-1); }
+		@keyframes acenar {
+			0%, 100% { transform: translate(-50%, 0); }
+			50%      { transform: translate(-50%, 8px); }
+		}
+	}
+</style>
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="../../css/protecao.css">
+<script src="../../js/protecao.js"></script>
+</head>
+<body>
+
+<div class="wrap">
+
+	<div class="intro">
+		<img src="assets/logo-cream.svg" alt="TeraBoard">
+		<h1>A estufa inteira <em>na palma da mão</em>.</h1>
+		<p>
+			Sensoriamento em campo, fertirrigação em malha fechada e a conta da
+			safra fechando sozinha. O TeraBoard não mostra só o número — mostra
+			onde ir e o que fazer.
+		</p>
+	</div>
+
+	<div class="showcase">
+
+		<div class="phone-col">
+			<!--
+				O palco tem EXATAMENTE a caixa da moldura em SVG. É dele que o
+				three.js lê a largura para calibrar a câmera — medir a coluna
+				inteira faria o aparelho 3D sair menor que o de vetor.
+			-->
+			<div class="palco">
+				<div class="device">
+					<div class="device-screen">
+						<iframe id="tela" title="TeraBoard" src="tela-login.html" width="402" height="874"></iframe>
+					</div>
+					<img class="device-chrome" src="assets/device.svg" alt="" aria-hidden="true">
+				</div>
+
+				<!-- Encenação do card 09: o aparelho vira e fotografa. -->
+				<div class="cena3d" id="cena3d" aria-hidden="true"></div>
+				<div class="mira" id="mira" aria-hidden="true"><div class="quadro"></div></div>
+				<div class="estouro" id="estouro" aria-hidden="true"></div>
+				<div class="carregando" id="carregando">Carregando o morango…</div>
+			</div>
+
+			<!-- A seta some assim que a apresentação abre. -->
+			<div class="cue" id="cue" aria-hidden="true">
+				<svg viewBox="0 0 76 44" fill="none">
+					<path d="M72 22C58 6 34 4 16 18" stroke="#1EC78C" stroke-width="3" stroke-linecap="round"/>
+					<path d="M8 22 L18 10 L21 24 Z" fill="#1EC78C"/>
+				</svg>
+				<span>Toque em Entrar</span>
+			</div>
+
+			<p class="caption">Role a tela do aparelho</p>
+		</div>
+
+		<div class="deck" id="deck">
+
+			<button class="file active" data-tela="tela-estufas.html" aria-expanded="true">
+				<span class="tab">
+					<span class="num">01</span>
+					<span class="name">Visão Geral das Estufas<span class="lead">Identificação imediata de prioridades</span></span>
+					<span class="mark"></span>
+				</span>
+				<span class="body"><span class="clip"><span class="txt">
+					Saiba instantaneamente <strong>qual estufa exige atenção</strong>. O
+					sistema utiliza alertas visuais baseados em cores para indicar a pior
+					condição de cada ambiente, tornando a verificação diária muito mais
+					fácil e rápida do que a análise linha por linha de dados numéricos.
+				</span></span></span>
+			</button>
+
+			<button class="file" data-tela="tela-painel.html" aria-expanded="false">
+				<span class="tab">
+					<span class="num">02</span>
+					<span class="name">Painel de Controle da Estufa<span class="lead">Monitoramento das operações em tempo real</span></span>
+					<span class="mark"></span>
+				</span>
+				<span class="body"><span class="clip"><span class="txt">
+					Acompanhe o status diário: execução, volume de insumos restantes, clima
+					e situação de cada canteiro. Os indicadores de umidade e condutividade
+					mostram <strong>se cada setor está dentro da faixa recomendada</strong>
+					para o estágio em curso.
+				</span></span></span>
+			</button>
+
+			<button class="file" data-tela="tela-mapa.html" aria-expanded="false">
+				<span class="tab">
+					<span class="num">03</span>
+					<span class="name">Mapeamento da Estufa<span class="lead">Localização exata, sem médias</span></span>
+					<span class="mark"></span>
+				</span>
+				<span class="body"><span class="clip"><span class="txt">
+					<strong>Encontre problemas na origem.</strong> A interface reflete as
+					fieiras e a posição física exata de cada sensor instalado.
+				</span></span></span>
+			</button>
+
+			<button class="file" data-tela="tela-avisos.html" aria-expanded="false">
+				<span class="tab">
+					<span class="num">04</span>
+					<span class="name">Sistema de Avisos<span class="lead">Alertas acompanhados de soluções práticas</span></span>
+					<span class="mark"></span>
+				</span>
+				<span class="body"><span class="clip"><span class="txt">
+					Receba notificações ordenadas por urgência e horário, com
+					<strong>instruções claras de resolução</strong>. O sistema traduz os
+					dados em ações corretivas. Alertas críticos são enviados para a tela do
+					celular via notificação push, independentemente de o aplicativo estar
+					aberto.
+				</span></span></span>
+			</button>
+
+			<button class="file" data-tela="tela-historico.html" aria-expanded="false">
+				<span class="tab">
+					<span class="num">05</span>
+					<span class="name">Histórico<span class="lead">Análise de estabilidade e consumo</span></span>
+					<span class="mark"></span>
+				</span>
+				<span class="body"><span class="clip"><span class="txt">
+					Visualize o desempenho da sua plantação em uma única tela. Avalie
+					<strong>se as condições se mantiveram dentro da faixa-alvo</strong> e
+					analise os desvios.
+				</span></span></span>
+			</button>
+
+			<button class="file" data-tela="tela-receitas.html" aria-expanded="false">
+				<span class="tab">
+					<span class="num">06</span>
+					<span class="name">Receitas por Fase de Cultivo<span class="lead">Parâmetros específicos para cada estágio</span></span>
+					<span class="mark"></span>
+				</span>
+				<span class="body"><span class="clip"><span class="txt">
+					Cada etapa do ciclo — germinação, crescimento, floração, frutificação e
+					colheita — tem <strong>a sua própria receita de rega e adubação</strong>,
+					ajustável pelo produtor.
+				</span></span></span>
+			</button>
+
+			<button class="file" data-tela="tela-plantio.html" aria-expanded="false">
+				<span class="tab">
+					<span class="num">07</span>
+					<span class="name">Registro de Nova Safra<span class="lead">Rastreamento de custos operacionais</span></span>
+					<span class="mark"></span>
+				</span>
+				<span class="body"><span class="clip"><span class="txt">
+					Inicie um novo ciclo registrando os custos de preparação do canteiro.
+					<strong>A partir desse ponto, o sistema passa a contabilizar todos os
+					insumos consumidos pelo setor</strong>, estabelecendo a base de dados
+					para o cálculo preciso do custo final de produção.
+				</span></span></span>
+			</button>
+
+			<button class="file" data-tela="tela-extrato.html" aria-expanded="false">
+				<span class="tab">
+					<span class="num">08</span>
+					<span class="name">Extrato de Custos da Safra<span class="lead">Cálculo exato de custo por quilo</span></span>
+					<span class="mark"></span>
+				</span>
+				<span class="body"><span class="clip"><span class="txt">
+					O consumo de água e adubo do setor entra na conta da safra em valores
+					reais. O relatório funciona como um extrato contínuo, evidenciando
+					<strong>o momento em que a produção atinge o ponto de equilíbrio
+					financeiro</strong>.
+				</span></span></span>
+			</button>
+
+			<button class="file cena" id="ficha9" data-tela="tela-venda.html" data-cena="foto" aria-expanded="false">
+				<span class="tab">
+					<span class="num">09</span>
+					<span class="name">Ferramenta de Venda<span class="lead">Da colheita ao cliente rapidamente</span></span>
+					<span class="mark"></span>
+				</span>
+				<span class="body"><span class="clip"><span class="txt">
+					<strong>Gere materiais de venda diretamente no campo.</strong> O
+					aplicativo utiliza a foto da colheita para montar automaticamente um
+					cartão de oferta com o preço, a quantidade disponível e o seu contato,
+					formatado e pronto para compartilhamento via WhatsApp e Instagram.
+					<span class="selo"><span aria-hidden="true">▶</span> Toque e veja o aparelho virar e bater a foto</span>
+				</span></span></span>
+			</button>
+
+		</div>
+	</div>
+
+	<p class="foot">TeraBoard · Monitoramento e fertirrigação em malha fechada · Serra Fluminense, RJ</p>
+</div>
+
+<script src="assets/device.js"></script>
+<script>
+	(function () {
+		"use strict";
+
+		var tela = document.getElementById("tela");
+		var cue = document.getElementById("cue");
+
+		/* -----------------------------------------------------------------
+		   Modo embutido
+
+		   A página que hospeda não tem como adivinhar a altura da vitrine:
+		   ela muda quando a apresentação abre, quando uma ficha expande e
+		   quando o navegador reflui em tela estreita. Então é daqui que a
+		   altura sai, e o iframe lá fora só obedece.
+		   ----------------------------------------------------------------- */
+		if (/[?&]embutido=1/.test(location.search)) {
+			document.body.classList.add("embutido");
+
+			var wrap = document.querySelector(".wrap");
+
+			var avisarAltura = function () {
+				/*
+				 * Medimos o CONTEÚDO, não `documentElement.scrollHeight` —
+				 * scrollHeight nunca fica abaixo da janela, e a janela aqui é
+				 * o próprio iframe que estamos dimensionando. Uma medida só
+				 * alta, e a altura trava lá em cima para sempre: o iframe
+				 * cresce, o scrollHeight passa a devolver o tamanho novo e
+				 * nada mais consegue encolher.
+				 */
+				parent.postMessage({
+					type: "teraboard:altura",
+					altura: wrap.offsetHeight,
+				}, "*");
+			};
+
+			addEventListener("load", avisarAltura);
+			addEventListener("resize", avisarAltura);
+			// As transições de abertura só chegam à altura final no fim delas.
+			addEventListener("transitionend", avisarAltura);
+			if (window.ResizeObserver) new ResizeObserver(avisarAltura).observe(document.body);
+			avisarAltura();
+		}
+		var fichas = Array.prototype.slice.call(document.querySelectorAll("#deck .file"));
+		var aberto = false;
+
+		function abrir(ficha) {
+			if (ficha.classList.contains("active") && aberto) return;
+
+			fichas.forEach(function (f) {
+				var ativa = f === ficha;
+				f.classList.toggle("active", ativa);
+				f.setAttribute("aria-expanded", ativa ? "true" : "false");
+			});
+
+			// A ficha da encenação carrega a própria tela no tempo dela.
+			if (!ficha.dataset.cena) tela.src = ficha.dataset.tela;
+		}
+
+		/** Entrou: o aparelho cede espaço e o arquivo de fichas aparece. */
+		function entrar() {
+			if (aberto) return;
+			aberto = true;
+			document.body.classList.add("aberto");
+			tela.src = fichas[0].dataset.tela;
+		}
+
+		// O toque vem de dentro do aparelho, na tela de login.
+		addEventListener("message", function (event) {
+			if (event.data && event.data.type === "teraboard:login") entrar();
+		});
+
+		// A seta também serve de atalho — quem clica nela quer a mesma coisa.
+		cue.addEventListener("click", entrar);
+		cue.style.cursor = "pointer";
+
+		fichas.forEach(function (ficha) {
+			ficha.addEventListener("click", function () {
+				entrar();
+				abrir(ficha);
+				if (ficha.dataset.cena === "foto") rodarCena(ficha);
+			});
+		});
+
+		/* -----------------------------------------------------------------
+		   Card 09 — o aparelho vira e fotografa o morango.
+
+		   O módulo 3D e os 6 MB do modelo só descem quando alguém pede: numa
+		   página de propaganda, esse peso não pode estar na abertura.
+		   ----------------------------------------------------------------- */
+
+		var cena3d = document.getElementById("cena3d");
+		var mira = document.getElementById("mira");
+		var estouro = document.getElementById("estouro");
+		var rodando = false;
+		var fotoPronta = false;
+
+		// A tela do post pode carregar depois da foto ficar pronta; quando ela
+		// avisa que chegou, a foto é reenviada.
+		addEventListener("message", function (event) {
+			if (event.data && event.data.type === "teraboard:venda-pronta" && fotoPronta) {
+				mandarFoto();
+			}
+		});
+
+		function mandarFoto() {
+			try {
+				tela.contentWindow.postMessage({ type: "teraboard:foto" }, "*");
+			} catch (e) {
+				/* a tela ainda avisa de novo quando terminar de carregar */
+			}
+		}
+
+		async function rodarCena(ficha) {
+			if (rodando) return;
+			rodando = true;
+			fotoPronta = false;
+			ficha.classList.add("rodando");
+			document.body.classList.add("carregando3d");
+
+			// A tela do post entra já no estado vazio, esperando a foto.
+			tela.src = "tela-venda.html";
+
+			let modulo;
+			try {
+				modulo = await import("./foto3d.js");
+			} catch (erro) {
+				// Sem WebGL ou sem rede, a ficha ainda entrega o post — só sem
+				// a encenação. É melhor do que uma ficha que não faz nada.
+				console.warn("Encenação 3D indisponível:", erro);
+				encerrarCena(ficha);
+				return;
+			}
+
+			var cena = null;
+			try {
+				document.body.classList.remove("carregando3d");
+				document.body.classList.add("encenando");
+
+				cena = await modulo.encenar(cena3d, {
+					aoVirar: function () { document.body.classList.add("mirando"); },
+					// A moldura do foco não adivinha onde a fruta está: a cena
+					// projeta o morango na tela e manda o ponto para cá.
+					aoMirar: function (x, y, diametro) {
+						mira.style.setProperty("--mira-x", x + "%");
+						mira.style.setProperty("--mira-y", y + "%");
+						mira.style.setProperty("--mira-d", diametro + "px");
+					},
+					aoClicar: function () {
+						document.body.classList.remove("mirando");
+						estouro.classList.remove("bate");
+						void estouro.offsetWidth;   // reinicia a animação
+						estouro.classList.add("bate");
+						fotoPronta = true;
+					},
+					aoTerminar: function () {
+						if (fotoPronta) mandarFoto();
+					},
+				});
+			} catch (erro) {
+				console.warn("Encenação interrompida:", erro);
+			}
+
+			// Devolve a moldura em SVG antes de desmontar o 3D: assim a troca
+			// acontece sob o desvanecimento, e não num quadro vazio.
+			document.body.classList.remove("encenando", "mirando");
+			setTimeout(function () {
+				// Descarta geometrias, texturas e o contexto WebGL. Sem isto,
+				// repetir a encenação empilha contextos até o navegador cortar.
+				if (cena && cena.encerrar) cena.encerrar();
+				encerrarCena(ficha);
+			}, 320);
+		}
+
+		function encerrarCena(ficha) {
+			document.body.classList.remove("encenando", "mirando", "carregando3d");
+			ficha.classList.remove("rodando");
+			cena3d.innerHTML = "";
+			rodando = false;
+		}
+
+		// Setas percorrem o arquivo, como numa gaveta de fichas mesmo.
+		document.getElementById("deck").addEventListener("keydown", function (event) {
+			var passo = event.key === "ArrowDown" ? 1 : event.key === "ArrowUp" ? -1 : 0;
+			if (!passo) return;
+
+			event.preventDefault();
+			var atual = fichas.findIndex(function (f) { return f.classList.contains("active"); });
+			var proxima = fichas[(atual + passo + fichas.length) % fichas.length];
+			abrir(proxima);
+			proxima.focus();
+		});
+	})();
+</script>
+</body>
+</html>

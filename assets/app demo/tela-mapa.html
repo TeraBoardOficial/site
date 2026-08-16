@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Fora das buscas enquanto os tres produtos estao em desenvolvimento. Esta
+     linha e o que realmente tira a pagina do Google.
+     E o robots.txt continua com Allow: / de proposito — "Disallow" impediria o
+     buscador de BAIXAR a pagina, e sem baixar ele nunca leria este noindex: a
+     URL ficaria presa no indice, sem titulo nem descricao. Primeiro sai do
+     indice, depois se discute bloquear o rastreio. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<title>TeraBoard · Mapa da estufa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	.lane { position: relative; height: 56px; border-radius: var(--r-chip); background: var(--beige); padding: 0 22px; }
+	.lane .soil { position: absolute; left: 22px; right: 22px; top: 50%; height: 3px; border-radius: 2px; background: rgba(11,77,54,0.15); }
+	.pin { position: absolute; top: 50%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 1px; }
+	.pin .ring { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 2px solid transparent; }
+	.pin .n { font-family: var(--font-mono); font-size: 10px; color: var(--ink-3); }
+	.pin.warn .n { color: var(--warn-text); } .pin.crit .n { color: var(--crit-text); }
+	/* Um ponto com problema pisca — é o que puxa o olho de longe. */
+	@keyframes blip { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+	.pin.warn .dot, .pin.crit .dot { animation: blip 1.4s ease-in-out infinite; }
+	.sector-block { padding: 20px var(--pad); display: flex; flex-direction: column; gap: 16px; }
+	.sector-head { display: flex; align-items: center; gap: 8px; }
+</style>
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="../../css/protecao.css">
+<script src="../../js/protecao.js"></script>
+</head>
+<body class="has-nav">
+
+<!-- =========================================================================
+     Mapa da estufa inteira. Empilha o mapa de cada setor numa tela só — é a
+     visão de "vou dar uma volta no barracão": mostra todos os pontos que
+     pedem atenção sem obrigar a entrar setor por setor.
+     ========================================================================= -->
+
+<div class="top-bar">
+	<span class="back"><i class="ph ph-caret-left"></i></span>
+	<div class="grow">
+		<div class="tb-title">Mapa da estufa</div>
+		<div class="tb-sub">Estufa Principal</div>
+	</div>
+</div>
+
+<div style="padding:16px var(--pad) 20px">
+	<div class="panel warn">
+		<div class="row" style="gap:4px">
+			<span class="dot warn"></span>
+			<span class="t-item c-warn">2 pontos pedem atenção</span>
+		</div>
+		<div style="margin-top:12px;display:flex;flex-direction:column;gap:8px">
+			<span class="row" style="gap:6px">
+				<span class="dot warn" style="width:7px;height:7px"></span>
+				<span class="t-caption grow">Setor Norte · Fieira 2 · posição 9</span>
+				<span class="t-mono-s c-warn">Atenção</span>
+			</span>
+			<span class="row" style="gap:6px">
+				<span class="dot warn" style="width:7px;height:7px"></span>
+				<span class="t-caption grow">Setor Sul · Fieira 1 · posição 11</span>
+				<span class="t-mono-s c-warn">Atenção</span>
+			</span>
+		</div>
+	</div>
+</div>
+
+<!-- SETOR NORTE -->
+<div class="sector-block">
+	<div class="sector-head">
+		<span class="grow">
+			<span class="t-heading" style="display:block">Setor Norte</span>
+			<span class="t-caption c-2">Tomate Cherry · 2 fieiras</span>
+		</span>
+		<span class="chip mono warn"><span class="dot warn" style="width:6px;height:6px"></span>1 ponto</span>
+	</div>
+
+	<div style="display:flex;flex-direction:column;gap:20px">
+		<div>
+			<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px">
+				<span class="t-label">Fieira 1</span>
+				<span class="t-mono-s c-2" style="text-transform:uppercase">10 posições · 2 sensores</span>
+			</div>
+			<div class="lane">
+				<div class="soil"></div>
+				<div class="pin ok" style="left:calc(22px + (100% - 44px) * 0.111)"><span class="ring"><span class="dot"></span></span><span class="n">2</span></div>
+				<div class="pin ok" style="left:calc(22px + (100% - 44px) * 0.778)"><span class="ring"><span class="dot"></span></span><span class="n">8</span></div>
+			</div>
+		</div>
+		<div>
+			<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px">
+				<span class="t-label">Fieira 2</span>
+				<span class="t-mono-s c-2" style="text-transform:uppercase">10 posições · 2 sensores</span>
+			</div>
+			<div class="lane">
+				<div class="soil"></div>
+				<div class="pin ok" style="left:calc(22px + (100% - 44px) * 0.222)"><span class="ring"><span class="dot"></span></span><span class="n">3</span></div>
+				<div class="pin warn" style="left:calc(22px + (100% - 44px) * 0.889)"><span class="ring"><span class="dot warn"></span></span><span class="n">9</span></div>
+			</div>
+		</div>
+	</div>
+
+	<div class="map-legend" style="border-top:1px solid var(--line-light);padding-top:12px">
+		<span class="lg"><span class="dot" style="width:9px;height:9px"></span>Normal</span>
+		<span class="lg"><span class="dot warn" style="width:9px;height:9px"></span>Atenção</span>
+		<span class="lg"><span class="dot crit" style="width:9px;height:9px"></span>Urgente</span>
+	</div>
+	<p class="t-caption c-3">
+		Cada fieira é desenhada no comprimento real, e cada sensor aparece na
+		posição em que está instalado.
+	</p>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- SETOR SUL -->
+<div class="sector-block">
+	<div class="sector-head">
+		<span class="grow">
+			<span class="t-heading" style="display:block">Setor Sul</span>
+			<span class="t-caption c-2">Alface Crespa · 1 fieira</span>
+		</span>
+		<span class="chip mono warn"><span class="dot warn" style="width:6px;height:6px"></span>1 ponto</span>
+	</div>
+
+	<div>
+		<div style="display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px">
+			<span class="t-label">Fieira 1</span>
+			<span class="t-mono-s c-2" style="text-transform:uppercase">15 posições · 2 sensores</span>
+		</div>
+		<div class="lane">
+			<div class="soil"></div>
+			<!-- divisor é (15 - 1): posição 1 na borda esquerda, 15 na direita -->
+			<div class="pin ok" style="left:calc(22px + (100% - 44px) * 0.214)"><span class="ring"><span class="dot"></span></span><span class="n">4</span></div>
+			<div class="pin warn" style="left:calc(22px + (100% - 44px) * 0.714)"><span class="ring"><span class="dot warn"></span></span><span class="n">11</span></div>
+		</div>
+	</div>
+
+	<div class="map-legend" style="border-top:1px solid var(--line-light);padding-top:12px">
+		<span class="lg"><span class="dot" style="width:9px;height:9px"></span>Normal</span>
+		<span class="lg"><span class="dot warn" style="width:9px;height:9px"></span>Atenção</span>
+		<span class="lg"><span class="dot crit" style="width:9px;height:9px"></span>Urgente</span>
+	</div>
+</div>
+
+<nav class="bottom-nav">
+	<span class="nav-item"><i class="ph ph-house"></i><span class="nav-indicator"></span></span>
+	<span class="nav-item"><i class="ph ph-chart-line-up"></i><span class="nav-indicator"></span></span>
+	<span class="nav-item active"><i class="ph-fill ph-map-trifold"></i><span class="nav-indicator"></span></span>
+	<span class="nav-item"><i class="ph ph-sliders-horizontal"></i><span class="nav-indicator"></span></span>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+# TeraBoard — os tres produtos estao em desenvolvimento e o site inteiro esta
+# fora das buscas. Quem tira as paginas do Google e a linha
+# <meta name="robots" content="noindex"> no <head> de cada uma, e nao este
+# arquivo.
+#
+# O "Allow: /" abaixo NAO e descuido, e o oposto do que parece:
+#
+#   "Disallow" impede o buscador de BAIXAR a pagina. Sem baixar, ele nunca le o
+#   noindex — e uma URL que ele ja conhece continua aparecendo no resultado,
+#   sem titulo e sem descricao, com aquele "nenhuma informacao disponivel".
+#   Bloquear aqui agora seria congelar no indice exatamente o que se quer tirar.
+#
+# A ordem certa e: deixar rastrear -> ele le o noindex -> as paginas caem do
+# indice -> so entao, se ainda fizer sentido, se discute bloquear o rastreio.
+#
+# A linha "Sitemap:" saiu junto: entregar a lista de enderecos ao buscador
+# enquanto se pede para ele esquecer o site seria trabalhar contra si mesmo.
+# Ela volta no lancamento (as instrucoes estao dentro do proprio sitemap.xml).
+
+User-agent: *
+Allow: /

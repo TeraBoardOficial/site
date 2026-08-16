@@ -1,0 +1,158 @@
+/* ==========================================================================
+   TeraBoard · Utilitários — o que o cdn.tailwindcss.com fazia
+
+   Aquele CDN é um COMPILADOR de 320 KB que rodava no navegador do visitante,
+   a cada carregamento de cada página, para gerar 21 classes. A própria
+   Tailwind avisa no console que ele não é para produção — e ele bloqueava a
+   renderização e era mais um terceiro entre o site e o ar.
+
+   Este arquivo faz as duas coisas que aquele script fazia:
+
+     1. o RESET (o "preflight"), que o site usava sem perceber — o base.css só
+        tinha `box-sizing`. Sem isto os títulos voltam a ter margem do
+        navegador, os links ficam azuis e sublinhados, os botões ganham cara
+        de sistema operacional e as imagens ficam com folga de linha de base;
+
+     2. as classes de grade e transição que estão no HTML, com os mesmos
+        pontos de quebra da Tailwind: sm 640, md 768, lg 1024.
+
+   Se você adicionar uma classe utilitária nova no HTML, ela precisa entrar
+   aqui — não há mais compilador para inventá-la em tempo de execução.
+   ========================================================================== */
+
+/* ---------- 1. reset ---------- */
+
+*, ::before, ::after { box-sizing: border-box; border: 0 solid; }
+
+/* Os 8 px de margem que todo navegador dá ao body. Sem zerar, cada página
+   encolhia 16 px de largura útil e a régua do site saía do lugar. */
+body { margin: 0; }
+
+/* Títulos herdam tamanho e peso: quem manda são as classes .display/.d1…
+   Foi assim que a página sempre se comportou, por conta do preflight. */
+h1, h2, h3, h4, h5, h6 { font-size: inherit; font-weight: inherit; }
+
+blockquote, dl, dd, h1, h2, h3, h4, h5, h6,
+hr, figure, p, pre { margin: 0; }
+
+ol, ul, menu { list-style: none; margin: 0; padding: 0; }
+
+a { color: inherit; text-decoration: inherit; }
+b, strong { font-weight: bolder; }
+
+button, input, optgroup, select, textarea {
+  font-family: inherit; font-size: 100%; font-weight: inherit;
+  line-height: inherit; color: inherit; margin: 0; padding: 0;
+}
+button, select { text-transform: none; }
+button, [type="button"], [type="reset"], [type="submit"] {
+  -webkit-appearance: button; background-color: transparent; background-image: none;
+}
+:-moz-focusring { outline: auto; }
+::placeholder { opacity: 1; color: currentColor; }
+textarea { resize: vertical; }
+
+/* `display:block` mata a folga de linha de base embaixo de toda imagem. */
+img, svg, video, canvas, audio, iframe, embed, object { display: block; vertical-align: middle; }
+img, video { max-width: 100%; height: auto; }
+
+hr { height: 0; color: inherit; border-top-width: 1px; }
+table { text-indent: 0; border-color: inherit; border-collapse: collapse; }
+
+/* ---------- 2. grades ---------- */
+/* Os elementos já trazem `display:grid` no atributo style; daqui sai só a
+   divisão das colunas. */
+
+.grid-cols-1 { grid-template-columns: repeat(1, minmax(0, 1fr)); }
+.grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .md\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .md\:grid-cols-\[1\.4fr_1fr_1fr\] { grid-template-columns: 1.4fr 1fr 1fr; }
+  .md\:grid-cols-\[\.55fr_\.45fr\]  { grid-template-columns: .55fr .45fr; }
+  .md\:items-center { align-items: center; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .lg\:grid-cols-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .lg\:grid-cols-\[1\.05fr_\.95fr\] { grid-template-columns: 1.05fr .95fr; }
+  .lg\:grid-cols-\[\.95fr_1\.05fr\] { grid-template-columns: .95fr 1.05fr; }
+  .lg\:grid-cols-\[1fr_\.92fr\]     { grid-template-columns: 1fr .92fr; }
+  .lg\:grid-cols-\[\.42fr_\.58fr\]  { grid-template-columns: .42fr .58fr; }
+  .lg\:grid-cols-\[\.44fr_\.56fr\]  { grid-template-columns: .44fr .56fr; }
+  .lg\:grid-cols-\[\.46fr_\.54fr\]  { grid-template-columns: .46fr .54fr; }
+  .lg\:grid-cols-\[\.4fr_\.6fr\]    { grid-template-columns: .4fr .6fr; }
+  .lg\:grid-cols-\[\.55fr_\.45fr\]  { grid-template-columns: .55fr .45fr; }
+  .lg\:items-center { align-items: center; }
+}
+
+/* ---------- 3. o cartão de passo do gêmeo digital ---------- */
+/* O js/pages/terasmart-3d.js troca estas classes para animar o cartão. Como
+   na Tailwind, as três partes da transformação vivem em variáveis: senão a
+   última classe aplicada apagaria as outras duas. */
+
+.absolute            { position: absolute; }
+.left-1\/2           { left: 50%; }
+.pointer-events-none { pointer-events: none; }
+.transition-all      { transition-property: all; transition-timing-function: cubic-bezier(.4,0,.2,1); }
+.duration-500        { transition-duration: .5s; }
+
+.opacity-0   { opacity: 0; }
+.opacity-100 { opacity: 1; }
+
+.-translate-x-1\/2 { --tb-tx: -50%; }
+.-translate-y-4    { --tb-ty: -1rem; }
+.translate-y-0     { --tb-ty: 0; }
+.scale-95          { --tb-sc: .95; }
+.scale-100         { --tb-sc: 1; }
+
+.-translate-x-1\/2, .-translate-y-4, .translate-y-0, .scale-95, .scale-100 {
+  transform: translate(var(--tb-tx, 0), var(--tb-ty, 0)) scale(var(--tb-sc, 1));
+}
+
+/* ---------- 4. avulsas ---------- */
+
+.w-full { width: 100%; }
+.h-px   { height: 1px; }
+.my-2   { margin-top: .5rem; margin-bottom: .5rem; }
+.bg-\[rgba\(240\2c 241\2c 227\2c 0\.1\)\] { background-color: rgba(240, 241, 227, .1); }
+
+/* ---------- 5. foco visivel ----------
+   O reset apaga a borda que o navegador desenha em volta do elemento focado.
+   Sem devolver alguma coisa no lugar, quem navega por Tab fica sem saber onde
+   esta — e o site tem dezenas de links e botoes por pagina.
+
+   `:focus-visible` (e nao `:focus`) porque so aparece para quem chegou pelo
+   teclado: quem clica com o mouse nao ganha uma moldura sem motivo. */
+:focus-visible{
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+/* Sobre fundo claro o verde de marca some; ali vale o verde escuro. */
+.cream :focus-visible,
+.plate :focus-visible{ outline-color: var(--signal-deep); }
+
+/* ---------- 6. menos movimento ----------
+   Vale para o site inteiro, nao so onde alguem lembrou de tratar. Quem liga
+   essa opcao no sistema costuma fazer isso por enjoo ou vertigem: animacao
+   longa e rolagem suave sao justamente os gatilhos. */
+@media (prefers-reduced-motion: reduce) {
+  html{ scroll-behavior: auto; }
+  *, ::before, ::after{
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* O .reveal esconde o conteudo ate a transicao rodar; sem animacao ele
+     precisa nascer visivel, senao a pagina fica em branco. */
+  .reveal{ opacity: 1 !important; transform: none !important; }
+}

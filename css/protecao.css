@@ -1,0 +1,334 @@
+@charset "UTF-8";
+/* ==========================================================================
+   TeraBoard · Protecao de conteudo — a metade visual
+
+   O comportamento esta em js/protecao.js. As regras usam !important porque
+   precisam vencer as folhas de pagina, que carregam depois desta.
+
+   Para desligar a protecao numa pagina, remova o <link> desta folha e o
+   <script src="js/protecao.js"> do <head> daquela pagina. Nao existe
+   interruptor em CSS: se a folha esta carregada, ela vale.
+
+   Notas de manutencao em _originais-nao-publicar/NOTAS-PROTECAO.md, fora da
+   pasta publicada — e e onde tem de continuar.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Selecao de texto
+
+   Fora dos campos de formulario nada e selecionavel — sem selecao nao ha
+   Ctrl+C, nao ha arrastar-para-copiar e nao ha o balaozinho de "copiar" que
+   o celular abre no toque longo.
+   -------------------------------------------------------------------------- */
+html, body{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none; /* iOS: mata o menu de "Salvar imagem" do toque longo */
+}
+body *{
+  -webkit-user-select:none;
+  -moz-user-select:none;
+  -ms-user-select:none;
+  user-select:none;
+}
+
+/* O visitante ainda precisa preencher o formulario de diagnostico e colar o
+   PIN do investidor. Campo de formulario continua sendo campo de formulario. */
+input, textarea, select,
+[contenteditable="true"], [contenteditable=""]{
+  -webkit-user-select:text !important;
+  -moz-user-select:text !important;
+  -ms-user-select:text !important;
+  user-select:text !important;
+  -webkit-touch-callout:default;
+}
+
+/* Mesmo que algo escape e fique selecionado, o realce nao aparece — sem
+   realce visivel a pessoa nem percebe que ha o que arrastar. */
+::selection{background:transparent; color:inherit}
+::-moz-selection{background:transparent; color:inherit}
+input::selection, textarea::selection{background:var(--signal-deep,#1F8F67); color:#fff}
+input::-moz-selection, textarea::-moz-selection{background:var(--signal-deep,#1F8F67); color:#fff}
+
+/* --------------------------------------------------------------------------
+   Imagens, SVG, canvas e video
+
+   Arrastar uma imagem para a area de trabalho ou para outra aba e o jeito
+   mais rapido de baixa-la sem passar por menu nenhum. Aqui o arrasto morre.
+   -------------------------------------------------------------------------- */
+img, svg, canvas, video, picture{
+  -webkit-user-drag:none;
+  -khtml-user-drag:none;
+  -moz-user-drag:none;
+  user-drag:none;
+  -webkit-touch-callout:none;
+}
+
+/* --------------------------------------------------------------------------
+   Impressao
+
+   Ctrl+P e "imprimir em PDF" e uma copia limpa da pagina inteira, texto
+   selecionavel incluso. Na impressao a pagina inteira some e sobra um aviso.
+   -------------------------------------------------------------------------- */
+@media print{
+  html, body{background:#fff !important}
+  body > *{display:none !important}
+  body::before{
+    content:"Conteúdo protegido · TeraBoard\A Esta página não pode ser impressa nem salva em PDF.\A teraboard.com.br";
+    white-space:pre-wrap;
+    display:block !important;
+    padding:60px 40px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:13px;
+    line-height:2;
+    color:#0A4D36;
+    text-align:center;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   O escudo — a cortina que cobre a pagina
+
+   Sobe quando a janela perde o foco, quando a aba vai para segundo plano,
+   quando alguem manda imprimir e quando o inspetor de elementos abre.
+   Subir e instantaneo de proposito (transition:none no .on): a captura de
+   tela acontece em milissegundos e qualquer fade daria tempo de pegar o
+   conteudo por baixo. Descer tem um respiro curto, para nao piscar.
+   -------------------------------------------------------------------------- */
+#tb-escudo{
+  position:fixed;
+  inset:0;
+  z-index:2147483646;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:16px;
+  padding:32px;
+  text-align:center;
+  background:#030806;
+  visibility:hidden;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .16s ease, visibility 0s linear .16s;
+}
+#tb-escudo.on{
+  visibility:visible;
+  opacity:1;
+  pointer-events:auto;
+  transition:none;
+}
+#tb-escudo .tb-escudo-marca{
+  font-family:'Space Grotesk', sans-serif;
+  font-weight:700;
+  font-size:clamp(1.4rem, 4vw, 2rem);
+  letter-spacing:.02em;
+  color:#1DC78B;
+}
+#tb-escudo .tb-escudo-txt{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:.78rem;
+  line-height:1.9;
+  letter-spacing:.06em;
+  color:#A5BCAB;
+  max-width:42ch;
+}
+#tb-escudo .tb-escudo-sel{
+  width:52px;
+  height:1px;
+  background:rgba(29,199,139,.5);
+}
+
+/* Aparece so na cortina de captura, que e a unica que exige o clique para
+   sair. Nas outras a linha existe no HTML mas fica escondida. */
+#tb-escudo .tb-escudo-acao{
+  display:none;
+  margin-top:10px;
+  padding:9px 18px;
+  border:1px solid rgba(29,199,139,.4);
+  border-radius:999px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:.7rem;
+  letter-spacing:.08em;
+  color:#1DC78B;
+  cursor:pointer;
+}
+#tb-escudo.com-acao{cursor:pointer}
+#tb-escudo.com-acao .tb-escudo-acao{display:block}
+
+/* --------------------------------------------------------------------------
+   TERMOS DE ACESSO E CAIXINHA DE ACEITE
+
+   Componente compartilhado por duas paginas: o portao do investidor e a de
+   captura bloqueada.
+
+   Os termos ficam fechados por padrao para nao empurrar o botao para fora da
+   primeira tela no celular — mas abrem ali mesmo, sem sair da pagina. Aceite
+   escondido atras de um link e aceite que ninguem le, e o valor da coisa e
+   justamente a pessoa ter tido o texto na frente.
+
+   As cores caem para valores fixos se os tokens da marca nao estiverem
+   carregados: esta folha precisa se sustentar sozinha.
+   -------------------------------------------------------------------------- */
+.termos{
+  margin-top:24px;
+  border:1px solid var(--hair,rgba(240,241,227,.15));
+  border-radius:12px;
+  background:rgba(6,44,31,.28);
+  text-align:left;
+}
+.termos > summary{
+  display:flex;align-items:center;gap:9px;
+  padding:13px 15px;
+  cursor:pointer;
+  list-style:none;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.72rem;letter-spacing:.06em;
+  color:var(--sage,#A5BCAB);
+}
+.termos > summary::-webkit-details-marker{display:none}   /* a setinha nativa do Safari */
+.termos > summary:hover{color:var(--ink,#F0F1E3)}
+.termos > summary:focus-visible{outline:2px solid #D6FFEE;outline-offset:2px;border-radius:11px}
+.termos > summary i{color:var(--signal,#1DC78B);font-size:1rem}
+/* A seta e nossa: gira ao abrir. */
+.termos > summary::after{
+  content:'';margin-left:auto;
+  width:7px;height:7px;
+  border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;
+  transform:rotate(45deg) translate(-2px,-2px);
+  transition:transform .2s ease;
+}
+.termos[open] > summary::after{transform:rotate(-135deg) translate(-2px,-2px)}
+
+.termos-corpo{
+  padding:2px 15px 16px;
+  max-height:230px;overflow-y:auto;   /* rola dentro da caixa: a pagina nao estica */
+  border-top:1px solid var(--hair-soft,rgba(240,241,227,.08));
+  margin-top:2px;
+}
+.termos-corpo p{
+  margin:13px 0 0;
+  font-size:.8rem;line-height:1.65;
+  color:var(--sage,#A5BCAB);
+}
+.termos-corpo strong{color:var(--ink,#F0F1E3);font-weight:600}
+
+/* A etiqueta inteira e clicavel: no celular isso e a diferenca entre marcar
+   de primeira e errar tres vezes. */
+.aceite{
+  display:flex;align-items:flex-start;gap:11px;
+  margin-top:18px;padding:12px 14px;
+  border:1px solid var(--hair,rgba(240,241,227,.15));
+  border-radius:12px;
+  cursor:pointer;
+  text-align:left;
+  transition:border-color .18s ease, background .18s ease;
+}
+.aceite:hover{border-color:rgba(29,199,139,.4);background:rgba(29,199,139,.04)}
+.aceite:has(:checked){border-color:rgba(29,199,139,.55);background:rgba(29,199,139,.07)}
+.aceite input{
+  flex:0 0 auto;
+  width:19px;height:19px;margin:1px 0 0;
+  accent-color:var(--signal,#1DC78B);
+  cursor:pointer;
+}
+.aceite input:focus-visible{outline:2px solid #D6FFEE;outline-offset:2px}
+.aceite span{font-size:.82rem;line-height:1.55;color:var(--sage,#A5BCAB)}
+.aceite:has(:checked) span{color:var(--ink,#F0F1E3)}
+
+/* Faltou marcar: a caixa pisca. O balanco tem nome proprio porque o do portao
+   (pin-nao) vive na folha da pagina do investidor, que a de bloqueio nao
+   carrega. */
+.aceite.falta{
+  border-color:#FFB4A2;background:rgba(226,123,88,.1);
+  animation:tb-nao .42s cubic-bezier(.36,.07,.19,.97);
+}
+@keyframes tb-nao{
+  10%,90%{transform:translateX(-2px)}
+  20%,80%{transform:translateX(4px)}
+  30%,50%,70%{transform:translateX(-7px)}
+  40%,60%{transform:translateX(7px)}
+}
+@media (prefers-reduced-motion:reduce){
+  .aceite.falta{animation:none}
+}
+
+/* --------------------------------------------------------------------------
+   Marca d'agua — so nas paginas fechadas
+
+   Quem liga e o proprio HTML da pagina, com data-marca no <html>; a vitrine
+   publica nao leva carimbo. Nao impede a captura: serve para que qualquer
+   print que vaze saia carimbado, o que muda o calculo de quem pensa em
+   repassar. Se ficar apagado demais no seu monitor, suba o opacity — .07 e
+   discreto, .14 e impossivel de ignorar.
+   -------------------------------------------------------------------------- */
+#tb-marca{
+  position:fixed;
+  inset:0;
+  z-index:2147483645;
+  pointer-events:none;
+  background-repeat:repeat;
+  opacity:.1;
+}
+
+/* --------------------------------------------------------------------------
+   Aviso de confidencialidade
+
+   Bloco de texto que a pagina insere onde quiser. Nao depende de nenhuma
+   folha de pagina: as cores caem para valores fixos se os tokens da marca
+   nao estiverem carregados, para o aviso nunca sumir por acidente.
+   -------------------------------------------------------------------------- */
+.tb-confid{
+  display:flex;
+  gap:14px;
+  align-items:flex-start;
+  max-width:64ch;
+  margin:30px auto 0;
+  padding:16px 18px;
+  border:1px solid rgba(245,184,65,.32);
+  border-radius:12px;
+  background:rgba(245,184,65,.05);
+  text-align:left;
+}
+.tb-confid > i{
+  flex:0 0 auto;
+  margin-top:2px;
+  font-size:1.05rem;
+  color:var(--amber,#F5B841);
+}
+.tb-confid strong{
+  display:block;
+  margin-bottom:7px;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:.66rem;
+  font-weight:600;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--amber,#F5B841);
+}
+.tb-confid p{
+  margin:0;
+  font-family:'IBM Plex Mono', monospace;
+  font-size:.72rem;
+  line-height:1.9;
+  letter-spacing:.02em;
+  color:var(--sage,#A5BCAB);
+}
+.tb-confid p + p{margin-top:8px}
+
+/* Versao curta, para caber embaixo do teclado de PIN sem empurrar o botao
+   para fora da primeira tela no celular. */
+.tb-confid.curto{
+  max-width:48ch;
+  margin-top:20px;
+  padding:13px 15px;
+  gap:11px;
+}
+.tb-confid.curto p{font-size:.68rem; line-height:1.8}
+
+@media (max-width:520px){
+  .tb-confid{padding:14px 15px; gap:11px}
+  .tb-confid p{font-size:.68rem}
+}

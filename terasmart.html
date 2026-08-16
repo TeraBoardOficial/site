@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="loading">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Fora das buscas enquanto os tres produtos estao em desenvolvimento. Esta
+     linha e o que realmente tira a pagina do Google.
+     E o robots.txt continua com Allow: / de proposito — "Disallow" impediria o
+     buscador de BAIXAR a pagina, e sem baixar ele nunca leria este noindex: a
+     URL ficaria presa no indice, sem titulo nem descricao. Primeiro sai do
+     indice, depois se discute bloquear o rastreio. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<title>TeraSmart · Irrigação autônoma em malha fechada | TeraBoard</title>
+<meta name="description" content="TeraSmart: plataforma fixa de hardware e software que lê o solo e o clima da estufa, decide a dose e aciona sozinha a irrigação e a fertirrigação.">
+
+<link rel="canonical" href="https://teraboardoficial.github.io/site/terasmart.html">
+
+<!-- Compartilhamento em redes sociais -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TeraBoard">
+<meta property="og:locale" content="pt_BR">
+<meta property="og:url" content="https://teraboardoficial.github.io/site/terasmart.html">
+<meta property="og:title" content="TeraSmart · Irrigação autônoma em malha fechada | TeraBoard">
+<meta property="og:description" content="TeraSmart: plataforma fixa de hardware e software que lê o solo e o clima da estufa, decide a dose e aciona sozinha a irrigação e a fertirrigação.">
+<meta property="og:image" content="https://teraboardoficial.github.io/site/assets/img/produtos/terasmart-capa.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="TeraSmart · Irrigação autônoma em malha fechada | TeraBoard">
+<meta name="twitter:description" content="TeraSmart: plataforma fixa de hardware e software que lê o solo e o clima da estufa, decide a dose e aciona sozinha a irrigação e a fertirrigação.">
+<meta name="twitter:image" content="https://teraboardoficial.github.io/site/assets/img/produtos/terasmart-capa.webp">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="assets/logo/teraboard-mark.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0B4D36">
+
+<!-- Tipografia -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Estilos: os compartilhados primeiro, o da pagina por ultimo -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/utilitarios.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/loader.css">
+<link rel="stylesheet" href="css/nav.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/pages/terasmart.css">
+
+<!-- Icones -->
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+
+<!-- Dados estruturados: e o que faz o buscador mostrar nome, logo,
+     contato e produtos direito, em vez de adivinhar pelo texto. -->
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Product",
+   "name": "TeraSmart",
+   "description": "Plataforma fixa de hardware e software para estufas: lê solo e clima, decide a dose e aciona sozinha a irrigação e a fertirrigação em malha fechada.",
+   "url": "https://teraboardoficial.github.io/site/terasmart.html",
+   "image": "https://teraboardoficial.github.io/site/assets/img/produtos/terasmart-capa.webp",
+   "category": "Sistema de irrigação automatizada",
+   "brand": {
+    "@type": "Brand",
+    "name": "TeraBoard"
+   },
+   "manufacturer": {
+    "@id": "https://teraboardoficial.github.io/site/#organizacao"
+   }
+  }
+ ]
+}
+</script>
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="css/protecao.css">
+<script src="js/protecao.js"></script>
+</head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+<noscript>
+  <!-- Sem JavaScript o loader nunca sairia da frente: aqui ele e removido na marra. -->
+  <style>html.loading{overflow:auto!important}.site-loader{display:none!important}
+    .reveal{opacity:1!important;transform:none!important}</style>
+</noscript>
+
+<!-- LOADING -->
+<div class="site-loader" id="siteLoader" data-min-ms="900" data-phrases="Abrindo a estufa">
+  <div id="travelLight" aria-hidden="true"></div>
+  <div class="loader-halo">
+    <img class="loader-mark" id="loaderMark" src="assets/logo/teraboard-mark.svg" alt="TeraBoard">
+  </div>
+  <span class="loader-label" id="loaderLabel">Abrindo a estufa</span>
+  <div class="loader-bar"><i id="loaderBar"></i></div>
+</div>
+<script src="js/loader.js"></script>
+
+<!-- Contêiner fixo para o renderizador 3D -->
+<div id="canvas-container" data-scale="0.0000024"></div>
+
+<nav class="top" id="topnav">
+  <div class="inner">
+    <a href="index.html" aria-label="TeraBoard — início" class="brand-wrap">
+              <span class="logo-glow" aria-hidden="true"></span>
+              <img class="brand-logo brand-logo-mono" src="assets/logo/teraboard-wordmark-cream.svg" alt="" aria-hidden="true">
+              <img class="brand-logo brand-logo-color" src="assets/logo/teraboard-wordmark-color.svg" alt="TeraBoard">
+              </a>
+    <div class="navlinks"><a href="index.html" class="navlink">Início</a><a href="produtos.html" class="navlink">Produtos</a><a href="terasensor.html" class="navlink">TeraSensor</a><a href="terasmart.html" class="navlink active">TeraSmart</a><a href="equipe.html" class="navlink">Equipe</a><a href="investidor.html" class="navlink navlink-restrito">Área do Investidor</a></div>
+    <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-signal navcta">Falar com a equipe</a>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"><span class="num">01</span>Início</a><a href="produtos.html"><span class="num">02</span>Produtos</a><a href="terasensor.html"><span class="num">03</span>TeraSensor</a><a href="terasmart.html"><span class="num">04</span>TeraSmart</a><a href="equipe.html"><span class="num">05</span>Equipe</a><a href="investidor.html"><span class="num">06</span>Área do Investidor</a>
+  <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" style="font-size:1.3rem;color:var(--signal)"><span class="num">→</span>WhatsApp</a>
+</div>
+
+<main id="conteudo" tabindex="-1">
+
+<!-- HERO -->
+<section class="pad hero-page">
+  <div class="wrap">
+    <div style="display:grid;gap:48px" class="lg:grid-cols-[1.05fr_.95fr] lg:items-center">
+      <div>
+        <span class="eyebrow reveal">Produto 02 &middot; Automação fixa</span>
+        <h1 class="display d1 reveal s1" style="margin-top:24px">Tera<em>Smart</em></h1>
+        <p class="reveal s2" style="margin-top:14px;font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:500;color:var(--signal)">Gestão autônoma, em malha fechada.</p>
+        <p class="lede reveal s2" style="margin-top:22px;max-width:46ch">
+          Plataforma fixa de hardware + software para estufas. Lê o solo e o clima, decide o que a lavoura precisa e aciona sozinha a irrigação e a fertirrigação — detecta, dosa e aplica, mantendo o solo sempre na condição ideal.
+        </p>
+        <div class="reveal s3" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px">
+          <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-solid"><i class="ph-bold ph-plant"></i> Implementar na estufa</a>
+          <a href="#painel" class="btn btn-ghost"><i class="ph-bold ph-cube"></i> Abrir o painel em 3D</a>
+        </div>
+        <div class="reveal s4" style="display:flex;gap:26px;flex-wrap:wrap;margin-top:40px">
+          <div><div class="readout-num" style="font-size:1.7rem">24/7</div><div class="kicker">operação contínua</div></div>
+          <div><div class="readout-num" style="font-size:1.7rem">3</div><div class="kicker">setores de cultivo</div></div>
+          <div><div class="readout-num" style="font-size:1.7rem">6</div><div class="kicker">parâmetros de solo</div></div>
+        </div>
+      </div>
+      <div class="reveal s2">
+        <div class="plate" style="padding:18px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:12px"><span class="kicker">Painel &middot; malha fechada</span><span class="kicker" style="color:var(--signal)">ao vivo</span></div>
+          <div class="imgframe" style="aspect-ratio:16/11"><img width="800" height="800" src="assets/img/fotos/painel-dados.webp" alt="Painel TeraSmart"><span class="fno">fig. 02 — painel TeraSmart</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAINEL 3D (interativo) -->
+<section id="painel" class="pad cream">
+  <div class="wrap">
+    <div class="reveal" style="max-width:60ch">
+      <span class="eyebrow">O painel &middot; interativo</span>
+      <h2 class="display d2" style="margin-top:20px">Abra a caixa,<br>veja a <em>malha</em>.</h2>
+      <p class="lede" style="margin-top:22px">
+        Este e o gabinete que fica na estufa: 300 &times; 200 &times; 150&nbsp;mm, painel frontal com display de operacao e, atras dele, a placa que fecha a malha. Gire, abra e toque em cada no para ler o que ele controla.
+      </p>
+    </div>
+
+    <div class="reveal s1 plate" style="margin-top:40px;padding:18px">
+      <div class="core-grid">
+
+        <div>
+          <div class="core-stage" id="coreStage" role="img" aria-label="Painel TeraSmart em 3D, girando"></div>
+          <div class="core-tools">
+            <button type="button" class="btn btn-signal" id="coreDoor"><i class="ph-bold ph-door-open"></i> Abrir painel</button>
+            <button type="button" class="btn btn-ghost" id="coreSpin" aria-pressed="false"><i class="ph-bold ph-arrows-clockwise"></i> Auto-rotacao</button>
+            <button type="button" class="btn btn-ghost core-zoom" id="coreZoomIn" aria-label="Aproximar"><i class="ph-bold ph-plus"></i></button>
+            <button type="button" class="btn btn-ghost core-zoom" id="coreZoomOut" aria-label="Afastar"><i class="ph-bold ph-minus"></i></button>
+          </div>
+          <span class="core-hint"><i class="ph-fill ph-hand-grabbing"></i> Arraste para girar &middot; Ctrl + roda para o zoom</span>
+        </div>
+
+        <div class="core-panel" id="corePanel">
+          <div class="core-panel-head">
+            <span class="kicker">Nos logicos</span>
+            <span class="core-count"><span id="coreCount">0</span> / 8</span>
+          </div>
+          <div class="core-bar"><span id="coreBar"></span></div>
+          <h3 class="display" id="coreTitle">Abra o painel</h3>
+          <p id="coreDesc">Toque em <strong>Abrir painel</strong>. A placa se destaca e os oito nos da malha ficam acessiveis &mdash; clique em cada um para ler o que aquela parte faz.</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ENGENHARIA -->
+<section class="pad" style="background:rgba(18,53,40,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <div style="display:grid;gap:48px" class="lg:grid-cols-[.42fr_.58fr]">
+      <div class="reveal">
+        <span class="eyebrow">Engenharia</span>
+        <h2 class="display d3" style="margin-top:20px">Gestão<br><em>autônoma</em>.</h2>
+        <p class="muted" style="margin-top:18px;line-height:1.65;max-width:36ch">Quatro frentes de sensoriamento alimentam uma única decisão: quanto de água e de nutriente aplicar, e quando.</p>
+      </div>
+      <div>
+        <div class="icard reveal tilt" style="margin-bottom:14px;height:auto">
+          <div style="display:flex;gap:16px;align-items:start">
+            <div class="ic" style="margin-bottom:0;flex-shrink:0"><i class="ph-fill ph-thermometer"></i></div>
+            <div><h3>Sensoriamento do solo 24/7</h3><p style="margin-top:4px">Os mesmos seis parâmetros do TeraSensor — pH, condutividade, umidade, temperatura, salinidade e TDS — monitorados em tempo real, sem interrupção.</p></div>
+          </div>
+        </div>
+        <div class="icard reveal s1 tilt" style="margin-bottom:14px;height:auto">
+          <div style="display:flex;gap:16px;align-items:start">
+            <div class="ic" style="margin-bottom:0;flex-shrink:0"><i class="ph-fill ph-cloud-sun"></i></div>
+            <div><h3>Clima da estufa</h3><p style="margin-top:4px">Temperatura e umidade relativa do ar acompanhadas de perto para proteger a cultura.</p></div>
+          </div>
+        </div>
+        <div class="icard reveal s2 tilt" style="margin-bottom:14px;height:auto">
+          <div style="display:flex;gap:16px;align-items:start">
+            <div class="ic" style="margin-bottom:0;flex-shrink:0"><i class="ph-fill ph-drop-half"></i></div>
+            <div><h3>Fertirrigação de precisão</h3><p style="margin-top:4px">Água e adubo na medida certa para o estágio da cultura, sem preparo manual de calda.</p></div>
+          </div>
+        </div>
+        <div class="icard reveal s3 tilt" style="height:auto">
+          <div style="display:flex;gap:16px;align-items:start">
+            <div class="ic" style="margin-bottom:0;flex-shrink:0"><i class="ph-fill ph-gauge"></i></div>
+            <div><h3>Nível dos reservatórios</h3><p style="margin-top:4px">Sensores acompanham os tanques e disparam alertas preditivos antes de faltar.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GÊMEO DIGITAL (interativo) -->
+<section id="gemeo" class="pad cream">
+  <div class="wrap">
+    <div class="reveal" style="max-width:60ch">
+      <span class="eyebrow">Gêmeo digital &middot; interativo</span>
+      <h2 class="display d2" style="margin-top:20px">A fertirrigação,<br>de ponta a <em>ponta</em>.</h2>
+      <p class="lede" style="margin-top:22px">
+        Toque para rodar um ciclo completo da malha fechada: o sistema mede o solo seco, decide a dose, abre as válvulas, injeta os nutrientes e devolve a planta à condição ideal — sozinho.
+      </p>
+    </div>
+
+    <div class="reveal s1 plate" style="margin-top:40px;padding:16px">
+      <div class="gemeo-stage">
+        <div id="step-display" class="absolute left-1/2 -translate-x-1/2 opacity-0 scale-95 -translate-y-4 transition-all duration-500 pointer-events-none plate"
+             style="top:14px;width:92%;max-width:640px;z-index:20;padding:16px 20px;display:flex;gap:16px;align-items:center;text-align:left">
+          <div id="step-number" class="readout-num" style="width:48px;height:48px;border-radius:9999px;background:var(--signal);color:#06301f;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0">1</div>
+          <div>
+            <p class="kicker" style="margin-bottom:2px">Fluxo de automação</p>
+            <h3 id="step-title" class="display" style="font-size:1.2rem">Coleta</h3>
+            <p id="step-desc" class="muted" style="font-size:.9rem;line-height:1.5;margin-top:2px">Sensores captam as métricas de umidade e nutrientes diretamente do solo.</p>
+          </div>
+        </div>
+
+        <div id="gemeo-canvas-container"></div>
+
+        <div id="hw-popup" class="sensor-popup plate">
+          <div class="lbl-title">UMIDADE</div>
+          <div id="hw-popup-val" class="lbl-val">68%</div>
+          <div class="w-full h-px bg-[rgba(240,241,227,0.1)] my-2"></div>
+          <div class="lbl-title">EC (SALINIDADE)</div>
+          <div id="hw-popup-ec" class="lbl-val">1.3mS</div>
+        </div>
+
+        <div id="consumo-popup" class="consumo-popup plate">
+          <div class="consumo-title">CONSUMO DO CICLO</div>
+          <div class="consumo-row"><span class="dot" style="background:#3b82f6;"></span><span class="c-nome">Água</span><span class="c-lit" id="c-lit-agua">0,0 L</span><span class="c-val" id="c-val-agua">R$ 0,00</span></div>
+          <div class="consumo-row"><span class="dot" style="background:#ef4444;"></span><span class="c-nome">Nutriente A</span><span class="c-lit" id="c-lit-a">0,0 L</span><span class="c-val" id="c-val-a">R$ 0,00</span></div>
+          <div class="consumo-row"><span class="dot" style="background:#eab308;"></span><span class="c-nome">Nutriente B</span><span class="c-lit" id="c-lit-b">0,0 L</span><span class="c-val" id="c-val-b">R$ 0,00</span></div>
+          <div class="consumo-row"><span class="dot" style="background:#22c55e;"></span><span class="c-nome">Nutriente C</span><span class="c-lit" id="c-lit-c">0,0 L</span><span class="c-val" id="c-val-c">R$ 0,00</span></div>
+          <div class="consumo-total"><span id="c-total-lit">0,0 L</span><span id="c-total-val">R$ 0,00</span></div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:center;margin-top:26px;padding-bottom:8px">
+        <div style="position:relative">
+          <span class="click-hint"><i class="ph-fill ph-cursor-click"></i> Toque para simular</span>
+          <button onclick="startHardwareSim()" id="btn-hard-sim" class="btn btn-solid"><i class="ph-bold ph-play"></i> Rodar ciclo de fertirrigação</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIAL -->
+<section class="pad" style="background:rgba(10,77,54,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <div class="reveal" style="max-width:60ch">
+      <span class="eyebrow">O diferencial</span>
+      <h2 class="display d2" style="margin-top:20px">Só o TeraSmart<br>fecha a <em>malha</em>.</h2>
+      <p class="muted" style="margin-top:18px;line-height:1.65;max-width:58ch">
+        Sensores isolados dizem o que está errado. Válvulas automáticas dizem quando ligar. O TeraSmart decide, dosa e aplica sozinho — sem depender do produtor no momento certo.
+      </p>
+    </div>
+    <div class="reveal s1" style="margin-top:44px;overflow-x:auto">
+      <table class="cmp">
+        <thead><tr>
+          <th class="cap"></th>
+          <th>Manejo<br>manual</th><th>Sensores<br>isolados</th><th>Irrigação<br>genérica</th>
+          <th class="tera">TeraSmart</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+      <td class="cap">Sensoriamento multivariável do solo</td>
+      <td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td><td><i class="ph-bold ph-check" style="color:var(--signal)"></i></td><td><i class="ph-bold ph-minus" style="color:var(--amber)"></i></td>
+      <td class="tera"><i class="ph-bold ph-check" style="color:var(--signal)"></i></td></tr>
+          <tr>
+      <td class="cap">Fertirrigação na dose do estágio</td>
+      <td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td><td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td><td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td>
+      <td class="tera"><i class="ph-bold ph-check" style="color:var(--signal)"></i></td></tr>
+          <tr>
+      <td class="cap">Decisão automática (malha fechada)</td>
+      <td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td><td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td><td><i class="ph-bold ph-minus" style="color:var(--amber)"></i></td>
+      <td class="tera"><i class="ph-bold ph-check" style="color:var(--signal)"></i></td></tr>
+          <tr>
+      <td class="cap">Monitoramento de clima da estufa</td>
+      <td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td><td><i class="ph-bold ph-minus" style="color:var(--amber)"></i></td><td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td>
+      <td class="tera"><i class="ph-bold ph-check" style="color:var(--signal)"></i></td></tr>
+          <tr>
+      <td class="cap">Alerta preditivo de reservatório</td>
+      <td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td><td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td><td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td>
+      <td class="tera"><i class="ph-bold ph-check" style="color:var(--signal)"></i></td></tr>
+          <tr>
+      <td class="cap">Histórico e custo por setor</td>
+      <td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td><td><i class="ph-bold ph-minus" style="color:var(--amber)"></i></td><td><i class="ph-bold ph-x" style="color:var(--clay);opacity:.6"></i></td>
+      <td class="tera"><i class="ph-bold ph-check" style="color:var(--signal)"></i></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- RESULTADOS PROJETADOS -->
+<section class="pad cream">
+  <div class="wrap">
+    <div class="reveal" style="max-width:56ch">
+      <span class="eyebrow">Impacto da malha fechada</span>
+      <h2 class="display d2" style="margin-top:20px">Resultados<br><em>projetados</em>.</h2>
+      <p class="muted" style="margin-top:16px;font-size:.95rem">Metas de desempenho projetadas com uso contínuo — ainda não validadas em safra fechada.</p>
+    </div>
+    <div style="display:grid;gap:16px;margin-top:44px" class="grid-cols-2 md:grid-cols-4">
+      <div class="reveal plate-dark" style="padding:24px"><i class="ph-duotone ph-drop" style="font-size:1.8rem;color:var(--signal)"></i><div class="readout-num" style="font-size:2rem;margin-top:12px"><span data-count="20" data-suffix="%+">0</span></div><div class="kicker">economia hídrica</div></div>
+      <div class="reveal s1 plate-dark" style="padding:24px"><i class="ph-duotone ph-flask" style="font-size:1.8rem;color:var(--signal)"></i><div class="readout-num" style="font-size:2rem;margin-top:12px">&minus;<span data-count="10" data-suffix="%">0</span></div><div class="kicker">uso de fertilizante</div></div>
+      <div class="reveal s2 plate-dark" style="padding:24px"><i class="ph-duotone ph-clock" style="font-size:1.8rem;color:var(--signal)"></i><div class="readout-num" style="font-size:2rem;margin-top:12px">&minus;<span data-count="30" data-suffix="%">0</span></div><div class="kicker">trabalho manual</div></div>
+      <div class="reveal s3 plate-dark" style="padding:24px"><i class="ph-duotone ph-trend-up" style="font-size:1.8rem;color:var(--signal)"></i><div class="readout-num" style="font-size:2rem;margin-top:12px"><span data-count="15" data-suffix="%+">0</span></div><div class="kicker">aproveitamento de safra</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- APP (interativo) -->
+<section id="app" class="pad" style="background:rgba(18,53,40,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <!-- Cabecalho em duas colunas: sozinho, empurrava a vitrine para fora
+         da primeira tela num monitor de notebook. -->
+    <div class="reveal app-demo-head">
+      <div>
+        <span class="eyebrow">App de gestão &middot; interativo</span>
+        <h2 class="display d3" style="margin-top:16px">A estufa<br>no seu <em>bolso</em>.</h2>
+      </div>
+      <p style="line-height:1.65;color:var(--ink);opacity:.9">
+        Toque em <strong>Entrar</strong> no aparelho e percorra as nove telas do TeraBoard. São as telas de verdade rodando aqui dentro &mdash; roláveis, não capturas de tela &mdash; do quadro geral das estufas ao extrato que fecha o custo por quilo.
+      </p>
+    </div>
+
+    <div class="reveal s1 app-demo">
+      <iframe id="appDemo" class="app-demo-frame"
+              src="assets/app%20demo/index.html?embutido=1"
+              title="TeraBoard em ação — as telas do aplicativo"
+              loading="lazy"></iframe>
+    </div>
+
+    <p class="reveal s2 app-demo-note">
+      As telas não são clicáveis: a vitrine mostra o app, não o opera. O aplicativo completo acompanha a instalação do TeraSmart.
+    </p>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="pad grad-green">
+  <div class="wrap" style="text-align:center">
+    <div class="reveal" style="max-width:26ch;margin:0 auto">
+      <span class="eyebrow" style="justify-content:center">Próximo passo</span>
+      <h2 class="display d2" style="margin-top:20px">Tire a estufa<br>do modo manual.</h2>
+    </div>
+    <div class="reveal s1" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px">
+      <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-solid"><i class="ph-bold ph-whatsapp-logo"></i> Implementar TeraSmart</a>
+      <a href="terasensor.html" class="btn btn-ghost">Conhecer o TeraSensor &rarr;</a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer style="background:var(--forest-2); border-top: 1px solid var(--hair-soft);">
+  <div class="wrap" style="padding-top:64px;padding-bottom:40px">
+    <div style="display:grid;gap:44px" class="md:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+<a href="index.html" style="display:inline-block"><img src="assets/logo/teraboard-stacked-cream.svg" alt="TeraBoard" style="height:104px;width:auto;display:block"></a>
+        <p class="font-mono muted" style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-top:20px;line-height:1.9">
+          TeraBoard Systems &middot; © 2026<br>Instrumentos de precisão para o solo<br>Serra Fluminense &middot; Rio de Janeiro, BR
+        </p>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Navegar</h2>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <a href="produtos.html" class="navlink" style="color:var(--ink);opacity:.72">Produtos</a>
+          <a href="terasensor.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSensor</a>
+          <a href="terasmart.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSmart</a>
+          <a href="equipe.html" class="navlink" style="color:var(--ink);opacity:.72">Equipe</a>
+        </div>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Contato</h2>
+        <div style="display:flex;gap:18px;align-items:center">
+          <a href="https://instagram.com/teraboard_oficial" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/instagram.svg" alt="Instagram"></a>
+          <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/whatsapp.svg" alt="WhatsApp"></a>
+        </div>
+        <p class="font-mono muted" style="font-size:.72rem;margin-top:20px;letter-spacing:.06em">@teraboard_oficial</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js"></script>
+
+<script src="js/ui-effects.js"></script>
+
+<script src="js/pages/terasmart.js"></script>
+
+
+<!-- Bibliotecas via CDN para o modelo 3D e GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/SVGLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<!-- ===== Gemeo Digital 3D — simulacao interativa de fertirrigacao ===== -->
+<script src="js/pages/terasmart-3d.js"></script>
+
+
+<script src="js/scene-3d.js"></script>
+</body>
+</html>
+

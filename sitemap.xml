@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SITEMAP DESATIVADO — os tres produtos estao em desenvolvimento e o site
+  inteiro saiu das buscas (todas as paginas levam <meta name="robots"
+  content="noindex">). Um sitemap ativo faria o contrario do que se quer:
+  entregaria a lista de enderecos ao buscador de bandeja.
+
+  O robots.txt tambem deixou de apontar para este arquivo.
+
+  NO DIA DO LANCAMENTO, para religar:
+    1. tire os comentarios das cinco <url> abaixo e atualize os <lastmod>;
+    2. remova o <meta name="robots"> e o <meta name="googlebot"> das cinco
+       paginas publicas (index, produtos, terasensor, terasmart, equipe) —
+       e SO delas: investidor, terahecta, /terahecta/ e bloqueado continuam
+       fora das buscas para sempre;
+    3. devolva a linha "Sitemap:" no robots.txt;
+    4. reenvie o sitemap pelo Google Search Console.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<!--
+  <url>
+    <loc>https://teraboard.com.br/</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://teraboard.com.br/produtos.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://teraboard.com.br/terasensor.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teraboard.com.br/terasmart.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://teraboard.com.br/equipe.html</loc>
+    <lastmod>2026-08-07</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+-->
+</urlset>

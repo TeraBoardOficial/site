@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- ATENCAO — ESTA LINHA MUDA NO DIA DO DOMINIO PROPRIO.
+     Hoje o site mora numa subpasta (https://teraboardoficial.github.io/site/),
+     e nao na raiz de um dominio. Esta pagina e a unica que precisa saber
+     disso: o servidor a entrega no lugar de QUALQUER endereco que nao existe
+     — inclusive /site/uma/pasta/funda/ — e o navegador resolve os caminhos
+     relativos a partir do endereco errado que a pessoa digitou, nao a partir
+     daqui. Sem o <base> abaixo, a folha de estilo viraria
+     /site/uma/pasta/css/tokens.css e a pagina de erro apareceria sem estilo
+     nenhum, que e o pior lugar possivel para isso acontecer.
+
+     Quando teraboard.com.br entrar no ar e o site voltar para a raiz, troque
+     por:  <base href="/">  — so esta linha, o resto do arquivo ja esta certo. -->
+<base href="/site/">
+
+<title>Página não encontrada · TeraBoard</title>
+<meta name="description" content="Esta página não existe no site da TeraBoard. Volte para o início ou fale com a equipe.">
+<meta name="robots" content="noindex, follow">
+
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="assets/logo/teraboard-mark.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="theme-color" content="#0B4D36">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!--
+  Sem loader e sem cena 3D de proposito: esta pagina existe para tirar alguem
+  de um beco, e rapido. Carregar meio megabyte de motor grafico para dizer
+  "nao achei" seria maltratar duas vezes.
+-->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/utilitarios.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+
+<style>
+  body{
+    min-height:100svh;display:flex;align-items:center;
+    background:
+      radial-gradient(90% 60% at 12% 0%, #10684A 0%, transparent 58%),
+      radial-gradient(80% 70% at 96% 100%, #0A3A29 0%, transparent 55%),
+      #08301F;
+    color:var(--ink);
+  }
+  .e404-marca{height:58px;width:auto;display:block}
+  .e404-num{
+    font-family:'IBM Plex Mono',monospace;font-size:.8rem;font-weight:600;
+    letter-spacing:.22em;color:var(--signal);
+  }
+  .e404-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:34px}
+  .e404-mapa{
+    margin-top:52px;padding-top:26px;border-top:1px solid var(--hair-soft);
+    display:grid;gap:10px 34px;
+  }
+  @media(min-width:640px){ .e404-mapa{grid-template-columns:repeat(3,minmax(0,1fr))} }
+  .e404-mapa a{
+    display:block;padding:9px 0;text-decoration:none;color:var(--ink);opacity:.75;
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.92rem;
+    transition:opacity .2s,transform .2s;
+  }
+  .e404-mapa a:hover{opacity:1;transform:translateX(4px)}
+  .e404-mapa a span{font-family:'IBM Plex Mono',monospace;font-size:.72rem;color:var(--signal);margin-right:10px}
+</style>
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="css/protecao.css">
+<script src="js/protecao.js"></script>
+</head>
+<body>
+
+<main class="wrap" style="padding-top:60px;padding-bottom:60px">
+  <a href="index.html" aria-label="TeraBoard — início">
+    <img class="e404-marca" src="assets/logo/teraboard-wordmark-cream.svg" alt="TeraBoard">
+  </a>
+
+  <p class="e404-num" style="margin-top:44px">ERRO 404</p>
+  <h1 class="display d1" style="margin-top:14px;max-width:16ch">
+    Esta página<br>não <em>existe</em>.
+  </h1>
+  <p class="lede" style="margin-top:22px;max-width:46ch">
+    O endereço pode ter mudado de lugar, ou o link que te trouxe até aqui está
+    com um caractere a mais. Nada se perdeu — o site inteiro está logo abaixo.
+  </p>
+
+  <div class="e404-links">
+    <a href="index.html" class="btn btn-solid"><i class="ph-bold ph-arrow-left"></i> Voltar ao início</a>
+    <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-ghost">
+      Falar com a equipe
+    </a>
+  </div>
+
+  <nav class="e404-mapa" aria-label="Mapa do site">
+    <a href="produtos.html"><span>01</span>Produtos</a>
+    <a href="terasensor.html"><span>02</span>TeraSensor</a>
+    <a href="terasmart.html"><span>03</span>TeraSmart</a>
+    <a href="equipe.html"><span>04</span>Equipe</a>
+    <a href="produtos.html#terasensor"><span>05</span>Comparar os dois</a>
+    <a href="https://instagram.com/teraboard_oficial" target="_blank" rel="noopener"><span>06</span>Instagram</a>
+  </nav>
+</main>
+
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+</body>
+</html>

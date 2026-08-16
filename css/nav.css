@@ -1,0 +1,101 @@
+/* ==========================================================================
+   TeraBoard · Nav — barra fixa, marca reativa ao scroll e menu mobile
+   ========================================================================== */
+
+/* ---------- nav ---------- */
+/* --p vai de 0 (topo da página) a 1 (~3 rolagens de mouse), atualizado via JS.
+   Tudo abaixo usa calc(--p) pra ficar gradual, sem "pulo" de estado. */
+nav.top{position:fixed;top:0;left:0;width:100%;z-index:60;--p:0;
+  background:rgba(10, 77, 54, 0.4);backdrop-filter:blur(16px) saturate(1.2);
+  border-bottom:1px solid var(--hair-soft);transition:background .4s,box-shadow .4s}
+nav.top .inner{position:relative;display:flex;align-items:center;justify-content:space-between;
+  padding:calc(28px - 12px*var(--p)) 24px;transition:padding .05s linear}
+@media(min-width:768px){nav.top .inner{padding:calc(32px - 14px*var(--p)) 44px}}
+nav.top.shrunk{background:rgba(10, 77, 54, 0.9);box-shadow:0 12px 30px -26px rgba(0,0,0,.8)}
+
+/* bola de luz atrás da logo — vaza pra fora da nav (sem overflow:hidden no pai) */
+.logo-glow{position:absolute;top:50%;left:38px;width:460px;height:460px;
+  transform:translate(-34%,-50%) scale(calc(1 - .3*var(--p)));
+  background:radial-gradient(circle, rgba(240,241,227,.9) 0%, rgba(229,231,204,.55) 28%, rgba(200,204,170,.2) 52%, rgba(10,77,54,0) 72%);
+  filter:blur(22px);opacity:calc(1 - var(--p));pointer-events:none;z-index:0}
+@media(min-width:768px){.logo-glow{width:680px;height:680px}}
+
+.brand-wrap{position:relative;display:block;z-index:1}
+.brand-logo{height:calc(56px - 16px*var(--p));width:auto;display:block;transition:height .05s linear}
+@media(min-width:768px){.brand-logo{height:calc(66px - 18px*var(--p))}}
+/* bege começa invisível e vai surgindo com o scroll; a colorida em cima é que desaparece */
+.brand-logo-mono{position:absolute;top:0;left:0;opacity:var(--p);z-index:0}
+.brand-logo-color{position:relative;z-index:1;opacity:calc(1 - var(--p))}
+/* A regua passou de cinco para seis itens ("Area do Investidor" e o mais
+   longo de todos). Em 900 px os seis nao cabiam ao lado da marca e do botao
+   de WhatsApp: a fila transbordava por cima do logotipo. Medido no navegador,
+   a barra so respira a partir de 1240 px (ali sobram 27 px de cada lado);
+   abaixo disso quem manda e o menu de hamburguer, que ja traz os seis itens
+   mais o WhatsApp. O vao entre os links tambem encolhe um pouco nas telas
+   mais estreitas dessa faixa. */
+.navlinks{display:none;gap:34px;align-items:center}
+@media(min-width:1240px){.navlinks{display:flex;gap:clamp(17px,1.9vw,34px)}}
+.navlink{font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink);text-decoration:none;opacity:.75;transition:.25s;position:relative;padding:4px 0}
+.navlink:hover{opacity:1}
+/* duas palavras, e a regua e apertada: este item nunca quebra em duas linhas */
+.navlink-restrito{white-space:nowrap}
+.navlink.active{opacity:1; color: var(--signal);}
+.navlink.active::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:1.5px;background:var(--signal)}
+/* O seletor precisa do `nav.top` na frente. O botao carrega `.btn` junto, e
+   `.btn{display:inline-flex}` mora em components.css, que carrega DEPOIS
+   deste arquivo — com a mesma especificidade, quem vem depois ganha, e o
+   `display:none` daqui nunca valia. Resultado no celular: o CTA aparecia por
+   cima do logotipo, em duas linhas, em todas as paginas. */
+nav.top .navcta{display:none}
+@media(min-width:1240px){ nav.top .navcta{display:inline-flex} }
+
+/* Area de toque de 44 px, o minimo que um dedo acerta sem tentar duas
+   vezes. O desenho continua com 24 px de traco; o que cresce e o alvo. */
+.burger{display:flex;flex-direction:column;justify-content:center;gap:5px;
+  background:none;border:none;cursor:pointer;padding:10px;
+  min-width:44px;min-height:44px;margin-right:-10px}
+@media(min-width:1240px){.burger{display:none}}
+.burger span{width:24px;height:2px;background:var(--ink);display:block;transition:.3s}
+
+/* O X do menu aberto. O js/nav.js ja marcava `.x` no botao, mas nao existia
+   regra nenhuma para essa classe: o desenho continuava hamburguer com o menu
+   escancarado, e nao havia sinal nenhum de "toque aqui para fechar".
+   Os 7 px sao a distancia de centro a centro dos tracos (2 px + 5 px de vao). */
+.burger.x span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.x span:nth-child(2){opacity:0;transform:scaleX(.2)}
+.burger.x span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(prefers-reduced-motion:reduce){ .burger span{transition:none} }
+
+/* Com o menu aberto, o halo atras do logotipo cai sobre um fundo chapado e
+   vira uma mancha clara em cima da marca. Some enquanto o menu esta la. */
+body.menu-aberto .logo-glow{opacity:0}
+.mobile-menu{position:fixed;inset:0;z-index:55;background:var(--forest-2);
+  transform:translateY(-100%);transition:transform .5s cubic-bezier(.7,0,.2,1);
+  display:flex;flex-direction:column;justify-content:center;padding:0 32px;gap:6px}
+.mobile-menu.open{transform:translateY(0)}
+.mobile-menu a{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-.02em;font-size:2rem;color:var(--ink);text-decoration:none;padding:12px 0;border-bottom:1px solid var(--hair-soft)}
+.mobile-menu a .num{font-family:'IBM Plex Mono',monospace;font-size:.8rem;color:var(--signal);margin-right:16px;vertical-align:middle}
+
+/* No rodape os mesmos `.navlink` sao lidos com o dedo, nao com o mouse: 28 px
+   de altura viram 40 px. No topo eles ficam como estao — la ha ponteiro. */
+footer .navlink{padding:10px 0}
+
+/* Menu aberto: trava a rolagem da pagina atras dele (ver js/nav.js). Sem
+   isto o fundo rolava junto no celular e o menu parecia solto. */
+body.menu-aberto{overflow:hidden}
+
+/* ---------- pular para o conteudo ----------
+   Fica escondido ate receber o foco pelo teclado. Sem ele, quem navega por
+   Tab reencontra os cinco links do menu em toda pagina antes de chegar no
+   texto — e quem usa leitor de tela ouve tudo de novo. */
+.pular{
+  position:fixed;top:10px;left:10px;z-index:200;
+  transform:translateY(-160%);transition:transform .2s;
+  background:var(--signal);color:#06301f;
+  font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.92rem;
+  padding:12px 18px;border-radius:11px;text-decoration:none;
+  box-shadow:0 12px 30px -10px rgba(0,0,0,.6);
+}
+.pular:focus{transform:none;outline:2px solid #fff;outline-offset:2px}
+#conteudo:focus{outline:none}

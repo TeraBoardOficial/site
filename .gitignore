@@ -1,0 +1,42 @@
+# Segunda barreira, caso esta pasta um dia vire repositorio git.
+#
+# A separacao de verdade agora e por pasta: o que esta AQUI vai para o ar, o
+# que nao pode subir mora em "Site Nao Subir", fora daqui. Este arquivo so
+# repete a regra para o caso de alguem arrastar algo para ca sem pensar.
+#
+# Nota: hospedagem estatica serve QUALQUER arquivo desta pasta pela URL
+# direta, inclusive .md, .json e este proprio arquivo. Nao guarde aqui nada
+# que nao possa ser lido por qualquer visitante.
+
+# Documentacao interna
+README.md
+*.md
+!assets/**/*.md
+
+# Ferramentas de desenvolvimento — o navegador nunca le nenhuma delas.
+# As da maquete ja estao em "Site Nao Subir/terahecta-dev".
+package.json
+servidor.mjs
+terahecta/package.json
+terahecta/servidor.mjs
+
+# ATENCAO: vendor/three/LICENSE FICA. O three.js e MIT, e a licenca exige que
+# o aviso acompanhe a distribuicao. Tirar de la e violar a licenca.
+
+# Sistema operacional
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Editores
+.vscode/
+.idea/
+*.swp
+*~
+
+# Restos de build/teste
+*.log
+*.bak
+*.old
+*.tmp
+node_modules/

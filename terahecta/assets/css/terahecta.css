@@ -1,0 +1,355 @@
+/*
+ * TeraHecta — Gêmeo Digital 3D
+ * Toda a aparência da página: HUD, painéis, legendas, botões e o layout móvel.
+ * A cena 3D em si não usa CSS — ela é desenhada pelo WebGL em assets/js/terahecta.js.
+ */
+:root {
+    --forest:#0b1a12; --signal:#3ffa8b; --cream:#f2ecd9; --amber:#e8b64f;
+    --clay:#d97757; --danger:#ff5c5c; --warn:#f4c542; --water:#5aa9e6;
+  }
+  *, *::before, *::after { box-sizing:border-box; }
+  html, body {
+    margin:0; height:100%; overflow:hidden;
+    background:linear-gradient(to bottom,#1b3f7a 0%,#4f93d6 45%,#cfe6f7 100%);
+    font-family:'Space Grotesk',sans-serif; color:var(--cream);
+    -webkit-tap-highlight-color:transparent;
+  }
+  #canvas-wrap { position:absolute; inset:0; }
+  canvas { display:block; }
+  .hud { position:absolute; pointer-events:none; z-index:5; }
+
+  #title-hud {
+    top:20px; left:20px; max-width:360px;
+    background:rgba(11,26,18,.68); padding:16px 18px; border-radius:12px;
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.1); box-shadow:0 8px 32px rgba(0,0,0,.25);
+  }
+  .eyebrow { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--signal); margin-bottom:7px; }
+  h1 { font-size:18px; font-weight:600; margin:0 0 5px; line-height:1.3; }
+  .sub { font-size:11.5px; color:#a9c2b3; font-family:'IBM Plex Mono',monospace; line-height:1.5; }
+
+  .panelbox {
+    background:rgba(11,26,18,.7); border:1px solid rgba(255,255,255,.1);
+    border-radius:12px; backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    pointer-events:auto;
+  }
+  details.panel summary { cursor:pointer; list-style:none; user-select:none; }
+  details.panel summary::-webkit-details-marker { display:none; }
+  .table-scroll { overflow-x:auto; }
+
+  /* ---------------- painéis ---------------- */
+  /* O painel de alertas começa recolhido como os outros, então precisa de corpo
+     de cartão e de clique próprio — sem isso o resumo ficava boiando no céu e o
+     título não abria. */
+  #alert-hud { position:absolute; top:178px; left:20px; z-index:6; max-width:310px;
+    padding:11px 13px; pointer-events:auto; }
+  #alert-hud[open] #alert-summary { margin-bottom:9px; }
+  .alert-card {
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; line-height:1.42;
+    padding:9px 13px; border-radius:8px; margin-bottom:7px;
+    border-left:4px solid var(--danger); background:rgb(37,12,12); color:#ffe1e1;
+    box-shadow:0 4px 16px rgba(0,0,0,.3);
+  }
+  .alert-card.warn { border-left-color:var(--warn); background:rgb(41,33,10); color:#fff3d0; }
+  #alert-summary { font-family:'IBM Plex Mono',monospace; font-size:10px; color:#a9c2b3;
+    margin-bottom:0; text-transform:uppercase; letter-spacing:.08em; }
+
+  /* Coluna da direita empilhada: meteorológica e tabela em fluxo, uma abaixo da
+     outra. Posicionar as duas com `top` fixo colidia assim que a meteorológica
+     era aberta ou fechada. */
+  #right-stack { position:absolute; top:72px; right:20px; z-index:6;
+    display:flex; flex-direction:column; align-items:flex-end; gap:8px; max-height:calc(100vh - 92px); }
+  #data-hud { position:static; padding:13px; }
+  #area-tabs { display:flex; gap:4px; margin:8px 0 9px; }
+  .tab {
+    flex:1; font-family:'IBM Plex Mono',monospace; font-size:9.5px; padding:5px 4px;
+    border-radius:5px; border:1px solid rgba(255,255,255,.15); cursor:pointer;
+    background:rgba(255,255,255,.05); color:#a9c2b3; text-align:center; transition:.15s;
+  }
+  .tab.on { background:var(--signal); color:#06180f; border-color:var(--signal); font-weight:700; }
+  .data-table { width:100%; border-collapse:collapse; font-family:'IBM Plex Mono',monospace;
+    font-size:10px; color:#c9dccf; text-align:right; }
+  .data-table th { text-align:right; padding:5px 7px; border-bottom:1px solid rgba(255,255,255,.1);
+    color:var(--signal); font-weight:600; }
+  .data-table th:first-child, .data-table td:first-child { text-align:left; }
+  .data-table td { padding:5px 7px; border-bottom:1px solid rgba(255,255,255,.05); font-variant-numeric:tabular-nums; }
+  .data-table tr:last-child td { border-bottom:none; }
+  /* Glossário curto sob a tabela: a narração foi escrita para quem nunca ouviu
+     falar de EC, e sem isto o painel voltava a falar como laudo de agrônomo. */
+  /* Largura travada: sem isso a nota vira uma linha só e é ELA que passa a
+     definir a largura do painel, que cresce e vai encostar no perfil. */
+  .table-nota { font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:#8fa89a;
+    line-height:1.55; margin-top:9px; padding-top:8px; max-width:340px;
+    border-top:1px solid rgba(255,255,255,.12); }
+  .table-nota b { color:#c9dccf; font-weight:600; }
+  .tr-alta td:first-child { color:var(--signal); font-weight:bold; }
+  .tr-media td:first-child { color:var(--amber); font-weight:bold; }
+  .tr-baixa td:first-child { color:var(--clay); font-weight:bold; }
+  td.cell-warn { color:var(--warn); font-weight:600; }
+  td.cell-danger { color:var(--danger); font-weight:700; }
+
+  /* estação meteorológica */
+  #meteo-hud { position:static; padding:12px 15px; min-width:206px; }
+  #meteo-hud .mt { font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--signal); margin-bottom:8px; }
+  .mrow { display:flex; justify-content:space-between; gap:12px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#c9dccf; margin-bottom:4px; }
+  .mrow span:last-child { color:var(--cream); font-variant-numeric:tabular-nums; }
+  #meteo-fc { margin-top:8px; padding-top:8px; border-top:1px solid rgba(255,255,255,.12);
+    font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--water); line-height:1.45; }
+
+  /* legenda e créditos */
+  /* z-index igual ao dos outros painéis: sem ele, legenda e créditos ficam
+     abaixo do #canvas-wrap, que vem depois no documento — a cena tapava os dois
+     e engolia o clique, então o cartão de créditos nunca abria. */
+  #legend-hud { position:absolute; bottom:20px; left:20px; padding:14px 18px; max-width:300px;
+    z-index:6; }
+  .legend-item { display:flex; align-items:center; gap:9px;
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#c9dccf; margin-bottom:6px; }
+  .legend-item:last-child { margin-bottom:0; }
+  .swatch { width:11px; height:11px; border-radius:50%; flex-shrink:0; }
+  .swatch.line { border-radius:2px; height:3px; }
+  .legend-note { font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:#8fa89a;
+    margin-top:9px; padding-top:8px; border-top:1px solid rgba(255,255,255,.12); line-height:1.5; }
+  #credits-hud { position:absolute; bottom:20px; left:334px; max-width:300px; padding:12px 16px;
+    font-family:'IBM Plex Mono',monospace; font-size:9.5px; color:#8fa89a; z-index:6; }
+  #credits-hud summary { font-size:10.5px; color:#c9dccf; }
+  #credits-hud[open] summary { margin-bottom:7px; }
+  .credit-line { line-height:1.5; margin-bottom:3px; }
+  .credit-line b { color:#c9dccf; font-weight:600; }
+  .credit-line a { color:var(--signal); text-decoration:none; }
+
+  /* perfil topográfico */
+  /* No topo-centro, e não embaixo: embaixo o perfil ficava atrás da barra de
+     botões e da legenda narrada do modo filme — justamente quando ele é mais
+     necessário. Aqui ele divide a faixa livre entre o título e a coluna direita. */
+  /* Ancorado na base esquerda, com a largura limitada pelo espaço que sobra
+     antes da coluna da direita (384 px + margens = 436). No topo-centro ele só
+     cabia acima de 1500 px de largura: a faixa entre o título e a coluna direita
+     encolhe rápido e some por volta de 900 px. */
+  #profile-hud {
+    position:absolute; left:20px; bottom:126px;
+    width:min(900px, calc(100vw - 436px)); padding:10px 12px 6px; z-index:8;
+    opacity:0; pointer-events:none; transition:opacity .45s ease;
+  }
+  #profile-hud.on { opacity:1; pointer-events:auto; }
+  /* No filme quem manda no perfil é o plano, como em todos os outros painéis */
+  body.playing #profile-hud { opacity:0; pointer-events:none; }
+  body.playing #profile-hud.on.cine { opacity:1; }
+  #profile-title { font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--signal); margin-bottom:7px; }
+  #profile-cvs { width:100%; height:auto; display:block; border-radius:6px; }
+
+  /* botões */
+  .btn { border:1px solid rgba(255,255,255,.2); border-radius:8px; cursor:pointer;
+    font-family:'IBM Plex Mono',monospace; font-weight:600; font-size:11.5px;
+    text-transform:uppercase; letter-spacing:.05em; transition:all .2s ease; z-index:10; }
+  #toolbar { position:absolute; bottom:78px; left:50%; transform:translateX(-50%);
+    display:flex; gap:8px; z-index:10; transition:all .3s ease; }
+  /* Com o filme rodando sobra um botão só, e ele sai do centro: a barra ficava
+     plantada em cima do assunto do plano (a estação, o sensor, o fazendeiro). */
+  body.playing #toolbar { left:auto; right:20px; transform:none; bottom:78px; }
+  body.playing #btn-topo, body.playing #btn-rain { display:none; }
+  body.playing #hint-hud { opacity:0; }
+  /* O cartão da chuva explica em texto o que a narração está dizendo em voz, no
+     alto da tela e por cima do plano. Fora do filme ele é a legenda do botão de
+     chuva; durante o filme, quem narra é a narração. */
+  body.playing #rain-status { opacity:0 !important; }
+  #btn-rain { padding:11px 17px; color:#fff; background:linear-gradient(135deg,#3b82f6,#2563eb);
+    box-shadow:0 4px 16px rgba(37,99,235,.4); }
+  #btn-topo { padding:11px 17px; color:#06180f; background:linear-gradient(135deg,#e8b64f,#d99a2b);
+    box-shadow:0 4px 16px rgba(232,182,79,.35); }
+  #btn-topo.on { background:linear-gradient(135deg,#fff0c0,#e8b64f); }
+  #btn-story { padding:11px 20px; background:linear-gradient(135deg,#3ffa8b,#22c55e); color:#0b1a12;
+    font-weight:700; box-shadow:0 4px 16px rgba(63,250,139,.35); }
+  #btn-story.playing { background:linear-gradient(135deg,#f4c542,#e8b64f); }
+  #btn-sound { position:absolute; top:20px; right:20px; padding:11px 14px; font-size:13px;
+    color:#fff; background:rgba(11,26,18,.75); backdrop-filter:blur(8px); }
+  #btn-sound.muted { opacity:.55; }
+
+  /* narrativa */
+  /* Legenda de FILME, não cartão: sem caixa, sem moldura, sem fundo — texto
+     sobre a imagem, como legenda de cinema. Quem garante a leitura é o contorno
+     escuro, que funciona tanto sobre o céu claro quanto sobre a terra escura. */
+  #story-caption {
+    position:absolute; bottom:52px; left:50%; transform:translateX(-50%);
+    max-width:min(880px, 76vw); text-align:center; background:none;
+    border:none; padding:0; border-radius:0;
+    font-size:22px; font-weight:500; line-height:1.34; color:#fff;
+    text-shadow:0 2px 5px rgba(0,0,0,.95), 0 0 16px rgba(0,0,0,.8), 0 1px 1px rgba(0,0,0,1);
+    opacity:0; transition:opacity .45s ease; z-index:9; pointer-events:none;
+  }
+  #story-caption b { color:#7cffb2; font-weight:700; }
+  #story-chapter {
+    position:absolute; top:20px; left:50%; transform:translateX(-50%);
+    background:rgba(11,26,18,.95); border:1px solid rgba(255,255,255,.15);
+    padding:7px 17px; border-radius:20px; font-family:'IBM Plex Mono',monospace;
+    font-size:11px; color:var(--signal); letter-spacing:.12em; opacity:0;
+    transition:opacity .4s ease; z-index:9; text-transform:uppercase;
+  }
+  #story-progress { position:absolute; top:0; left:0; height:2px; width:0%;
+    background:var(--signal); z-index:12; opacity:0; }
+  #rain-status {
+    position:absolute; top:150px; left:50%; transform:translateX(-50%);
+    background:rgba(11,26,18,.8); padding:11px 16px; border-radius:8px;
+    border:1px solid rgba(255,255,255,.1); border-left:4px solid var(--water);
+    font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:#e0f2fe;
+    opacity:0; transition:opacity .5s; z-index:9; max-width:340px; line-height:1.5;
+    pointer-events:none; white-space:pre-line; text-align:center;
+  }
+  #hint-hud { bottom:20px; right:20px; font-family:'IBM Plex Mono',monospace; font-size:10.5px;
+    color:rgba(255,255,255,.6); text-align:right; background:rgba(11,26,18,.5);
+    padding:9px 13px; border-radius:8px; backdrop-filter:blur(8px); line-height:1.6; }
+
+  /* ---------------- ficha do objeto (modo livre) ----------------
+     Clicou numa peça da cena, ela se apresenta: nome, o que faz e — no caso do
+     sensor — o que ele está lendo agora. Some sozinha depois de alguns segundos
+     para a cena não virar um mural de cartões esquecidos. */
+  #info-card {
+    position:absolute; left:50%; bottom:132px; transform:translate(-50%, 14px);
+    width:min(430px, calc(100vw - 40px)); z-index:11;
+    background:rgba(11,26,18,.94); border:1px solid rgba(255,255,255,.14);
+    border-left:4px solid var(--signal); border-radius:12px; padding:14px 16px 13px;
+    box-shadow:0 10px 34px rgba(0,0,0,.4); backdrop-filter:blur(12px);
+    opacity:0; pointer-events:none; transition:opacity .28s ease, transform .28s ease;
+  }
+  #info-card.on { opacity:1; transform:translate(-50%, 0); pointer-events:auto; }
+  #info-kind { font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--signal); margin-bottom:5px; }
+  #info-name { font-size:16px; font-weight:600; margin:0 0 6px; line-height:1.25; padding-right:22px; }
+  #info-desc { font-family:'IBM Plex Mono',monospace; font-size:11px; color:#a9c2b3; line-height:1.55; }
+  #info-desc b { color:var(--cream); font-weight:600; }
+  #info-close { position:absolute; top:9px; right:11px; cursor:pointer; border:none;
+    background:none; color:#8fa89a; font-size:17px; line-height:1; padding:2px 4px; }
+  #info-close:hover { color:var(--cream); }
+  #info-read { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-top:10px; }
+  .rd { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09);
+    border-radius:7px; padding:6px 8px; }
+  .rd i { display:block; font-style:normal; font-family:'IBM Plex Mono',monospace;
+    font-size:8.5px; letter-spacing:.09em; color:#8fa89a; text-transform:uppercase; }
+  .rd b { display:block; font-family:'IBM Plex Mono',monospace; font-size:13px;
+    color:var(--cream); font-weight:600; font-variant-numeric:tabular-nums; margin-top:2px; }
+  .rd.warn b { color:var(--warn); } .rd.danger b { color:var(--danger); }
+  #info-link { display:inline-block; margin-top:11px; font-family:'IBM Plex Mono',monospace;
+    font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:#06180f;
+    background:var(--signal); padding:7px 13px; border-radius:7px; font-weight:700; }
+
+  /* ---------------- manche de navegação (toque) ---------------- */
+  #nav-pad { position:absolute; left:24px; bottom:120px; width:128px; height:128px;
+    border-radius:50%; z-index:11; display:none; touch-action:none;
+    background:rgba(11,26,18,.42); border:1px solid rgba(255,255,255,.16);
+    backdrop-filter:blur(8px); pointer-events:auto; }
+  #nav-knob { position:absolute; left:50%; top:50%; width:52px; height:52px; margin:-26px 0 0 -26px;
+    border-radius:50%; background:rgba(63,250,139,.55); border:1px solid rgba(255,255,255,.35);
+    box-shadow:0 3px 12px rgba(0,0,0,.35); transition:background .15s; }
+  #nav-pad.act #nav-knob { background:rgba(63,250,139,.85); }
+  #nav-pad::after { content:'PERCORRER'; position:absolute; left:0; right:0; bottom:-17px;
+    text-align:center; font-family:'IBM Plex Mono',monospace; font-size:8.5px;
+    letter-spacing:.12em; color:rgba(255,255,255,.45); }
+  body.touchnav #nav-pad { display:block; }
+  body.playing #nav-pad, body.playing #info-card { display:none; }
+
+  /* ---------------- modo filme: a tela é do filme ----------------
+     Os painéis são ferramenta de quem está explorando; durante a narração eles
+     tapam justamente o plano que a câmera montou. Cada um volta só no capítulo
+     em que ELE é o assunto — ver `panels` nos estágios. */
+  body.playing #alert-hud, body.playing #data-hud, body.playing #meteo-hud,
+  body.playing #legend-hud, body.playing #credits-hud {
+    opacity:0; pointer-events:none !important; transition:opacity .5s ease;
+  }
+  body.playing #alert-hud.cine, body.playing #data-hud.cine,
+  body.playing #meteo-hud.cine, body.playing #legend-hud.cine {
+    opacity:1; pointer-events:auto !important;
+  }
+
+  /* carregamento */
+  #loading { position:absolute; inset:0; display:flex; flex-direction:column; gap:16px;
+    align-items:center; justify-content:center; font-family:'IBM Plex Mono',monospace;
+    font-size:12px; color:#fff; background:#17406e; z-index:40; letter-spacing:.15em;
+    text-transform:uppercase; transition:opacity .5s ease; }
+  #loading-bar { width:min(280px,60vw); height:3px; background:rgba(255,255,255,.18);
+    border-radius:2px; overflow:hidden; }
+  #loading-fill { height:100%; width:0%; background:var(--signal); transition:width .25s ease; }
+  #loading-err { max-width:min(560px,86vw); text-transform:none; letter-spacing:0; text-align:center;
+    line-height:1.65; font-size:12.5px; color:#ffd9d9; display:none; }
+  #loading-err code { background:rgba(0,0,0,.35); padding:3px 7px; border-radius:4px;
+    display:inline-block; margin-top:4px; }
+
+  /* Em modo topografia a legenda descreve cores que não estão mais na tela — o
+     terreno virou rampa de altitude. Ela cede o lugar ao perfil, que é a legenda
+     daquele modo. */
+  body.topo #legend-hud, body.topo #credits-hud { display:none; }
+
+  /* Teto no painel de alertas: com 24 sensores ele pode crescer até encostar no
+     perfil nas resoluções mais baixas. */
+  #alert-hud { max-height:calc(100vh - 520px); overflow-y:auto; }
+
+  #mobile-panels { display:contents; }
+
+  /* ============================= MOBILE ============================= */
+  @media (max-width:1250px) {
+    #title-hud { position:fixed; top:0; left:0; right:0; max-width:100%; border-radius:0;
+      padding:9px 13px; border:none; border-bottom:1px solid rgba(255,255,255,.12);
+      background:rgba(11,26,18,.93); z-index:30; }
+    #title-hud .eyebrow { margin-bottom:2px; font-size:8.5px; }
+    #title-hud h1 { font-size:12.5px; margin:0; line-height:1.25; }
+    #title-hud .sub { display:none; }
+
+    #right-stack { display:contents; }
+    #mobile-panels { display:flex; flex-wrap:wrap; gap:5px;
+      position:fixed; top:50px; left:7px; right:7px; z-index:25; }
+    details.panel, #alert-hud, #data-hud, #legend-hud, #credits-hud, #meteo-hud {
+      position:static !important; inset:auto !important; transform:none !important;
+      background:rgb(15,32,22) !important; backdrop-filter:none !important;
+      border:1px solid rgba(255,255,255,.14) !important; border-radius:8px !important;
+      box-shadow:none !important; max-width:100% !important; min-width:0 !important;
+      padding:0 !important; pointer-events:auto !important; flex:0 0 auto; }
+    details.panel summary { padding:6px 11px; font-size:10px; white-space:nowrap;
+      font-family:'IBM Plex Mono',monospace; color:var(--cream); }
+    details.panel[open] { flex:1 1 100%; max-height:40vh; overflow-y:auto; padding-bottom:7px !important; }
+    #alert-hud #alert-summary { padding:6px 11px; display:block; margin-bottom:0; }
+    #alert-hud #alert-list { padding:0 9px; }
+    #data-hud .table-scroll { padding:0 7px; }
+    #data-hud .data-table { font-size:9px; }
+    #data-hud .table-nota { margin:8px 11px 0; font-size:8.5px; }
+    #area-tabs { padding:0 7px; margin:6px 0 7px; }
+    #legend-hud .legend-item { padding:0 11px 7px; margin-bottom:0; }
+    #legend-hud .legend-note { margin:0 11px 6px; }
+    #credits-hud .credit-line { padding:0 11px 5px; margin-bottom:0; font-size:9px; }
+    #meteo-hud .mt { padding:6px 11px; margin-bottom:0; }
+    #meteo-hud .mrow { padding:0 11px 4px; margin-bottom:0; font-size:9.5px; }
+    #meteo-hud #meteo-fc { margin:4px 11px 6px; font-size:9px; }
+
+    #toolbar { position:fixed; left:7px; right:7px; bottom:calc(7px + env(safe-area-inset-bottom));
+      transform:none; z-index:30; }
+    #btn-rain, #btn-topo, #btn-story { flex:1; padding:12px 4px; font-size:9px; }
+    #btn-sound { position:fixed !important; top:7px; right:7px; z-index:31; padding:7px 9px; font-size:12px; }
+    #story-caption { left:10px; right:10px; bottom:64px; transform:none; max-width:none;
+      font-size:15px; padding:0; }
+    /* No celular o botão do filme NÃO sai do rodapé: jogado para o canto, ele
+       cai justamente em cima da legenda, que aqui ocupa a largura toda. E a
+       barra de título dá lugar ao nome do capítulo — as duas juntas não cabem
+       nos 390 px de topo. */
+    body.playing #toolbar { left:7px; right:7px; bottom:calc(7px + env(safe-area-inset-bottom)); }
+    body.playing #title-hud { opacity:0; pointer-events:none; transition:opacity .4s ease; }
+    body.playing #story-chapter { right:auto; left:7px; }
+    #story-chapter { top:7px; right:52px; left:auto; transform:none; z-index:31; font-size:9.5px; }
+    #rain-status { top:52px; left:7px; right:7px; transform:none; max-width:none; }
+    #profile-hud { left:7px; right:7px; top:auto; bottom:118px; transform:none;
+      width:auto; padding:8px 9px 5px; }
+    #alert-hud { max-height:none; overflow:visible; }
+    #hint-hud { display:none; }
+
+    /* O manche fica no canto do polegar; a ficha divide a faixa com ele. */
+    #nav-pad { left:12px; bottom:calc(74px + env(safe-area-inset-bottom));
+      width:104px; height:104px; }
+    #nav-knob { width:44px; height:44px; margin:-22px 0 0 -22px; }
+    #info-card { left:128px; right:7px; bottom:calc(62px + env(safe-area-inset-bottom));
+      transform:translate(0,14px); width:auto; padding:11px 13px 12px; }
+    #info-card.on { transform:translate(0,0); }
+    #info-name { font-size:13.5px; }
+    #info-desc { font-size:10px; }
+    #info-read { grid-template-columns:repeat(3,1fr); gap:4px; }
+    .rd { padding:4px 6px; } .rd b { font-size:11px; }
+  }

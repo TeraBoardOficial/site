@@ -1,0 +1,54 @@
+/* =========================================================================
+   Camada de vitrine
+   -------------------------------------------------------------------------
+   Aplicada por cima de `../assets/app.css` nas telas da propaganda.
+
+   REGRA DESTA BUILD: nada é clicável, tudo é rolável.
+
+   A garantia principal não é CSS — é a marcação: estas telas não têm um
+   único `<a href>` nem `<button>`. Links viram `<span>`. O que está aqui é
+   só o acabamento visual disso (cursor, seleção, foco), porque estilo se
+   burla e marcação não.
+   ========================================================================= */
+
+body {
+	cursor: default;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	user-select: none;
+}
+
+/* Nada aqui recebe foco de teclado nem realce de toque. */
+:focus { outline: none; }
+
+/*
+ * Sem a ilha dinâmica, o conteúdo encostaria na borda do vidro. Este respiro
+ * é o que qualquer app reserva no topo — e é o que faz a tela parecer
+ * assentada no aparelho em vez de colada nele.
+ */
+.dark-header,
+.gh-header { padding-top: 30px !important; }
+
+.top-bar { padding-top: 22px; }
+
+/* Rolagem sem barra visível: dentro do aparelho ela não existe. */
+html { scrollbar-width: none; }
+::-webkit-scrollbar { display: none; }
+
+/*
+ * Elementos que só existiam para dar destino a um toque saem de cena — uma
+ * seta de "entrar" apontando para lugar nenhum é pior do que seta nenhuma.
+ */
+.no-touch { display: none !important; }
+
+/*
+ * Campos preenchidos viram `<span>` — o valor está lá para ser lido, não
+ * digitado. Como `.input` foi desenhado para um `<input>` de altura fixa, o
+ * texto precisa ser centralizado na mão.
+ */
+span.input {
+	display: flex;
+	align-items: center;
+	color: var(--ink);
+	font-size: 16px;
+}

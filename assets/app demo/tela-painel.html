@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Fora das buscas enquanto os tres produtos estao em desenvolvimento. Esta
+     linha e o que realmente tira a pagina do Google.
+     E o robots.txt continua com Allow: / de proposito — "Disallow" impediria o
+     buscador de BAIXAR a pagina, e sem baixar ele nunca leria este noindex: a
+     URL ficaria presa no indice, sem titulo nem descricao. Primeiro sai do
+     indice, depois se discute bloquear o rastreio. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<title>TeraBoard · Painel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="../../css/protecao.css">
+<script src="../../js/protecao.js"></script>
+</head>
+<body class="has-nav">
+
+<!-- =========================================================================
+     Painel — a primeira tela da estufa.
+
+     Ordem de leitura pensada para quem chega na estufa de manhã:
+       1. O que o sistema está fazendo agora?  → card flutuante
+       2. Tem algo errado?                     → carrossel de avisos
+       3. Como está a plantação (dinheiro)?    → resumo de safra
+       4. Tenho insumo?                        → caixas
+       5. Como está o ambiente?                → clima
+       6. E cada canteiro?                     → setores
+     ========================================================================= -->
+
+<header class="dark-header">
+	<div class="dh-top">
+		<span class="avatar"><i class="ph-fill ph-plant"></i></span>
+		<div class="dh-actions">
+			<span class="bell-wrap"><i class="ph ph-bell"></i><span class="bell-badge"></span></span>
+			<span><i class="ph ph-sliders-horizontal"></i></span>
+		</div>
+	</div>
+	<h1 class="t-greet c-onDark">Estufa Principal</h1>
+	<div class="t-mono c-onDarkMuted dh-sub">Nova Friburgo · RJ</div>
+</header>
+
+<div class="floating-wrap">
+	<div class="floating-card">
+		<div class="between">
+			<span class="t-label c-2">Status da operação</span>
+		</div>
+		<div class="t-greet c-dark" style="margin-top:4px">Adubando Setor Norte</div>
+		<div style="margin-top:12px">
+			<span class="conn-badge"><span class="dot"></span><span>Malha fechada ativa</span></span>
+		</div>
+	</div>
+</div>
+
+<!-- Carrossel de avisos. Substituiu o letreiro rolante: texto em movimento
+     obriga a esperar a frase passar e é ruim de ler no sol. -->
+<div class="alerts-scroll">
+	<div class="alert-pill crit">
+		<span class="icon-box"><i class="ph-fill ph-warning-circle"></i></span>
+		<span>
+			<span class="row" style="gap:4px"><b class="t-strong c-crit grow">Caixa quase vazia</b><span class="dot crit" style="width:7px;height:7px"></span></span>
+			<p class="t-caption">Micronutrientes em 16%. Reabasteça para manter a fertirrigação. (há 4 min)</p>
+		</span>
+	</div>
+	<div class="alert-pill warn">
+		<span class="icon-box"><i class="ph-fill ph-info"></i></span>
+		<span>
+			<span class="row" style="gap:4px"><b class="t-strong c-warn grow">Solo muito seco</b><span class="dot warn" style="width:7px;height:7px"></span></span>
+			<p class="t-caption">Setor Norte · umidade em 31,4% na Fieira 2 · posição 9. (há 18 min)</p>
+		</span>
+	</div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- =====================================================================
+     Plantação — traz o dinheiro para a primeira tela. "Quanto já gastei
+     nesta plantação" é tão operacional quanto "preciso regar".
+     ===================================================================== -->
+<section class="section">
+	<div class="section-header">
+		<div>
+			<h2 class="t-section">Plantação</h2>
+			<div class="hint">2 safras abertas</div>
+		</div>
+	</div>
+
+	<div class="panel" style="margin-bottom:12px">
+		<div class="row" style="gap:8px">
+			<span class="grow">
+				<span class="t-item" style="display:block">Tomate Cherry</span>
+				<span class="t-caption c-2">Setor Norte · 63 dias</span>
+			</span>
+			<span class="chip mono ok">Frutificação</span>
+		</div>
+		<div class="stat-strip" style="margin-top:16px">
+			<div class="stat"><span class="k">Gasto</span><span class="v">R$ 1,0 mil</span></div>
+			<div class="stat"><span class="k">Colhido</span><span class="v">185,0 kg</span></div>
+			<div class="stat"><span class="k">Custo/kg</span><span class="v">R$ 5,51</span></div>
+		</div>
+	</div>
+
+	<div class="panel">
+		<div class="row" style="gap:8px">
+			<span class="grow">
+				<span class="t-item" style="display:block">Alface Crespa</span>
+				<span class="t-caption c-2">Setor Sul · 21 dias</span>
+			</span>
+			<span class="chip mono ok">Crescimento</span>
+		</div>
+		<div class="stat-strip" style="margin-top:16px">
+			<div class="stat"><span class="k">Gasto</span><span class="v">R$ 284,10</span></div>
+			<div class="stat"><span class="k">Colhido</span><span class="v">—</span></div>
+			<div class="stat"><span class="k">Previsto/kg</span><span class="v">R$ 3,16</span></div>
+		</div>
+	</div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- =====================================================================
+     Nível das caixas. Uma linguagem de cor só: a cor SEMPRE significa
+     estado. A identidade da caixa vem do ÍCONE e do NOME.
+     ===================================================================== -->
+<section class="section">
+	<div class="section-header">
+		<div>
+			<h2 class="t-section">Nível das caixas</h2>
+			<div class="hint">Água e nutrientes disponíveis</div>
+		</div>
+	</div>
+
+	<div class="list-item" style="margin-bottom:20px">
+		<span class="icon-circle"><i class="ph-fill ph-drop"></i></span>
+		<div class="item-content">
+			<div class="item-header" style="margin-bottom:8px">
+				<span class="t-item">Água</span>
+				<span class="t-metric-s c-ok">41%</span>
+			</div>
+			<div class="bar-track"><div class="bar-fill bg-ok" style="width:41%"></div></div>
+			<div class="bar-foot"><span>205,0 L / 500 L</span></div>
+		</div>
+	</div>
+
+	<div class="list-item" style="margin-bottom:20px">
+		<span class="icon-circle"><i class="ph-fill ph-flask"></i></span>
+		<div class="item-content">
+			<div class="item-header" style="margin-bottom:8px">
+				<span class="t-item">Macronutrientes</span>
+				<span class="t-metric-s c-warn">35%</span>
+			</div>
+			<div class="bar-track"><div class="bar-fill bg-warn" style="width:35%"></div></div>
+			<div class="bar-foot"><span>17,6 L / 50 L</span><span class="c-warn">Atenção</span></div>
+		</div>
+	</div>
+
+	<div class="list-item">
+		<span class="icon-circle" style="color:var(--crit)"><i class="ph-fill ph-test-tube"></i></span>
+		<div class="item-content">
+			<div class="item-header" style="margin-bottom:8px">
+				<span class="t-item">Micronutrientes</span>
+				<span class="t-metric-s c-crit">16%</span>
+			</div>
+			<div class="bar-track"><div class="bar-fill bg-crit" style="width:16%"></div></div>
+			<div class="bar-foot"><span>7,9 L / 50 L</span><span class="c-crit">Crítico</span></div>
+		</div>
+	</div>
+
+	<p class="t-caption c-3" style="margin-top:12px">
+		Cada caixa é acompanhada por sensor dedicado — leitura direta do volume,
+		não estimativa.
+	</p>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- Clima. Mostra só o que existe sensor para medir. -->
+<section class="section">
+	<div class="section-header">
+		<div>
+			<h2 class="t-section">Clima da estufa</h2>
+			<div class="hint">Ar dentro do ambiente</div>
+		</div>
+	</div>
+
+	<div class="list-item" style="margin-bottom:16px">
+		<span class="icon-circle"><i class="ph-fill ph-thermometer"></i></span>
+		<div class="item-content" style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+			<span class="t-item">Temperatura do ar</span>
+			<span class="t-metric-s c-ok">27,4<small>°C</small></span>
+		</div>
+	</div>
+
+	<div class="list-item">
+		<span class="icon-circle"><i class="ph-fill ph-drop"></i></span>
+		<div class="item-content" style="display:flex;align-items:baseline;justify-content:space-between;gap:8px">
+			<span class="t-item">Umidade do ar</span>
+			<span class="t-metric-s c-ok">68,0<small>%</small></span>
+		</div>
+	</div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- =====================================================================
+     Setores. Cada cartão traz a condição atual do canteiro contra a faixa
+     recomendada para o estágio em curso.
+     Fundo alternado impede que empilhados virem uma coluna só de números.
+     ===================================================================== -->
+<div class="section" style="padding-bottom:0">
+	<div class="section-header" style="margin-bottom:0">
+		<div>
+			<h2 class="t-section">Setores de cultivo</h2>
+			<div class="hint">Condição de cada canteiro em tempo real</div>
+		</div>
+	</div>
+</div>
+
+<div class="stripe">
+	<div class="list-item" style="padding:16px var(--pad)">
+		<span class="icon-circle"><i class="ph-fill ph-leaf"></i></span>
+		<div class="item-content">
+			<div class="row" style="gap:8px;justify-content:space-between">
+				<span class="t-item grow">Tomate Cherry <span class="t-caption c-2">&nbsp;·&nbsp; Setor Norte</span></span>
+				<span class="chip mono" style="background:var(--ok-soft);color:var(--brand-dark)"><span class="dot" style="width:6px;height:6px;background:var(--brand-green)"></span>Adubando</span>
+			</div>
+			<div class="t-mono-s c-3" style="margin-top:2px;margin-bottom:16px;text-transform:uppercase">Frutificação · 2 fieiras</div>
+
+			<div style="margin-bottom:16px">
+				<div class="metric-head">
+					<span class="metric-title">Umidade do solo</span>
+					<span class="metric-val">49,8<span>%</span></span>
+				</div>
+				<div class="bar-track">
+					<div class="bar-target" style="left:40%;width:18%"></div>
+					<div class="bar-fill bg-dark" style="width:49.8%"></div>
+				</div>
+				<div class="bar-foot"><span>Dentro da faixa do estágio</span></div>
+			</div>
+
+			<div style="margin-bottom:8px">
+				<div class="metric-head">
+					<span class="metric-title">Condutividade (EC)</span>
+					<span class="metric-val">1,94<span>mS/cm</span></span>
+				</div>
+				<div class="bar-track">
+					<div class="bar-target" style="left:20%;width:10%"></div>
+					<div class="bar-fill bg-dark" style="width:19.4%"></div>
+				</div>
+				<div class="bar-foot"><span>Dentro da faixa do estágio</span></div>
+			</div>
+
+			<div class="mini-grid">
+				<div class="mini"><span class="k">Acidez (pH)</span><span class="v">6,3<small>pH</small></span></div>
+				<div class="mini"><span class="k">Temperatura</span><span class="v">26,7<small>°C</small></span></div>
+				<div class="mini"><span class="k">Sensores</span><span class="v">4/4<small>ativos</small></span></div>
+				<div class="mini"><span class="k">Pontos em alerta</span><span class="v c-warn">1<small>ponto</small></span></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="stripe">
+	<div class="list-item" style="padding:16px var(--pad)">
+		<span class="icon-circle"><i class="ph-fill ph-leaf"></i></span>
+		<div class="item-content">
+			<div class="row" style="gap:8px;justify-content:space-between">
+				<span class="t-item grow">Alface Crespa <span class="t-caption c-2">&nbsp;·&nbsp; Setor Sul</span></span>
+			</div>
+			<div class="t-mono-s c-3" style="margin-top:2px;margin-bottom:16px;text-transform:uppercase">Crescimento · 1 fieira</div>
+
+			<div style="margin-bottom:16px">
+				<div class="metric-head">
+					<span class="metric-title">Umidade do solo</span>
+					<span class="metric-val">42,5<span>%</span></span>
+				</div>
+				<div class="bar-track">
+					<div class="bar-target" style="left:38%;width:17%"></div>
+					<div class="bar-fill bg-dark" style="width:42.5%"></div>
+				</div>
+				<div class="bar-foot"><span>Dentro da faixa do estágio</span></div>
+			</div>
+
+			<div style="margin-bottom:8px">
+				<div class="metric-head">
+					<span class="metric-title">Condutividade (EC)</span>
+					<span class="metric-val">2,74<span>mS/cm</span></span>
+				</div>
+				<div class="bar-track">
+					<div class="bar-target" style="left:16%;width:10%"></div>
+					<div class="bar-fill bg-warn" style="width:27.4%"></div>
+				</div>
+				<div class="bar-foot"><span class="c-warn">Acima da faixa do estágio</span></div>
+			</div>
+
+			<div class="mini-grid">
+				<div class="mini"><span class="k">Acidez (pH)</span><span class="v">6,1<small>pH</small></span></div>
+				<div class="mini"><span class="k">Temperatura</span><span class="v">25,3<small>°C</small></span></div>
+				<div class="mini"><span class="k">Sensores</span><span class="v">2/2<small>ativos</small></span></div>
+				<div class="mini"><span class="k">Pontos em alerta</span><span class="v c-warn">1<small>ponto</small></span></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Barra inferior. Só ícones, com um ponto marcando a aba ativa: pensada
+     para ser acertada sem olhar. -->
+<nav class="bottom-nav">
+	<span class="nav-item active"><i class="ph-fill ph-house"></i><span class="nav-indicator"></span></span>
+	<span class="nav-item"><i class="ph ph-chart-line-up"></i><span class="nav-indicator"></span></span>
+	<span class="nav-item"><i class="ph ph-map-trifold"></i><span class="nav-indicator"></span></span>
+	<span class="nav-item"><i class="ph ph-sliders-horizontal"></i><span class="nav-indicator"></span></span>
+</nav>
+
+</body>
+</html>

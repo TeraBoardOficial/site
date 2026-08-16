@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Fora das buscas enquanto os tres produtos estao em desenvolvimento. Esta
+     linha e o que realmente tira a pagina do Google.
+     E o robots.txt continua com Allow: / de proposito — "Disallow" impediria o
+     buscador de BAIXAR a pagina, e sem baixar ele nunca leria este noindex: a
+     URL ficaria presa no indice, sem titulo nem descricao. Primeiro sai do
+     indice, depois se discute bloquear o rastreio. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<title>TeraBoard · Monitoramento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	.s-chip { border-radius: 999px; padding: 8px 16px; background: var(--surface-icon); color: var(--ink-2); font-size: 13px; font-weight: 500; white-space: nowrap; }
+	.s-chip.selected { background: var(--brand-dark); color: #fff; }
+	.mtabs { display: flex; margin: 0 var(--pad); background: var(--surface-icon); border-radius: 999px; padding: 4px; gap: 4px; }
+	.mtabs span { flex: 1; text-align: center; padding: 8px 4px; border-radius: 999px; font-size: 13px; font-weight: 500; color: var(--ink-2); }
+	.mtabs span.selected { background: var(--surface-app); color: var(--brand-dark); font-weight: 600; }
+	.stats { display: flex; flex-wrap: wrap; padding: 0 var(--pad) 8px; row-gap: 16px; }
+	.stats .stat { width: 50%; display: flex; flex-direction: column; gap: 2px; }
+	.stats .stat .k { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.04em; color: var(--ink-2); }
+	.stats .stat .v { font-family: var(--font-display); font-size: 18px; font-weight: 700; }
+	.stats .stat .v small { font-family: var(--font-mono); font-size: 10px; font-weight: 500; color: var(--ink-3); margin-left: 4px; }
+	.axis { font-family: var(--font-mono); font-size: 9px; fill: var(--ink-3); }
+	.wk { display: flex; align-items: flex-end; gap: 10px; height: 118px; }
+	.wk .b { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; gap: 6px; height: 100%; }
+	.wk .b .col { width: 100%; border-radius: 6px 6px 0 0; background: var(--brand-dark); }
+	.wk .b .val { font-family: var(--font-display); font-size: 12px; font-weight: 700; }
+	.wk .b .cap { font-family: var(--font-mono); font-size: 9px; text-transform: uppercase; color: var(--ink-2); }
+</style>
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="../../css/protecao.css">
+<script src="../../js/protecao.js"></script>
+</head>
+<body class="has-nav">
+
+<!-- =========================================================================
+     Monitoramento de 30 dias.
+
+     Um mês inteiro numa tela: a linha da umidade média do setor sobre a
+     FAIXA-ALVO da receita. O que vale ler aqui não é o valor de agora — é se
+     a curva passa o mês dentro da faixa, e o que aconteceu quando ela saiu.
+     ========================================================================= -->
+
+<div class="top-bar">
+	<span class="back"><i class="ph ph-caret-left"></i></span>
+	<div class="grow">
+		<div class="tb-title">Monitoramento</div>
+		<div class="tb-sub">Setor Norte · últimos 30 dias</div>
+	</div>
+</div>
+
+<div class="gap-16"></div>
+
+<div class="filter-row">
+	<span class="s-chip selected">Setor Norte</span>
+	<span class="s-chip">Setor Sul</span>
+	<span class="s-chip">Setor Leste</span>
+</div>
+
+<div class="gap-16"></div>
+
+<div class="mtabs">
+	<span class="selected">Umidade</span>
+	<span>Sal (EC)</span>
+	<span>Temp. solo</span>
+</div>
+
+<div style="padding:12px var(--pad) 0;display:flex;gap:8px">
+	<span class="chip outline">7 dias</span>
+	<span class="chip selected">30 dias</span>
+	<span class="chip outline">Safra inteira</span>
+</div>
+
+<div style="padding:16px var(--pad) 8px">
+	<svg viewBox="0 0 354 196" style="width:100%;height:auto;display:block;overflow:visible" role="img"
+		aria-label="Umidade média do Setor Norte nos últimos 30 dias, entre 33% e 55%">
+		<defs>
+			<linearGradient id="fade" x1="0" y1="0" x2="0" y2="1">
+				<stop offset="0%"   stop-color="#1EC78C" stop-opacity="0.28"/>
+				<stop offset="100%" stop-color="#1EC78C" stop-opacity="0.02"/>
+			</linearGradient>
+		</defs>
+
+		<!-- Faixa-alvo da receita. Desenhada ATRÁS da curva: é a régua contra
+		     a qual a linha deve ser lida. -->
+		<rect x="30" y="19.1" width="320" height="99.6" fill="rgba(11,77,54,0.07)"/>
+		<line x1="30" y1="19.1" x2="350" y2="19.1" stroke="rgba(11,77,54,0.28)" stroke-width="1" stroke-dasharray="4 3"/>
+		<line x1="30" y1="118.7" x2="350" y2="118.7" stroke="rgba(11,77,54,0.28)" stroke-width="1" stroke-dasharray="4 3"/>
+
+		<!-- Grade e eixo -->
+		<line x1="30" y1="8"     x2="350" y2="8"     stroke="#E8ECEB" stroke-width="1"/>
+		<line x1="30" y1="63.3"  x2="350" y2="63.3"  stroke="#E8ECEB" stroke-width="1"/>
+		<line x1="30" y1="174"   x2="350" y2="174"   stroke="#E8ECEB" stroke-width="1"/>
+		<text class="axis" x="24" y="11.5"  text-anchor="end">60</text>
+		<text class="axis" x="24" y="66.8"  text-anchor="end">50</text>
+		<text class="axis" x="24" y="122.2" text-anchor="end">40</text>
+		<text class="axis" x="24" y="177.5" text-anchor="end">30</text>
+
+		<path fill="url(#fade)" d="M30.0 52.3 L41.0 85.5 L52.1 35.7 L63.1 74.4 L74.1 46.7 L85.2 79.9 L96.2 41.2 L107.2 68.9 L118.3 52.3 L129.3 85.5 L140.3 35.7 L151.4 74.4 L162.4 57.8 L173.4 91.0 L184.5 46.7 L195.5 79.9 L206.6 96.5 L217.6 129.7 L228.6 146.3 L239.7 157.4 L250.7 79.9 L261.7 46.7 L272.8 74.4 L283.8 41.2 L294.8 68.9 L305.9 52.3 L316.9 85.5 L327.9 41.2 L339.0 74.4 L350.0 63.3 L350.0 174 L30 174 Z"/>
+		<path fill="none" stroke="#0B4D36" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"
+			d="M30.0 52.3 L41.0 85.5 L52.1 35.7 L63.1 74.4 L74.1 46.7 L85.2 79.9 L96.2 41.2 L107.2 68.9 L118.3 52.3 L129.3 85.5 L140.3 35.7 L151.4 74.4 L162.4 57.8 L173.4 91.0 L184.5 46.7 L195.5 79.9 L206.6 96.5 L217.6 129.7 L228.6 146.3 L239.7 157.4 L250.7 79.9 L261.7 46.7 L272.8 74.4 L283.8 41.2 L294.8 68.9 L305.9 52.3 L316.9 85.5 L327.9 41.2 L339.0 74.4 L350.0 63.3"/>
+
+		<!-- O afundamento do dia 20: onde a curva furou a faixa. -->
+		<circle cx="239.7" cy="157.4" r="4" fill="#C4732B" stroke="#fff" stroke-width="2"/>
+		<line x1="239.7" y1="163" x2="239.7" y2="174" stroke="#C4732B" stroke-width="1" stroke-dasharray="2 2"/>
+
+		<circle cx="350" cy="63.3" r="4" fill="#0B4D36" stroke="#fff" stroke-width="2"/>
+
+		<text class="axis" x="30"  y="190" text-anchor="start">07/07</text>
+		<text class="axis" x="140" y="190" text-anchor="middle">17/07</text>
+		<text class="axis" x="251" y="190" text-anchor="middle">27/07</text>
+		<text class="axis" x="350" y="190" text-anchor="end">06/08</text>
+	</svg>
+
+	<div class="chart-legend" style="margin-top:10px">
+		<span class="lg"><span class="swatch" style="background:#0B4D36"></span>Umidade média</span>
+		<span class="lg"><span class="swatch" style="background:rgba(11,77,54,0.28)"></span>Faixa-alvo da receita</span>
+	</div>
+</div>
+
+<div class="stats">
+	<div class="stat"><span class="k">Agora</span><span class="v">50,0<small>%</small></span></div>
+	<div class="stat"><span class="k">Média do mês</span><span class="v">48,4<small>%</small></span></div>
+	<div class="stat"><span class="k">Máximo</span><span class="v">55,0<small>%</small></span></div>
+	<div class="stat"><span class="k">Mínimo</span><span class="v c-warn">33,0<small>%</small></span></div>
+</div>
+
+<div style="padding:8px var(--pad) 0">
+	<div class="panel warn">
+		<div class="row" style="gap:6px">
+			<span class="dot warn" style="width:8px;height:8px"></span>
+			<span class="t-strong c-warn">Fora da faixa em 26 e 27 de julho</span>
+		</div>
+		<p class="t-caption c-2" style="margin-top:4px">
+			Três dias de queda até 33%. O aviso apontou a Fieira 2 · posição 9 —
+			gotejador entupido. Depois da limpeza, a curva voltou à faixa no mesmo dia.
+		</p>
+	</div>
+</div>
+
+<div class="section-divider" style="margin-top:20px"></div>
+
+<!-- Consumo por semana. Ao lado da curva, responde a outra metade da
+     pergunta: manter o canteiro na faixa custou quanto de água? -->
+<section class="section">
+	<div class="section-header">
+		<div>
+			<h2 class="t-section">Água por semana</h2>
+			<div class="hint">Volume medido pelo sistema</div>
+		</div>
+	</div>
+
+	<div class="wk">
+		<div class="b"><span class="val">96</span><span class="col" style="height:62%"></span><span class="cap">Sem 1</span></div>
+		<div class="b"><span class="val">105</span><span class="col" style="height:68%"></span><span class="cap">Sem 2</span></div>
+		<div class="b"><span class="val">138</span><span class="col" style="height:89%"></span><span class="cap">Sem 3</span></div>
+		<div class="b"><span class="val">113</span><span class="col" style="height:73%"></span><span class="cap">Sem 4</span></div>
+	</div>
+
+	<div class="stat-strip" style="margin-top:20px">
+		<div class="stat"><span class="k">Total no mês</span><span class="v">452 L</span></div>
+		<div class="stat"><span class="k">Regas</span><span class="v">17</span></div>
+		<div class="stat"><span class="k">Média/rega</span><span class="v">26,6 L</span></div>
+	</div>
+
+	<p class="t-caption c-3" style="margin-top:14px">
+		A semana 3 puxou o consumo: foi quando o gotejador entupido obrigou o
+		sistema a regar mais vezes para levantar a média do setor.
+	</p>
+</section>
+
+<nav class="bottom-nav">
+	<span class="nav-item"><i class="ph ph-house"></i><span class="nav-indicator"></span></span>
+	<span class="nav-item active"><i class="ph-fill ph-chart-line-up"></i><span class="nav-indicator"></span></span>
+	<span class="nav-item"><i class="ph ph-map-trifold"></i><span class="nav-indicator"></span></span>
+	<span class="nav-item"><i class="ph ph-sliders-horizontal"></i><span class="nav-indicator"></span></span>
+</nav>
+
+</body>
+</html>

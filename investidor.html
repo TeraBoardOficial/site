@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<!-- data-marca liga o carimbo diagonal de js/protecao.js. Ele so aparece nas
+     paginas fechadas; a vitrine publica nao leva. Para o carimbo apontar para
+     uma pessoa em vez de so marcar data e hora, ponha o nome no atributo:
+     data-marca="Fulano / Fundo X". -->
+<html lang="pt-BR" class="loading" data-marca>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Área do Investidor · TeraBoard</title>
+<meta name="description" content="Área restrita da TeraBoard. O acesso é por senha.">
+
+<!-- Fora das buscas. Esta linha e o que realmente tira a pagina do Google.
+     De proposito NAO ha canonical aqui: canonical em pagina noindex e
+     instrucao contraditoria. E de proposito esta pagina NAO esta bloqueada
+     no robots.txt: "Disallow" impediria o buscador de baixar a pagina, e sem
+     baixar ele nunca leria o noindex abaixo. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="assets/logo/teraboard-mark.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0B4D36">
+
+<!-- Tipografia -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Estilos: os compartilhados primeiro, o da pagina por ultimo -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/utilitarios.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/loader.css">
+<link rel="stylesheet" href="css/nav.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/pages/investidor.css">
+
+<!-- Icones -->
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="css/protecao.css">
+<script src="js/protecao.js"></script>
+</head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+<noscript>
+  <!-- Sem JavaScript o loader nunca sairia da frente: aqui ele e removido na marra. -->
+  <style>html.loading{overflow:auto!important}.site-loader{display:none!important}
+    .reveal{opacity:1!important;transform:none!important}</style>
+</noscript>
+
+<!-- LOADING -->
+<div class="site-loader" id="siteLoader" data-min-ms="700" data-phrases="Conferindo o acesso">
+  <div id="travelLight" aria-hidden="true"></div>
+  <div class="loader-halo">
+    <img class="loader-mark" id="loaderMark" src="assets/logo/teraboard-mark.svg" alt="TeraBoard">
+  </div>
+  <span class="loader-label" id="loaderLabel">Conferindo o acesso</span>
+  <div class="loader-bar"><i id="loaderBar"></i></div>
+</div>
+<script src="js/loader.js"></script>
+
+<!-- Contêiner fixo para o renderizador 3D -->
+<div id="canvas-container" data-scale="0.0000024"></div>
+
+<nav class="top" id="topnav">
+  <div class="inner">
+    <a href="index.html" aria-label="TeraBoard — início" class="brand-wrap">
+              <span class="logo-glow" aria-hidden="true"></span>
+              <img class="brand-logo brand-logo-mono" src="assets/logo/teraboard-wordmark-cream.svg" alt="" aria-hidden="true">
+              <img class="brand-logo brand-logo-color" src="assets/logo/teraboard-wordmark-color.svg" alt="TeraBoard">
+              </a>
+    <div class="navlinks"><a href="index.html" class="navlink">Início</a><a href="produtos.html" class="navlink">Produtos</a><a href="terasensor.html" class="navlink">TeraSensor</a><a href="terasmart.html" class="navlink">TeraSmart</a><a href="equipe.html" class="navlink">Equipe</a><a href="investidor.html" class="navlink navlink-restrito active">Área do Investidor</a></div>
+    <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-signal navcta">Falar com a equipe</a>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"><span class="num">01</span>Início</a><a href="produtos.html"><span class="num">02</span>Produtos</a><a href="terasensor.html"><span class="num">03</span>TeraSensor</a><a href="terasmart.html"><span class="num">04</span>TeraSmart</a><a href="equipe.html"><span class="num">05</span>Equipe</a><a href="investidor.html"><span class="num">06</span>Área do Investidor</a>
+  <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" style="font-size:1.3rem;color:var(--signal)"><span class="num">→</span>WhatsApp</a>
+</div>
+
+<main id="conteudo" tabindex="-1">
+
+<section class="pad hero-page">
+  <div class="wrap">
+    <div style="text-align:center;max-width:640px;margin:0 auto">
+      <span class="eyebrow reveal" style="justify-content:center">Acesso restrito</span>
+      <h1 class="display d2 reveal s1" style="margin-top:20px">Área do <em>Investidor</em></h1>
+    </div>
+
+    <!-- ================= O PORTÃO ================= -->
+    <div id="portao">
+      <p class="lede reveal s2" style="margin-top:22px;text-align:center;max-width:46ch;margin-left:auto;margin-right:auto">
+        Aqui ficam os projetos da TeraBoard que estão em busca de investimento.
+        Digite os quatro dígitos que você recebeu.
+      </p>
+
+      <div class="portao reveal s3" style="margin-top:38px">
+        <form class="plate portao-card" id="portaoForm" novalidate>
+          <p class="kicker" id="pinRotulo" style="text-align:center">Senha de 4 dígitos</p>
+
+          <div class="pin-linha" id="pinLinha" role="group" aria-labelledby="pinRotulo">
+            <input class="pin" id="pin1" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+                   autocomplete="off" aria-label="Primeiro dígito">
+            <input class="pin" id="pin2" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+                   autocomplete="off" aria-label="Segundo dígito">
+            <input class="pin" id="pin3" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+                   autocomplete="off" aria-label="Terceiro dígito">
+            <input class="pin" id="pin4" type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1"
+                   autocomplete="off" aria-label="Quarto dígito">
+          </div>
+
+          <!-- role="alert" faz o leitor de tela anunciar o erro sem precisar procurar -->
+          <p class="portao-erro" id="portaoErro" role="alert" aria-live="polite"></p>
+
+          <!-- ---------- TERMOS DE ACESSO ----------
+               Fechado por padrão, mas o texto está na página e não atrás de um
+               link: quem quiser ler, lê aqui, e quem marcar a caixa marcou
+               tendo o texto ao alcance. É o que dá algum peso ao aceite. -->
+          <details class="termos">
+            <summary>
+              <i class="ph-bold ph-scroll" aria-hidden="true"></i>
+              Termos de acesso — leia antes de entrar
+            </summary>
+            <div class="termos-corpo">
+              <p><strong>1. O que é esta área.</strong> Os projetos aqui apresentados estão em
+                desenvolvimento e são divulgados exclusivamente para avaliação de investimento
+                por quem recebeu a senha diretamente da TeraBoard.</p>
+              <p><strong>2. Confidencialidade.</strong> Você concorda em tratar como confidencial
+                todo o conteúdo desta área — textos, imagens, dados técnicos, projeções,
+                maquetes 3D e apresentações — e a não divulgá-lo a terceiros sem autorização
+                escrita da TeraBoard.</p>
+              <p><strong>3. Reprodução.</strong> É proibido copiar, reproduzir, republicar,
+                capturar tela, gravar, imprimir, redistribuir ou criar obra derivada do
+                conteúdo, no todo ou em parte, por qualquer meio.</p>
+              <p><strong>4. Acesso pessoal.</strong> A senha é pessoal e intransferível. Não a
+                repasse. Se precisar dar acesso a mais alguém da sua equipe, peça uma senha
+                para essa pessoa.</p>
+              <p><strong>5. Registro do acesso.</strong> Cada acesso recebe um código, exibido
+                em marca d'água sobre as páginas desta área. Ele identifica de qual acesso
+                saiu qualquer imagem que venha a circular.</p>
+              <p><strong>6. Propriedade.</strong> Nada aqui transfere direito, licença ou
+                titularidade sobre a tecnologia, a marca ou o conteúdo apresentado. O material
+                é protegido pela Lei nº 9.610/1998, e o uso não autorizado sujeita o
+                responsável às sanções civis e criminais previstas em lei.</p>
+              <p><strong>7. Não é oferta.</strong> O conteúdo é informativo e não constitui
+                oferta pública de valores mobiliários nem promessa de rentabilidade.</p>
+            </div>
+          </details>
+
+          <label class="aceite" for="aceiteTermos">
+            <input type="checkbox" id="aceiteTermos" name="aceite">
+            <span>Li e aceito os termos de acesso. Comprometo-me a não reproduzir,
+              republicar nem compartilhar o material desta área.</span>
+          </label>
+
+          <div style="display:flex;justify-content:center;margin-top:20px">
+            <button type="submit" class="btn btn-solid"><i class="ph-bold ph-arrow-right"></i> Entrar</button>
+          </div>
+
+          <p class="muted portao-nota">
+            Não tem a senha? <a class="link-under" href="https://wa.me/5522998745065" target="_blank" rel="noopener">Fale com a equipe</a>
+          </p>
+        </form>
+      </div>
+
+      <noscript>
+        <p class="muted" style="margin-top:24px;text-align:center">
+          Esta área precisa de JavaScript para conferir a senha.
+        </p>
+      </noscript>
+    </div>
+
+    <!-- ================= A GRADE DE PROJETOS ================= -->
+    <div id="projetos" hidden>
+      <h2 class="display d3" id="projetosTitulo" tabindex="-1" style="margin-top:52px;text-align:center">Projetos</h2>
+      <p class="lede" style="margin-top:14px;text-align:center;max-width:52ch;margin-left:auto;margin-right:auto">
+        Clique no projeto para abrir a apresentação completa.
+      </p>
+
+      <div class="tb-confid">
+        <i class="ph-bold ph-warning" aria-hidden="true"></i>
+        <p>
+          <strong>Material confidencial · reprodução proibida</strong>
+          Os projetos desta área estão em desenvolvimento e são apresentados em caráter
+          confidencial, para avaliação pessoal e intransferível de quem recebeu a senha.
+          É proibida a reprodução, cópia, captura de tela, gravação ou divulgação, total
+          ou parcial, sem autorização escrita da TeraBoard. O conteúdo é protegido pela
+          Lei nº 9.610/1998, e o uso não autorizado sujeita o responsável às sanções
+          civis e criminais previstas em lei.
+        </p>
+      </div>
+
+      <div class="proj-grade">
+
+        <!-- ---------- Projeto em destaque ---------- -->
+        <article class="plate proj-card proj-destaque reveal">
+          <div class="proj-topo">
+            <span class="tag"><span class="dot"></span>Em desenvolvimento</span>
+            <span class="font-mono" style="opacity:.55;font-size:.72rem">PROJETO 01</span>
+          </div>
+
+          <h3 class="proj-nome"><a class="proj-link" href="terahecta.html">TeraHecta</a></h3>
+
+          <p class="proj-linha">
+            Monitoramento de solo por hectare, para lavoura em área extensa.
+          </p>
+
+          <div class="proj-unidade">
+            <span>1 hectare</span>
+            <span>1 estação</span>
+            <span>6 sensores a 30 cm</span>
+          </div>
+          <p class="muted proj-modular">
+            Modular: funciona a partir de uma área e cresce somando áreas.
+          </p>
+
+          <!-- Os três levam para a mesma página. Os cadeados dizem por onde se
+               começa, não quem pode entrar: a Fase 1 está destravada porque é o
+               ponto de partida; as outras duas destravam depois dela. -->
+          <div class="fases">
+            <a class="fase fase-aberta" href="terahecta.html#fases"
+               aria-label="Fase 1, Enxergar o solo — pronta para começar. Abrir a página do TeraHecta.">
+              <span class="fase-cab">
+                <!-- cadeado ABERTO -->
+                <svg class="cadeado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <rect x="4" y="10.5" width="16" height="10.5" rx="2.5"></rect>
+                  <path d="M8 10.5V6.8a4 4 0 0 1 7.8-1.3"></path>
+                </svg>
+                <span class="fase-num">Fase 1</span>
+              </span>
+              <span class="fase-nome">Enxergar o solo</span>
+              <span class="fase-estado">Pronta para começar</span>
+            </a>
+
+            <a class="fase" href="terahecta.html#fases"
+               aria-label="Fase 2, Irrigação e fertirrigação — depende da Fase 1. Abrir a página do TeraHecta.">
+              <span class="fase-cab">
+                <!-- cadeado FECHADO -->
+                <svg class="cadeado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <rect x="4" y="10.5" width="16" height="10.5" rx="2.5"></rect>
+                  <path d="M8 10.5V6.8a4 4 0 0 1 8 0v3.7"></path>
+                </svg>
+                <span class="fase-num">Fase 2</span>
+              </span>
+              <span class="fase-nome">Irrigação e fertirrigação</span>
+              <span class="fase-estado">Depende da Fase 1</span>
+            </a>
+
+            <a class="fase" href="terahecta.html#fases"
+               aria-label="Fase 3, Drenagem — depende da Fase 1. Abrir a página do TeraHecta.">
+              <span class="fase-cab">
+                <!-- cadeado FECHADO -->
+                <svg class="cadeado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                  <rect x="4" y="10.5" width="16" height="10.5" rx="2.5"></rect>
+                  <path d="M8 10.5V6.8a4 4 0 0 1 8 0v3.7"></path>
+                </svg>
+                <span class="fase-num">Fase 3</span>
+              </span>
+              <span class="fase-nome">Drenagem</span>
+              <span class="fase-estado">Depende da Fase 1</span>
+            </a>
+          </div>
+
+          <!-- o link de verdade e o do titulo, que estica por cima do card -->
+          <span class="link-under proj-abrir" aria-hidden="true">Abrir o projeto &rarr;</span>
+        </article>
+
+        <!-- Um projeto novo entra aqui, com a mesma marcação e sem a classe
+             .proj-destaque: ele ocupa uma coluna e a grade se acomoda sozinha. -->
+
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer style="background:var(--forest-2); border-top: 1px solid var(--hair-soft);">
+  <div class="wrap" style="padding-top:64px;padding-bottom:40px">
+    <div style="display:grid;gap:44px" class="md:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+<a href="index.html" style="display:inline-block"><img src="assets/logo/teraboard-stacked-cream.svg" alt="TeraBoard" style="height:104px;width:auto;display:block"></a>
+        <p class="font-mono muted" style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-top:20px;line-height:1.9">
+          TeraBoard Systems &middot; © 2026<br>Instrumentos de precisão para o solo<br>Serra Fluminense &middot; Rio de Janeiro, BR
+        </p>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Navegar</h2>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <a href="produtos.html" class="navlink" style="color:var(--ink);opacity:.72">Produtos</a>
+          <a href="terasensor.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSensor</a>
+          <a href="terasmart.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSmart</a>
+          <a href="equipe.html" class="navlink" style="color:var(--ink);opacity:.72">Equipe</a>
+        </div>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Contato</h2>
+        <div style="display:flex;gap:18px;align-items:center">
+          <a href="https://instagram.com/teraboard_oficial" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/instagram.svg" alt="Instagram"></a>
+          <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/whatsapp.svg" alt="WhatsApp"></a>
+        </div>
+        <p class="font-mono muted" style="font-size:.72rem;margin-top:20px;letter-spacing:.06em">@teraboard_oficial</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js"></script>
+<script src="js/pages/investidor.js"></script>
+
+<!-- Bibliotecas via CDN para o modelo 3D e GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://unpkg.com/three@0.128.0/examples/js/loaders/SVGLoader.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script src="js/scene-3d.js"></script>
+</body>
+</html>

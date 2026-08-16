@@ -1,0 +1,63 @@
+0.380000	1.410.000	Som 01	Este é o TeraHecta.
+1.960.000	6.730.000	Som 02	 Quatro áreas de café, de um hectare cada — cem por cem metros de lavoura em cada uma.
+7.190.000	10.320.000	Som 03	Em cada área, uma estação e seis sensores no solo. 
+10.760.000	14.840.000	Som 04	São vinte e quatro pontos de leitura em quatro hectares. Comece pelo terreno:
+15.420.000	19.400.000	Som 05	A chuva não fica onde cai: ela desce. Aqui a cor mostra a altura 
+19.820.000	21.870.000	Som 06	— claro em cima, azul lá embaixo.
+22.490.000	24.430.000	Som 07	Por isso um hectare não tem um solo só. 
+24.900.000	26.190.000	Som 08	O alto seca depressa.
+26.680.000	28.830.000	Som 09	O sopé recebe tudo o que desce.
+29.350.000	32.370.000	Som 10	E cada dobra do terreno reage do seu jeito.
+32.910.000	35.160.000	Som 11	No ponto mais baixo, a água empoça. 
+35.710.000	37.470.000	Som 12	Enxergar isso já é possível hoje.
+37.960.000	41.270.000	Som 13	Drenar é a Fase 3, ainda em desenvolvimento.
+41.790.000	43.850.000	Som 14	Por isso cada hectare é estudado antes.
+44.450.000	47.490.000	Som 15	O relevo divide a lavoura em zonas parecidas entre si
+48.030.000	49.810.000	Som 16	e cada sensor vai para uma delas.
+50.300.000	54.860.000	Som 17	Cada sensor fica no ponto mais típico da sua zona e responde por ela inteira:
+55.460.000	59.140.000	Som 18	 o que ele mede vale para tudo que se comporta como aquele ponto.
+59.700.000	62.690.000	Som 19	O que os seis medem chega até a estação de transmissão da área.
+63.280.000	64.310.000	Som 20	Nenhuma caderneta
+64.880.000	68.610.000	Som 21	nenhuma visita ao campo para anotar número: é o solo que dá notícia.
+69.140.000	70.990.000	Som 22	E a estação não depende de nada ali.
+71.540.000	76.140.000	Som 23	Ela gera a própria energia e trabalha todo dia, chova ou faça sol.
+76.600.000	80.830.000	Som 24	A estação fica no ponto mais alto da área, e a antena bem acima do cafezal. 
+81.370.000	83.730.000	Som 25	É daqui que as leituras começam a viagem.
+84.200.000	87.540.000	Som 26	Cada ponto que corre nessas linhas é uma leitura em trânsito.
+88.000.000	91.860.000	Som 27	Cada área tem o seu próprio caminho até a Caixa Principal — se uma parar,
+92.380.000	94.160.000	Som 28	 as outras três seguem entregando.
+94.620.000	96.940.000	Som 29	Tudo se encontra aqui, na Caixa Principal
+97.430.000	101.880.000	Som 30	 ao lado da casa e na parte alta do terreno — longe de onde a água se junta.
+102.420.000	105.240.000	Som 31	A estação meteorológica acompanha o céu: chuva,
+105.850.000	108.320.000	Som 32	vento, temperatura, umidade do ar.
+108.870.000	109.680.000	Som 33	E antecipa.
+110.130.000	113.770.000	Som 34	Molhar um solo que vai encharcar em seis horas é perder duas vezes.
+114.330.000	117.570.000	Som 35	Chove. E cada zona reage de um jeito diferente.
+118.130.000	121.810.000	Som 36	É isso que os vinte e quatro sensores registram, cada um pela sua zona.
+122.390.000	123.080.000	Som 37	Dias depois,
+123.650.000	127.580.000	Som 38	numa das zonas altas da área A: a umidade caiu para vinte e quatro por cento.
+128.220.000	130.190.000	Som 39	A lavoura daquele trecho está em estresse.
+130.610.000	132.850.000	Som 40	O aviso chega no celular já apontando onde.
+133.400.000	137.590.000	Som 41	Sem isso, o produtor só veria o problema quando a folha já estivesse murcha.
+138.210.000	140.400.000	Som 42	O sistema não diz que o hectare está seco.
+140.810.000	144.190.000	Som 43	Diz qual parte dele está — e a correção vai só naquela zona.
+144.700.000	147.810.000	Som 44	Acionar sozinho é a Fase 2, em desenvolvimento.
+148.280.000	149.550.000	Som 45	Zona de volta ao normal.
+150.090.000	153.990.000	Som 46	Uma parte tratada — e não o hectare inteiro tratado igual, no escuro.
+154.530.000	156.190.000	Som 47	Na parte baixa do mesmo hectare,
+156.740.000	158.250.000	Som 48	o problema é o oposto:
+158.710.000	159.730.000	Som 49	solo encharcado
+160.370.000	162.460.000	Som 50	, com o sal que desceu da encosta parado ali.
+163.010.000	164.790.000	Som 51	Aqui, molhar seria o erro.
+165.410.000	166.790.000	Som 52	O dado pede o oposto.
+167.220.000	168.740.000	Som 53	Duas zonas do mesmo hectare,
+169.230.000	171.690.000	Som 54	dois problemas opostos — sem sensor,
+172.240.000	174.440.000	Som 55	as duas receberiam o mesmo tratamento.
+174.950.000	176.340.000	Som 56	Vinte e quatro sensores.
+176.810.000	177.910.000	Som 57	Quatro estações.
+178.420.000	179.590.000	Som 58	Uma Caixa Principal.
+180.040.000	183.520.000	Som 59	A propriedade inteira acompanhada ponto a ponto, o ano todo.
+184.020.000	185.990.000	Som 60	A Fase 1 é enxergar o solo. 
+186.460.000	188.310.000	Som 61	É ela que sustenta o que vem depois:
+188.780.000	191.330.000	Som 62	irrigação e fertirrigação na Fase 2
+191.880.000	193.500.000	Som 63	drenagem na Fase 3.

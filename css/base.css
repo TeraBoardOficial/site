@@ -1,0 +1,45 @@
+/* ==========================================================================
+   TeraBoard · Base — reset, tipografia e utilitarios de texto
+   ========================================================================== */
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; background-color: #030806;} /* Fundo dark super profundo p/ o 3D brilhar */
+body{
+  font-family:'Inter',sans-serif;
+  font-size:17px;
+  background:var(--porcelain);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  /* Estava 1.62 aqui, mas nunca valeu: o reset do Tailwind entrava depois
+     desta folha e forcava 1.5, e foi com 1.5 que o site inteiro foi
+     desenhado e revisado. Agora que o Tailwind saiu, o valor real fica
+     escrito. Para deixar o texto mais arejado, e so subir este numero. */
+  line-height:1.5;
+}
+
+::selection{background:var(--signal);color:var(--forest-2)}
+
+/* ---------- type ---------- */
+.font-mono{font-family:'IBM Plex Mono',monospace}
+.display{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;
+  line-height:1.04;
+  letter-spacing:-.03em;
+}
+.display em{font-style:normal;font-weight:700;color:var(--signal)}
+.d1{font-size:clamp(2.7rem,7.4vw,5.8rem)}
+.d2{font-size:clamp(2.1rem,4.8vw,3.9rem)}
+.d3{font-size:clamp(1.7rem,3.2vw,2.5rem)}
+.lede{font-size:clamp(1.15rem,1.7vw,1.45rem);line-height:1.6;color:var(--ink);opacity:.9;font-weight:400}
+.eyebrow{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:.82rem;font-weight:700;
+  letter-spacing:.15em;text-transform:uppercase;
+  color:var(--signal);
+  display:inline-flex;align-items:center;gap:.55rem;
+}
+.eyebrow::before{content:"";width:9px;height:9px;border-radius:3px;background:var(--signal)}
+.kicker{font-family:'Space Grotesk',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sage)}
+.muted{color:var(--sage)}

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<!-- Fora das buscas enquanto os tres produtos estao em desenvolvimento. Esta
+     linha e o que realmente tira a pagina do Google.
+     E o robots.txt continua com Allow: / de proposito — "Disallow" impediria o
+     buscador de BAIXAR a pagina, e sem baixar ele nunca leria este noindex: a
+     URL ficaria presa no indice, sem titulo nem descricao. Primeiro sai do
+     indice, depois se discute bloquear o rastreio. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+<title>TeraBoard · Receitas do setor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+<link rel="stylesheet" href="assets/app.css">
+<link rel="stylesheet" href="ad.css">
+<style>
+	.stage-row { display: flex; align-items: center; gap: 16px; padding: 16px 0; width: 100%; }
+	.stage-body { padding-left: 64px; padding-bottom: 24px; display: flex; flex-direction: column; gap: 16px; }
+	.stage-sep { height: 1px; background: var(--line-light); margin-left: 64px; }
+	.grp-ttl { font-family: var(--font-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-2); }
+
+	.mode { border: 1.5px solid var(--line-light); border-radius: var(--r-card); padding: 12px; display: flex; flex-direction: column; gap: 4px; }
+	.mode.selected { border-color: var(--brand-green); background: var(--ok-soft); }
+	.mode .hd { display: flex; align-items: center; gap: 8px; }
+	.radio { width: 18px; height: 18px; border-radius: 9px; border: 2px solid var(--line-light); flex-shrink: 0; }
+	.mode.selected .radio { border: 6px solid var(--brand-green); }
+
+	.stepper-block { display: flex; flex-direction: column; gap: 8px; }
+</style>
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="../../css/protecao.css">
+<script src="../../js/protecao.js"></script>
+</head>
+<body>
+
+<!-- =========================================================================
+     Receitas do setor, uma por estágio da cultura.
+
+     A lista segue a ordem real do ciclo (preparo → colheita) e marca qual
+     estágio está valendo agora. A edição abre NO LUGAR, sem trocar de tela:
+     é mais fácil comparar a receita nova com a do estágio vizinho.
+
+     VITRINE: esta tela é uma amostra comercial. Os parâmetros de controle do
+     TeraSmart (faixas por estágio, doses, limiares e travas) NÃO entram aqui —
+     ficam no produto. O que se mostra é a existência do ajuste, não o ajuste.
+     ========================================================================= -->
+
+<div class="top-bar">
+	<span class="back"><i class="ph ph-caret-left"></i></span>
+	<div class="grow">
+		<div class="tb-title">Receitas</div>
+		<div class="tb-sub">Setor Norte · Tomate Cherry</div>
+	</div>
+</div>
+
+<div style="padding:16px var(--pad) 20px">
+	<p class="t-body c-2">
+		Cada fase da planta pede uma rega diferente. Ajuste aqui quando regar,
+		quando adubar e quanto de cada adubo entra na água.
+	</p>
+	<p class="t-caption c-3" style="margin-top:8px">
+		Nesta amostra os valores aparecem ocultos — os parâmetros de cada
+		cultura são entregues com o equipamento.
+	</p>
+</div>
+
+<div class="section-divider"></div>
+
+<div style="padding:12px var(--pad) 0">
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Preparo do solo</span>
+			<span class="t-caption c-2">Rega de assentamento · só água</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+	<div class="stage-sep"></div>
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Germinação</span>
+			<span class="t-caption c-2">Rega frequente · adubo em dose leve</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+	<div class="stage-sep"></div>
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Crescimento</span>
+			<span class="t-caption c-2">Rega regular · adubo em dose crescente</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+	<div class="stage-sep"></div>
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Floração</span>
+			<span class="t-caption c-2">Rega regular · adubo em dose alta</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+	<div class="stage-sep"></div>
+
+	<!-- Estágio em uso, aberto para edição -->
+	<div class="stage-row">
+		<span class="icon-circle lg"><i class="ph-fill ph-plant"></i></span>
+		<span class="grow">
+			<span class="row" style="gap:8px;flex-wrap:wrap">
+				<span class="t-item">Frutificação</span>
+				<span class="chip mono ok">Em uso</span>
+			</span>
+			<span class="t-caption c-2">Rega ampla · adubo na dose máxima do ciclo</span>
+		</span>
+		<i class="ph ph-caret-up c-3" style="font-size:20px"></i>
+	</div>
+
+	<div class="stage-body">
+		<div class="grp-ttl">O que este estágio recebe</div>
+
+		<div style="display:flex;flex-direction:column;gap:8px">
+			<div class="mode">
+				<span class="hd"><span class="radio"></span><span class="t-strong">Só água</span></span>
+				<span class="t-caption c-2">Nenhum adubo entra na linha, mesmo com a caixa cheia.</span>
+			</div>
+			<div class="mode">
+				<span class="hd"><span class="radio"></span><span class="t-strong">Sempre adubar</span></span>
+				<span class="t-caption c-2">Toda rega leva adubo, sem consultar a leitura do solo.</span>
+			</div>
+			<div class="mode selected">
+				<span class="hd"><span class="radio"></span><span class="t-strong">Automático (recomendado)</span></span>
+				<span class="t-caption c-2">O sistema decide pela leitura do solo: aduba só quando precisa.</span>
+			</div>
+		</div>
+
+		<div class="grp-ttl">Quando regar</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Faixa de umidade do estágio</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">•• – ••</span><small>%</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+			<span class="fhint">Define quando o sistema abre e quando fecha a água.</span>
+		</div>
+
+		<div class="grp-ttl">Dose de adubo</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Macronutriente</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">••,•</span><small>mL/L</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+			<span class="fhint">Quanto do concentrado entra em cada litro de água.</span>
+		</div>
+
+		<div class="stepper-block">
+			<span class="t-label">Micronutriente</span>
+			<div class="stepper">
+				<span class="pm"><i class="ph ph-minus"></i></span>
+				<span class="val"><span class="num">••,•</span><small>mL/L</small></span>
+				<span class="pm"><i class="ph ph-plus"></i></span>
+			</div>
+		</div>
+
+		<div class="grp-ttl">Limites de segurança</div>
+
+		<div class="panel" style="padding:12px">
+			<p class="t-caption c-2">
+				Cada estágio tem ainda os seus limites de salinidade e as travas de
+				aplicação. Vêm configurados de fábrica para a cultura escolhida e
+				são ajustados com a equipe na instalação.
+			</p>
+		</div>
+
+		<div class="btn-row" style="margin-top:4px">
+			<span class="btn secondary">Cancelar</span>
+			<span class="btn">Salvar</span>
+		</div>
+	</div>
+
+	<div class="stage-sep"></div>
+
+	<div class="stage-row">
+		<span class="icon-circle neutral lg"><i class="ph ph-plant"></i></span>
+		<span class="grow">
+			<span class="t-item" style="display:block">Colheita</span>
+			<span class="t-caption c-2">Rega de 35% a 50% · só água</span>
+		</span>
+		<i class="ph ph-caret-down c-3" style="font-size:20px"></i>
+	</div>
+
+</div>
+
+<div class="section-divider"></div>
+
+<div style="padding:20px var(--pad) 32px">
+	<span class="btn ghost full">Restaurar receitas de fábrica</span>
+</div>
+
+</body>
+</html>

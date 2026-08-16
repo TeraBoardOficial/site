@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<!-- data-marca liga o carimbo diagonal de js/protecao.js: esta pagina vive
+     atras do portao do investidor e o material e fechado. -->
+<html lang="pt-BR" class="loading tb-trancado" data-marca>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TeraHecta · Monitoramento de solo por hectare | TeraBoard</title>
+<meta name="description" content="Projeto TeraHecta: monitoramento de solo por hectare para lavoura em área extensa. Uma estação autônoma e seis sensores a 30 cm por hectare, modular a partir de uma área.">
+
+<!-- Fora das buscas. Esta linha e o que realmente tira a pagina do Google.
+     Sem canonical de proposito (canonical em pagina noindex e instrucao
+     contraditoria) e sem og:/twitter:, para o projeto nao vazar na previa de
+     um link colado por engano. A pagina tambem NAO esta bloqueada no
+     robots.txt: sem poder baixar, o buscador nunca leria o noindex. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="googlebot" content="noindex, nofollow">
+
+<!-- Area restrita: a pagina nasce trancada e so abre para quem passou pelo
+     portao. Notas de manutencao em _originais-nao-publicar/NOTAS-PROTECAO.md,
+     fora desta pasta. -->
+<style>
+  html.tb-trancado body > *{display:none}
+  html.tb-trancado body::before{
+    content:"Área restrita · TeraBoard\A Este projeto fica atrás da Área do Investidor. Entre com a sua senha para abrir.";
+    white-space:pre-wrap;
+    display:block;
+    max-width:44ch;
+    margin:22vh auto 0;
+    padding:0 24px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.8rem;
+    line-height:2.1;
+    text-align:center;
+    color:#A5BCAB;
+  }
+</style>
+<script>
+  try {
+    if (sessionStorage.getItem('tb:investidor') === 'ok') {
+      document.documentElement.classList.remove('tb-trancado');
+    } else {
+      location.replace('investidor.html');
+    }
+  } catch (e) {
+    /* Navegador sem sessionStorage: destranca, senao ninguem entra nunca. */
+    document.documentElement.classList.remove('tb-trancado');
+  }
+</script>
+
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" type="image/svg+xml" href="assets/logo/teraboard-mark.svg">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="theme-color" content="#0B4D36">
+
+<!-- Tipografia -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Estilos: os compartilhados primeiro, o da pagina por ultimo -->
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/utilitarios.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/loader.css">
+<link rel="stylesheet" href="css/nav.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/themes.css">
+<link rel="stylesheet" href="css/pages/terahecta.css">
+
+<!-- Icones -->
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.1" defer></script>
+
+<!-- Protecao de conteudo do site. -->
+<link rel="stylesheet" href="css/protecao.css">
+<script src="js/protecao.js"></script>
+</head>
+<body>
+<a class="pular" href="#conteudo">Pular para o conteúdo</a>
+
+<noscript>
+  <!-- Sem JavaScript o loader nunca sairia da frente: aqui ele e removido na marra. -->
+  <style>html.loading{overflow:auto!important}.site-loader{display:none!important}
+    .reveal{opacity:1!important;transform:none!important}</style>
+</noscript>
+
+<!-- LOADING -->
+<div class="site-loader" id="siteLoader" data-min-ms="900" data-phrases="Abrindo o projeto">
+  <div id="travelLight" aria-hidden="true"></div>
+  <div class="loader-halo">
+    <img class="loader-mark" id="loaderMark" src="assets/logo/teraboard-mark.svg" alt="TeraBoard">
+  </div>
+  <span class="loader-label" id="loaderLabel">Abrindo o projeto</span>
+  <div class="loader-bar"><i id="loaderBar"></i></div>
+</div>
+<script src="js/loader.js"></script>
+
+<!-- A marca do fundo, ESTÁTICA nesta página.
+
+     Nas outras ela é um sólido extrudado que gira com a rolagem (js/scene-3d.js).
+     Aqui não: esta página embute a maquete do TeraHecta, que é um motor 3D
+     completo com o seu próprio contexto WebGL. Manter um segundo three.js só
+     para o enfeite do fundo custava ~690 KB de download e disputava GPU com a
+     única coisa que o visitante veio ver.
+
+     O SVG vai inline, e não em <img>: são 400 bytes, e assim não há uma segunda
+     requisição para desenhar o fundo. É a mesma geometria de
+     assets/logo/teraboard-mark.svg. O aria-hidden é porque isto é decoração —
+     a marca com significado para leitor de tela é a da barra de navegação. -->
+<div id="canvas-container">
+  <svg class="marca-fundo" viewBox="0 0 682780 589816" aria-hidden="true" focusable="false"
+       fill-rule="evenodd" clip-rule="evenodd" xmlns="http://www.w3.org/2000/svg">
+    <polygon fill="#1EC78C" points="168251,2 337388,146003 161154,286712 0,144673"/>
+    <polygon fill="#0B4D36" points="682780,149136 335613,434034 336055,589816 682780,298678"/>
+    <polygon fill="#1F8F68" points="513643,446 161154,286267 0,144673 0,296016 336055,589375 336055,435393 682780,149136"/>
+  </svg>
+</div>
+
+<nav class="top" id="topnav">
+  <div class="inner">
+    <a href="index.html" aria-label="TeraBoard — início" class="brand-wrap">
+              <span class="logo-glow" aria-hidden="true"></span>
+              <img class="brand-logo brand-logo-mono" src="assets/logo/teraboard-wordmark-cream.svg" alt="" aria-hidden="true">
+              <img class="brand-logo brand-logo-color" src="assets/logo/teraboard-wordmark-color.svg" alt="TeraBoard">
+              </a>
+    <div class="navlinks"><a href="index.html" class="navlink">Início</a><a href="produtos.html" class="navlink">Produtos</a><a href="terasensor.html" class="navlink">TeraSensor</a><a href="terasmart.html" class="navlink">TeraSmart</a><a href="equipe.html" class="navlink">Equipe</a><a href="investidor.html" class="navlink navlink-restrito active">Área do Investidor</a></div>
+    <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-signal navcta">Falar com a equipe</a>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="index.html"><span class="num">01</span>Início</a><a href="produtos.html"><span class="num">02</span>Produtos</a><a href="terasensor.html"><span class="num">03</span>TeraSensor</a><a href="terasmart.html"><span class="num">04</span>TeraSmart</a><a href="equipe.html"><span class="num">05</span>Equipe</a><a href="investidor.html"><span class="num">06</span>Área do Investidor</a>
+  <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" style="font-size:1.3rem;color:var(--signal)"><span class="num">→</span>WhatsApp</a>
+</div>
+
+<main id="conteudo" tabindex="-1">
+
+<!-- ============================ 1. HERO ============================ -->
+<section class="pad hero-page">
+  <div class="wrap">
+    <div style="display:grid;gap:48px" class="lg:grid-cols-[1.05fr_.95fr] lg:items-center">
+      <div>
+        <a href="investidor.html" class="link-under reveal" style="display:inline-block">&larr; Voltar aos projetos</a>
+        <h1 class="display d1 reveal s1" style="margin-top:26px">Tera<em>Hecta</em></h1>
+        <p class="reveal s2" style="margin-top:14px;font-family:'Space Grotesk',sans-serif;font-size:1.4rem;font-weight:500;color:var(--signal)">
+          Monitoramento de solo por hectare.
+        </p>
+        <p class="lede reveal s2" style="margin-top:22px;max-width:48ch">
+          Para lavoura em área extensa — o caso projetado é o café. A unidade do sistema
+          é o hectare: uma área de 100&nbsp;&times;&nbsp;100&nbsp;m com uma estação de
+          transmissão autônoma e seis sensores enterrados a 30&nbsp;cm. É esse bloco que se repete.
+        </p>
+        <div class="unidade reveal s3">
+          <span>1 hectare &middot; 100 &times; 100 m</span>
+          <span>1 estação por área</span>
+          <span>6 sensores a 30 cm</span>
+        </div>
+        <div class="reveal s4" style="display:flex;gap:14px;flex-wrap:wrap;margin-top:34px">
+          <a href="#maquete" class="btn btn-solid"><i class="ph-bold ph-cube"></i> Ver a maquete 3D</a>
+          <a href="#fases" class="btn btn-ghost">As três fases</a>
+        </div>
+
+        <div class="tb-confid reveal s4" style="margin-left:0">
+          <i class="ph-bold ph-warning" aria-hidden="true"></i>
+          <p>
+            <strong>Material confidencial · reprodução proibida</strong>
+            Esta página integra a Área do Investidor. O TeraHecta está em desenvolvimento
+            e é apresentado em caráter confidencial, para avaliação pessoal e intransferível
+            de quem recebeu a senha. É proibida a reprodução, cópia, captura de tela,
+            gravação ou divulgação, total ou parcial, sem autorização escrita da TeraBoard.
+            O conteúdo é protegido pela Lei nº 9.610/1998, e o uso não autorizado sujeita
+            o responsável às sanções civis e criminais previstas em lei.
+          </p>
+        </div>
+      </div>
+
+      <div class="reveal s2">
+        <div class="plate" style="padding:26px">
+          <span class="tag"><span class="dot"></span>Projeto em desenvolvimento</span>
+          <h2 class="display d3" style="margin-top:20px">Onde o projeto<br>está <em>hoje</em>.</h2>
+          <div style="margin-top:20px">
+            <div class="log-row"><span class="s ok"></span><span class="k">Leitura do solo</span><span class="v">Validada em menor escala — é a base pronta do projeto</span></div>
+            <div class="log-row"><span class="s run"></span><span class="k">Fase 1</span><span class="v">Desenhada e pronta para começar — ainda não executada</span></div>
+            <div class="log-row"><span class="s run"></span><span class="k">Fases 2 e 3</span><span class="v">Destravam depois da Fase 1</span></div>
+          </div>
+          <p class="muted" style="margin-top:18px;font-size:.92rem;line-height:1.55">
+            A configuração de campo — estação por área, transmissão até a Caixa Principal
+            e mapeamento das zonas pelo relevo — está desenhada. Nenhuma das três fases
+            foi executada.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= 2. O PROBLEMA ========================= -->
+<section class="pad cream">
+  <div class="wrap">
+    <div class="reveal" style="max-width:60ch">
+      <span class="eyebrow">O problema</span>
+      <h2 class="display d2" style="margin-top:20px">Um hectare não<br>tem um solo <em>só</em>.</h2>
+      <p class="lede" style="margin-top:22px">
+        A chuva não fica onde cai: ela desce. O alto seca depressa, o sopé recebe tudo
+        o que desce, e no ponto mais baixo a água empoça. Cada dobra do terreno reage
+        do seu jeito.
+      </p>
+    </div>
+
+    <p class="reveal s1 kicker" style="margin-top:44px">O mesmo hectare, no mesmo dia</p>
+
+    <div class="contraste">
+      <div class="plate zona reveal s1">
+        <span class="zona-tag" style="color:var(--amber)">Zona alta</span>
+        <div class="zona-num" style="color:var(--amber)">24%</div>
+        <h3>Umidade caída</h3>
+        <p class="muted">
+          A água desceu e não voltou. A lavoura entra em estresse ali, e o aviso chega
+          ao celular apontando qual parte da área é.
+        </p>
+      </div>
+      <div class="plate zona reveal s2">
+        <span class="zona-tag" style="color:var(--clay)">Zona baixa</span>
+        <div class="zona-num" style="color:var(--clay)">Encharcada</div>
+        <h3>Água parada e sal</h3>
+        <p class="muted">
+          Recebe o que veio de cima e não drena. Junto com a água desce o sal da encosta,
+          que fica parado no ponto mais baixo.
+        </p>
+      </div>
+    </div>
+
+    <p class="reveal s2" style="margin-top:26px;line-height:1.7;max-width:64ch">
+      Dois problemas opostos, no mesmo hectare. Sem sensor, as duas partes receberiam
+      o mesmo tratamento — mais água nas duas, ou menos nas duas. É esse cenário que o
+      sistema foi desenhado para resolver.
+    </p>
+
+    <p class="tese reveal s2">
+      O sistema não diz que o hectare está seco. Diz qual parte dele está — e a correção
+      vai só naquela zona.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== 3. A MAQUETE 3D ===================== -->
+<section class="pad" id="maquete" style="background:rgba(18,53,40,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">A maquete &middot; interativa</span>
+      <h2 class="display d2" style="margin-top:20px">O projeto inteiro,<br>em <em>3D</em>.</h2>
+
+      <!-- Nota de enquadramento: prepara o leitor para o que ele vai ver, em
+           especial para o painel dentro da cena, que anuncia "4 Hectares ·
+           4 Estações · 24 Sensores" sem contexto. -->
+      <p class="lede" style="margin-top:22px">
+        O que abre abaixo é uma maquete — um gêmeo digital que demonstra como o sistema
+        funciona. Os valores que aparecem na tela são simulados para explicar o conceito,
+        e não a leitura de uma lavoura em operação; a tecnologia de medição por trás deles
+        é que já está validada em menor escala.
+      </p>
+      <p style="margin-top:16px;line-height:1.7;max-width:64ch">
+        As quatro áreas da cena estão ali para ilustrar a modularidade — o sistema serve
+        para uma área ou para várias, e uma mesma Caixa Principal recebe mais de uma
+        estação. O painel dentro da cena anuncia <b>4 hectares · 4 estações · 24
+        sensores</b>: é um arranjo de demonstração, não tamanho mínimo, máximo nem
+        obrigatório.
+      </p>
+      <!-- A cena mostra as sondas por marcadores na superficie, porque enterradas
+           elas seriam invisiveis. A profundidade e justamente o que o visitante nao
+           consegue ver ali — entao ela e dita aqui, antes de ele olhar. -->
+      <p class="maquete-profundidade">
+        <i class="ph-fill ph-arrow-line-down" aria-hidden="true"></i>
+        <span>Na cena os sensores aparecem marcados na superfície, para poderem ser vistos.
+        No campo eles ficam <b>enterrados a 30&nbsp;cm</b> — a profundidade em que a raiz
+        do café trabalha.</span>
+      </p>
+    </div>
+
+    <p class="reveal s1 maquete-como" style="margin-top:30px">
+      <span class="maquete-teclas">arraste para girar &middot; scroll para aproximar &middot;
+      setas ou W A S D para percorrer o campo &middot; clique num equipamento para saber o que ele é</span><br>
+      Dentro da cena, o botão <b>&#9654; Modo Filme</b> roda três minutos narrados que
+      percorrem o projeto inteiro, do terreno ao alerta no celular. <b>Tem som.</b>
+    </p>
+  </div>
+
+  <div class="maquete-bloco reveal s1" id="maqueteBloco">
+    <iframe src="terahecta/" class="maquete-frame" title="TeraHecta - Gemeo Digital 3D"
+            allow="autoplay; fullscreen" loading="lazy"></iframe>
+  </div>
+
+  <div class="wrap">
+    <div class="maquete-pes">
+      <p class="muted maquete-nota">
+        Precisa de um navegador com WebGL&nbsp;2 — Chrome, Edge, Firefox e Safari atuais,
+        no computador ou no celular. Em tela cheia, <b>Esc</b> volta para a página.
+      </p>
+      <!-- Link de verdade, e nao <button>: sem JavaScript, ou num navegador que
+           nao faz tela cheia por elemento (iOS), ele abre a maquete em aba nova
+           e a opcao continua existindo. Com suporte, o script intercepta o
+           clique e expande o quadro sem recarregar a cena. -->
+      <a href="terahecta/" target="_blank" rel="noopener" class="btn btn-ghost" id="maqueteFs">
+        <i class="ph-bold ph-arrows-out"></i> Abrir em tela cheia
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 4. COMO FUNCIONA ===================== -->
+<section class="pad cream">
+  <div class="wrap">
+    <div class="reveal" style="max-width:60ch">
+      <span class="eyebrow">Como funciona</span>
+      <h2 class="display d2" style="margin-top:20px">Do chão ao<br><em>celular</em>.</h2>
+      <p class="lede" style="margin-top:22px">
+        Sem caderneta, sem visita ao campo para anotar número: é o solo que dá notícia.
+      </p>
+    </div>
+
+    <div class="passos">
+      <div class="icard reveal">
+        <div class="ic"><i class="ph-fill ph-thermometer"></i></div>
+        <div class="passo-num">Passo 01</div>
+        <h3>O solo mede sozinho</h3>
+        <p>Os seis sensores da área leem o solo o dia inteiro, sem ninguém por perto.</p>
+      </div>
+      <div class="icard reveal s1">
+        <div class="ic"><i class="ph-fill ph-solar-panel"></i></div>
+        <div class="passo-num">Passo 02</div>
+        <h3>A estação recolhe</h3>
+        <p>Fica no ponto mais alto da área, gera a própria energia por painel solar e não
+          depende de energia elétrica no meio da lavoura.</p>
+      </div>
+      <div class="icard reveal s2">
+        <div class="ic"><i class="ph-fill ph-broadcast"></i></div>
+        <div class="passo-num">Passo 03</div>
+        <h3>A antena manda para fora</h3>
+        <p>Bem acima do cafezal, ela entrega os dados mesmo a quilômetros de distância e
+          sem sinal de celular na lavoura.</p>
+      </div>
+      <div class="icard reveal s3">
+        <div class="ic"><i class="ph-fill ph-device-mobile"></i></div>
+        <div class="passo-num">Passo 04</div>
+        <h3>A Caixa Principal entrega</h3>
+        <p>Na parte alta do terreno, junto da sede, reúne o que as estações mandam e
+          entrega no aplicativo.</p>
+      </div>
+    </div>
+
+    <div class="plate reveal s1" style="margin-top:16px;padding:26px 24px">
+      <div style="display:grid;gap:26px" class="md:grid-cols-2">
+        <div>
+          <div class="kicker" style="color:var(--signal)">Cada área tem o seu caminho</div>
+          <p style="margin-top:10px;line-height:1.65">
+            Cada estação fala com a Caixa Principal pelo próprio caminho. Se uma parar,
+            as outras seguem entregando.
+          </p>
+        </div>
+        <div>
+          <div class="kicker" style="color:var(--signal)">A estação meteorológica antecipa</div>
+          <p style="margin-top:10px;line-height:1.65">
+            Ela acompanha chuva, vento, temperatura e umidade do ar. Molhar um solo que vai
+            encharcar sozinho em seis horas é perder duas vezes.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================== 5. COMO O SISTEMA CRESCE ================== -->
+<section class="pad" id="cresce" style="background:rgba(10,77,54,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <div style="display:grid;gap:48px" class="lg:grid-cols-[.42fr_.58fr]">
+      <div class="reveal">
+        <span class="eyebrow">Como o sistema cresce</span>
+        <h2 class="display d2" style="margin-top:20px">Uma área<br>já é um <em>sistema</em>.</h2>
+        <p class="muted" style="margin-top:18px;line-height:1.65;max-width:38ch">
+          O hectare é a unidade. Somar áreas é somar blocos iguais — não é refazer o
+          projeto a cada área nova.
+        </p>
+      </div>
+      <div>
+        <div class="icard reveal" style="margin-bottom:14px;height:auto">
+          <div style="display:flex;gap:16px;align-items:start">
+            <div class="ic" style="margin-bottom:0;flex-shrink:0"><i class="ph-fill ph-square"></i></div>
+            <div><h3>O bloco que se repete</h3>
+              <p style="margin-top:4px">Uma área de 100 &times; 100 m, uma estação autônoma e
+                seis sensores a 30 cm. Funciona a partir de uma área.</p></div>
+          </div>
+        </div>
+        <div class="icard reveal s1" style="margin-bottom:14px;height:auto">
+          <div style="display:flex;gap:16px;align-items:start">
+            <div class="ic" style="margin-bottom:0;flex-shrink:0"><i class="ph-fill ph-stack"></i></div>
+            <div><h3>Uma Caixa Principal, uma ou várias estações</h3>
+              <p style="margin-top:4px">Cada área nova entra com a sua estação e os seus
+                sensores. A mesma Caixa Principal recebe as leituras de uma ou de várias
+                estações e entrega tudo no aplicativo.</p></div>
+          </div>
+        </div>
+        <div class="icard reveal s2" style="height:auto">
+          <div style="display:flex;gap:16px;align-items:start">
+            <div class="ic" style="margin-bottom:0;flex-shrink:0"><i class="ph-fill ph-question"></i></div>
+            <div><h3>O teto ainda não está definido</h3>
+              <p style="margin-top:4px">Quantas estações uma Caixa Principal atende é uma
+                questão em aberto: será definida nos testes da Fase 1. Enquanto o teste
+                não disser, não há número — e não vamos escrever um aqui.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================ 6. O QUE CADA SENSOR MEDE ================ -->
+<section class="pad cream">
+  <div class="wrap">
+    <div class="reveal" style="max-width:60ch">
+      <span class="eyebrow">O que cada sensor mede</span>
+      <h2 class="display d2" style="margin-top:20px">Seis leituras,<br>a 30 <em>centímetros</em>.</h2>
+      <p class="lede" style="margin-top:22px">
+        É a profundidade onde a raiz do café trabalha — e é lá que cada sensor fica.
+      </p>
+    </div>
+
+    <div class="medidas">
+      <div class="medida reveal"><h3>Umidade do solo</h3>
+        <p class="muted">Quanta água está realmente disponível para a planta naquele ponto.</p></div>
+      <div class="medida reveal s1"><h3>Temperatura do solo</h3>
+        <p class="muted">O calor que a raiz enfrenta, que muda o ritmo da planta.</p></div>
+      <div class="medida reveal s2"><h3>Condutividade elétrica (EC)</h3>
+        <p class="muted">Quanto sal e adubo há dissolvido no solo.</p></div>
+      <div class="medida reveal"><h3>pH</h3>
+        <p class="muted">A acidez do solo, que decide o que a planta consegue absorver do que está ali.</p></div>
+      <div class="medida reveal s1"><h3>Salinidade</h3>
+        <p class="muted">O sal acumulado. Em excesso, a planta passa a ter dificuldade de puxar água.</p></div>
+      <div class="medida reveal s2"><h3>Sólidos dissolvidos totais (TDS)</h3>
+        <p class="muted">O total dissolvido na água do solo. Junto com o EC, mostra quanto do
+          adubo aplicado ainda está no lugar.</p></div>
+    </div>
+
+    <div class="plate reveal s1" style="margin-top:26px;padding:24px 22px">
+      <div style="display:flex;gap:14px;align-items:start">
+        <i class="ph-fill ph-check-circle" style="font-size:1.5rem;color:var(--signal);flex-shrink:0"></i>
+        <p style="line-height:1.65">
+          <b>Esta parte já está resolvida.</b> A leitura do solo está validada em menor escala:
+          os sensores entregam dado confiável. O que a Fase 1 constrói é levar essa leitura
+          à escala do hectare e transformá-la em produto.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== 7. COMO AS ZONAS SÃO DEFINIDAS ============== -->
+<section class="pad" id="zonas" style="background:rgba(18,53,40,.42);backdrop-filter:blur(8px)">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">Como as zonas são definidas</span>
+      <h2 class="display d2" style="margin-top:20px">Por que seis —<br>e por que <em>ali</em>.</h2>
+      <p class="lede" style="margin-top:22px">
+        Cada hectare é estudado antes de instalar. O relevo divide a lavoura em seis zonas
+        parecidas entre si, e cada zona recebe um sensor.
+      </p>
+    </div>
+
+    <div style="display:grid;gap:16px;margin-top:40px" class="md:grid-cols-3">
+      <div class="icard reveal">
+        <div class="ic"><i class="ph-fill ph-mountains"></i></div>
+        <h3>Pelo terço da encosta</h3>
+        <p>Alto, meio e sopé não se comportam do mesmo jeito. O terço em que a zona está é
+          a primeira coisa que a separa das outras.</p>
+      </div>
+      <div class="icard reveal s1">
+        <div class="ic"><i class="ph-fill ph-drop-half"></i></div>
+        <h3>Por onde a água anda</h3>
+        <p>Onde o terreno converge, a água se junta; onde ele se abre, ela se espalha. Duas
+          partes no mesmo terço podem ser zonas diferentes por causa disso.</p>
+      </div>
+      <div class="icard reveal s2">
+        <div class="ic"><i class="ph-fill ph-map-pin"></i></div>
+        <h3>Um sensor por zona</h3>
+        <p>Ele é plantado no ponto de atenção da zona e responde por ela inteira: o que ele
+          mede vale para tudo que se comporta como aquele ponto.</p>
+      </div>
+    </div>
+
+    <p class="reveal s2" style="margin-top:26px;line-height:1.7;max-width:64ch">
+      É daí que vêm os seis sensores por hectare — um por zona. Não é uma grade desenhada
+      no mapa: é o relevo que diz onde cada um entra.
+    </p>
+  </div>
+</section>
+
+<!-- ===================== 8. AS TRÊS FASES ===================== -->
+<section class="pad cream" id="fases">
+  <div class="wrap">
+    <div class="reveal" style="max-width:62ch">
+      <span class="eyebrow">O roteiro do projeto</span>
+      <h2 class="display d2" style="margin-top:20px">Três fases,<br>o mesmo <em>ciclo</em>.</h2>
+      <p class="lede" style="margin-top:22px">
+        As três seguem o mesmo padrão de execução. Cada fase é um ciclo completo:
+      </p>
+      <div class="ciclo">
+        <span>Desenvolver o produto</span><i>&rarr;</i>
+        <span>Testar</span><i>&rarr;</i>
+        <span>Validar</span><i>&rarr;</i>
+        <span>Pronto para industrializar</span>
+      </div>
+      <p style="margin-top:22px;line-height:1.7">
+        Não é um ciclo de instalar lavoura: é um ciclo de criar produto. E o produto de cada
+        fase já nasce preparado para receber a fase seguinte — o que for instalado na Fase 1
+        não é descartado quando a Fase 2 chegar, é atualizado.
+      </p>
+      <p class="muted" style="margin-top:14px;line-height:1.7">
+        Nenhuma das três foi executada. A Fase 1 é o ponto de partida que o investimento destrava.
+      </p>
+    </div>
+
+    <!-- FASE 1 -->
+    <article class="plate fase-bloco reveal s1" style="margin-top:40px">
+      <div class="fase-cab">
+        <!-- cadeado ABERTO: o caminho está destravado, é por aqui que se começa -->
+        <svg class="cadeado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+          <rect x="4" y="10.5" width="16" height="10.5" rx="2.5"></rect>
+          <path d="M8 10.5V6.8a4 4 0 0 1 7.8-1.3"></path>
+        </svg>
+        <span class="kicker">Fase 1</span>
+        <span class="fase-selo" style="color:var(--signal)">Pronta para começar</span>
+      </div>
+      <h3 class="fase-titulo">Enxergar o solo</h3>
+
+      <p class="fase-corpo">
+        A fase entrega o produto de monitoramento criado de fato: desenvolvido, testado,
+        validado e pronto para industrializar. Inclui definir em teste o que hoje está em
+        aberto — entre outras coisas, quantas estações uma Caixa Principal atende.
+      </p>
+      <p class="fase-corpo muted">
+        O que já está resolvido antes de começar é a leitura do solo, validada em menor
+        escala: os sensores já entregam dado confiável.
+      </p>
+
+      <div class="fase-lista">
+        <div><i class="ph-bold ph-arrow-right marca" aria-hidden="true"></i>
+          <span>Levar a leitura à escala do hectare e transformá-la em produto.</span></div>
+        <div><i class="ph-bold ph-arrow-right marca" aria-hidden="true"></i>
+          <span>As estações autônomas e a transmissão até a Caixa Principal.</span></div>
+        <div><i class="ph-bold ph-arrow-right marca" aria-hidden="true"></i>
+          <span>O mapeamento das zonas pelo relevo, hectare a hectare.</span></div>
+        <div><i class="ph-bold ph-arrow-right marca" aria-hidden="true"></i>
+          <span>O aviso chegando no celular, apontando a zona.</span></div>
+      </div>
+
+      <p class="fase-corpo">
+        E já nasce pensada para atualização: o equipamento da Fase 1 é projetado para receber
+        as Fases 2 e 3 quando elas forem liberadas. As outras duas não têm em que se apoiar
+        sem ela — é a Fase 1 que sustenta o que vem depois.
+      </p>
+    </article>
+
+    <div style="display:grid;gap:16px;margin-top:16px" class="md:grid-cols-2">
+      <!-- FASE 2 -->
+      <article class="plate fase-bloco reveal s2" style="margin-top:0">
+        <div class="fase-cab">
+          <!-- cadeado FECHADO: destrava depois da Fase 1 -->
+          <svg class="cadeado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <rect x="4" y="10.5" width="16" height="10.5" rx="2.5"></rect>
+            <path d="M8 10.5V6.8a4 4 0 0 1 8 0v3.7"></path>
+          </svg>
+          <span class="kicker">Fase 2</span>
+          <span class="fase-selo muted">Depende da Fase 1</span>
+        </div>
+        <h3 class="fase-titulo">Irrigação e fertirrigação</h3>
+        <p class="fase-corpo">
+          Sair do aviso e agir: acionar a correção sozinho, por zona, a partir do que os
+          sensores estão medindo. Molhar e adubar só a parte que precisa, na medida que o
+          dado pede — em vez de tratar o hectare inteiro igual, no escuro.
+        </p>
+        <p class="fase-corpo muted">
+          Mesmo ciclo: desenvolver, testar, validar, preparar a industrialização.
+        </p>
+      </article>
+
+      <!-- FASE 3 -->
+      <article class="plate fase-bloco reveal s3" style="margin-top:0">
+        <div class="fase-cab">
+          <!-- cadeado FECHADO: destrava depois da Fase 1 -->
+          <svg class="cadeado" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+               stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <rect x="4" y="10.5" width="16" height="10.5" rx="2.5"></rect>
+            <path d="M8 10.5V6.8a4 4 0 0 1 8 0v3.7"></path>
+          </svg>
+          <span class="kicker">Fase 3</span>
+          <span class="fase-selo muted">Depende da Fase 1</span>
+        </div>
+        <h3 class="fase-titulo">Drenagem</h3>
+        <p class="fase-corpo">
+          Tirar a água de onde ela para. A maquete já mostra a área de acúmulo e a bacia
+          dentro do talhão; drenar é o passo seguinte.
+        </p>
+        <p class="fase-corpo muted">
+          Mesmo ciclo: desenvolver, testar, validar, preparar a industrialização.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 9. VOLTA E CONTATO ===================== -->
+<section class="pad grad-green">
+  <div class="wrap" style="text-align:center">
+    <div class="reveal" style="max-width:42ch;margin:0 auto">
+      <span class="eyebrow" style="justify-content:center">Próximo passo</span>
+      <h2 class="display d2" style="margin-top:20px">Começar pela<br>Fase 1.</h2>
+    </div>
+    <div class="reveal s1" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px">
+      <a href="investidor.html" class="btn btn-solid"><i class="ph-bold ph-arrow-left"></i> Voltar aos projetos</a>
+      <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="btn btn-ghost">Falar com a equipe</a>
+    </div>
+    <p class="reveal s2 muted" style="margin-top:34px;font-size:.95rem;line-height:1.65;max-width:56ch;margin-left:auto;margin-right:auto">
+      O TeraHecta tem um irmão mais velho, o TeraSmart — automação para quem cultiva em área
+      concentrada. É outro projeto da casa; a página dele nesta área entra em breve.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer style="background:var(--forest-2); border-top: 1px solid var(--hair-soft);">
+  <div class="wrap" style="padding-top:64px;padding-bottom:40px">
+    <div style="display:grid;gap:44px" class="md:grid-cols-[1.4fr_1fr_1fr]">
+      <div>
+<a href="index.html" style="display:inline-block"><img src="assets/logo/teraboard-stacked-cream.svg" alt="TeraBoard" style="height:104px;width:auto;display:block"></a>
+        <p class="font-mono muted" style="font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;margin-top:20px;line-height:1.9">
+          TeraBoard Systems &middot; © 2026<br>Instrumentos de precisão para o solo<br>Serra Fluminense &middot; Rio de Janeiro, BR
+        </p>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Navegar</h2>
+        <div style="display:flex;flex-direction:column;gap:11px">
+          <a href="produtos.html" class="navlink" style="color:var(--ink);opacity:.72">Produtos</a>
+          <a href="terasensor.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSensor</a>
+          <a href="terasmart.html" class="navlink" style="color:var(--ink);opacity:.72">TeraSmart</a>
+          <a href="equipe.html" class="navlink" style="color:var(--ink);opacity:.72">Equipe</a>
+        </div>
+      </div>
+      <div>
+        <h2 class="kicker" style="color:var(--signal);margin-bottom:18px">Contato</h2>
+        <div style="display:flex;gap:18px;align-items:center">
+          <a href="https://instagram.com/teraboard_oficial" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/instagram.svg" alt="Instagram"></a>
+          <a href="https://wa.me/5522998745065" target="_blank" rel="noopener" class="social-link"><img class="social-ic" src="assets/icons/whatsapp.svg" alt="WhatsApp"></a>
+        </div>
+        <p class="font-mono muted" style="font-size:.72rem;margin-top:20px;letter-spacing:.06em">@teraboard_oficial</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="js/nav.js"></script>
+<script src="js/pages/terahecta.js"></script>
+
+<!-- GSAP fica: quem o usa aqui e o js/loader.js, na animacao de abertura. Sem
+     ele o loader ainda funciona (tem saida simples embutida), mas esta pagina
+     abriria diferente de todas as outras.
+
+     O QUE SAIU, e por que:
+       three.min.js (r128, ~580 KB) + SVGLoader (~70 KB) + scene-3d.js
+       ScrollTrigger (~40 KB), que aqui so servia ao scene-3d.js
+
+     Eles existiam para a marca extrudada que girava com a rolagem, no fundo da
+     tela. Nesta pagina — e SO nesta — ela saiu e virou o SVG estatico la em
+     cima, em #canvas-container. O motivo e que aqui ela nao era so peso de
+     download: a maquete no iframe ja roda um motor 3D completo, com o seu
+     proprio contexto WebGL, e ter um SEGUNDO three.js na mesma pagina para
+     desenhar um enfeite atras dela era disputa de GPU pelo que ninguem veio
+     ver. Nas outras paginas a cena continua igual.
+
+     ATENCAO: era o scene-3d.js quem chamava window.__hideLoader(). Sem ele, a
+     cortina de abertura so cairia pela rede de seguranca de 9 s do loader.js.
+     Quem faz esse papel agora e o script logo abaixo. -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<script>
+(function () {
+  /* A animacao de saida do loader faz a logo 2D crescer ate o tamanho exato da
+     logo do fundo, e so entao dissolve uma na outra. A medida vinha calculada
+     pelo 3D (window.__logo3dWidth); sem o 3D, ela vem daqui.
+
+     A conta e a mesma que o scene-3d.js fazia, resolvida: com escala 0.0000024,
+     camera em z=7 e campo de visao de 75 graus, a marca ocupava 44,3% da altura
+     da janela. O CSS de #canvas-container usa esse mesmo 44.3vh, entao a logo
+     do loader pousa exatamente sobre a estatica. */
+  window.__logo3dWidth = window.innerHeight * 0.443;
+
+  window.addEventListener('load', function () { window.__hideLoader(); });
+})();
+</script>
+</body>
+</html>

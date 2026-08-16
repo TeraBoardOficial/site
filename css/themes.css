@@ -1,0 +1,122 @@
+/* ==========================================================================
+   TeraBoard · Temas — contextos que reescrevem os tokens (card verde, faixa creme)
+   ========================================================================== */
+
+/* ==========================================================================
+   TERABOARD — CARDS #1DC78B A 50% + CORREÇÃO DE LEGIBILIDADE
+   ========================================================================== */
+
+/* --- 1. FUNDO DOS CARDS: #1DC78B com 50% de transparência -------------- */
+.plate,
+.plate-dark,
+.icard{
+  background-color: rgba(29, 199, 139, .5);
+}
+
+/* --- 2. A FAIXA DA CTA ("Vamos medir o seu solo?") igual aos cards ----- */
+.grad-green{
+  background: rgba(29, 199, 139, .5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* --- 3. LEGIBILIDADE ---------------------------------------------------
+   Sobre o card o fundo vira um verde médio (#127652). Nele, o verde de
+   texto e o cinza-sálvia ficam ilegíveis (2.6:1). Redefinindo as variáveis
+   DENTRO do card, todo texto filho se corrige sozinho.
+   ---------------------------------------------------------------------- */
+.plate,
+.plate-dark,
+.icard,
+.grad-green{
+  --sage:        #E5F5EC;   /* texto secundário   4.98:1 */
+  --signal:      #D6FFEE;   /* acentos verdes     5.19:1 */
+  --signal-deep: #D6FFEE;   /* faltava: deixava "Passo 01" em 1.39:1 */
+  --amber:  #FFE8B8;   /* estado "atenção"   4.68:1 */
+  --clay:   #FFE0D7;   /* estado "fora"      4.52:1 */
+}
+
+/* --- 4. ...mas onde o verde é FUNDO/GRÁFICO, volta ao verde da marca --- */
+.plate .tag .dot,
+.plate-dark .tag .dot,
+.icard .tag .dot,
+.plate .log-row .s.ok,
+.plate .click-hint{
+  background: #1DC78B;
+}
+/* pseudo-elementos de slider ficam em regras separadas de propósito:
+   se um seletor -webkit- entra numa lista com outros, o Chrome descarta tudo */
+.plate .srange::-webkit-slider-thumb{ background:#1DC78B; }
+.plate .srange::-moz-range-thumb{ background:#1DC78B; }
+.plate .click-hint::after{ border-top-color:#1DC78B; }
+.plate .ideal-line{ stroke:#1DC78B; }
+.icard .ic{ color:#1DC78B; }            /* ícone dentro do chip escuro */
+
+/* --- 5. BOTÕES: o verde da marca sumiria no card verde ----------------
+   Deixa os botões primários em creme para destacarem.
+   (Se preferir manter verde, é só apagar este bloco 5.)
+   ---------------------------------------------------------------------- */
+.plate .btn-solid,
+.plate .btn-signal,
+.plate-dark .btn-solid,
+.plate-dark .btn-signal,
+.grad-green .btn-solid,
+.grad-green .btn-signal{
+  background: #F0F1E3;
+  color: #0A4D36;
+}
+.plate .btn-solid:hover,
+.plate .btn-signal:hover,
+.plate-dark .btn-solid:hover,
+.plate-dark .btn-signal:hover,
+.grad-green .btn-solid:hover,
+.grad-green .btn-signal:hover{
+  background: #FFFFFF;
+  color: #0A4D36;
+}
+
+/* --- 6. Borda um pouco mais viva para o card se destacar do fundo ------ */
+.plate,
+.plate-dark,
+.icard{
+  border-color: rgba(240, 241, 227, .22);
+}
+
+/* ==========================================================================
+   FAIXAS CREME — pausas propositais (90%)
+   ========================================================================== */
+.cream{
+  background: rgba(240, 241, 227, .9);
+  color: #0A4D36;
+  --ink:         #0A4D36;   /* texto principal escuro   6.97:1 */
+  --sage:        #47584D;   /* texto secundario         5.35:1 */
+  --signal:      #0E5F42;   /* verde de texto            4.93:1 */
+  --signal-deep: #0E5F42;
+}
+.cream .eyebrow::before{ background:#1DC78B; }   /* o quadradinho fica vivo */
+.cream .rule-soft{ background:rgba(10,77,54,.18); }
+
+/* card dentro da faixa creme fica ESCURO: contraste forte, chama atencao */
+.cream .plate,
+.cream .plate-dark,
+.cream .icard{
+  background-color: rgba(10, 77, 54, .93);
+  border-color: rgba(240, 241, 227, .18);
+  color: #F0F1E3;
+  --ink:         #F0F1E3;
+  --sage:        #E5F5EC;
+  --signal:      #D6FFEE;
+  --signal-deep: #D6FFEE;
+  --amber:       #FFE8B8;
+  --clay:        #FFE0D7;
+}
+
+/* --- Faixa creme: o botao usava --signal (aqui, verde escuro de TEXTO) como
+   FUNDO e sumia. Na creme ele vira verde-escuro com texto creme. --- */
+.cream .btn-solid,
+.cream .btn-signal{ background:#0A4D36; color:#F0F1E3; }
+.cream .btn-solid:hover,
+.cream .btn-signal:hover{ background:#116B4B; color:#FFFFFF; }
+
+/* creme um pouco mais translucida: deixa a logo 3D respirar por tras */
+.cream{ background: rgba(240, 241, 227, .86); }
